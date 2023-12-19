@@ -1,0 +1,44 @@
+name: flutter_quick_starter
+
+sdkPath: .fvm/flutter_sdk
+
+packages:
+  - .
+
+scripts:
+  format: find . -not -path './.git/*' -not -path '*/.dart_tool/*' -not -path '*/bricks/*' -name "*.dart" ! -name "*.g.dart" ! -name "*_test.dart" ! -name '*.swagger.*' ! -name '*.config.dart' ! -name '*.chopper.dart' ! -name '*.freezed.dart' ! -name '*.module.dart' ! -name '*.gr.dart' | tr '\n' ' ' | xargs fvm dart format --line-length=100
+
+  analyze:
+    exec: fvm flutter analyze
+
+  get:
+    description: Get all dependencies. Identical to `melos bootstrap` or `melos bs`
+    run: melos bs
+
+  gen:
+    description: Generate all except for swaggers
+    exec: fvm flutter pub run build_runner build --delete-conflicting-outputs
+    packageFilters:
+      dependsOn: build_runner
+
+  test:
+    exec: fvm flutter test
+    packageFilters:
+      dirExists: test
+
+  update-goldens:
+    exec: fvm flutter test --update-goldens --tags=golden
+    packageFilters:
+      dirExists: test
+
+  coverage:
+    run: melos gen-full-coverage && melos exec --dir-exists="test" -- "fvm flutter test --coverage" ; melos exec --dir-exists="test" -- "$MELOS_ROOT_PATH/scripts/combine_coverage.sh" && genhtml coverage_report/lcov.info -o coverage_report/html && open coverage_report/html/index.html
+
+  gen-full-coverage:
+    run: fvm dart pub global activate full_coverage && melos exec --dir-exists="test" -- "fvm dart pub global run full_coverage"
+    description: Generates test files with imports, so coverage will include all files.
+
+command:
+  clean:
+    hooks:
+      post: melos exec --concurrency=3 -- "fvm flutter clean"
