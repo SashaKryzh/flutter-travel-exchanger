@@ -1,5 +1,5 @@
-import 'package:flutter_quick_starter/utils/logger.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 
 class MyProviderObserver extends ProviderObserver {
   const MyProviderObserver();
