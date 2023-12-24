@@ -45,3 +45,8 @@ extension WidgetX on Widget {
   @widgetFactory
   Widget sliver() => SliverToBoxAdapter(child: this);
 }
+
+extension WidgetListX on List<Widget> {
+  @widgetFactory
+  List<Widget> separated(Widget separator) => expand((e) => [separator, e]).skip(1).toList();
+}
