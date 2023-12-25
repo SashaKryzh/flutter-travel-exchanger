@@ -1,6 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart' hide Provider;
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_providers.dart';
 
@@ -100,7 +102,27 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
       child: ProxyProvider0(
         create: (_) => SlideAnimationProvider(animation),
         update: (context, value) => SlideAnimationProvider(animation),
-        child: const _ExchangeTableRows(),
+        child: Stack(
+          children: [
+            const TableColumnsBackground(
+              columnsCount: 2,
+            ),
+            LayoutBuilder(
+              builder: (context, constraints) => Provider(
+                create: (_) => ExchangeTableLayoutProperties(
+                  tableHeight: constraints.maxHeight,
+                ),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: constraints,
+                    child: const _ExchangeTableRows(),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -115,43 +137,300 @@ class SlideAnimationProvider extends Equatable {
   List<Object?> get props => [animation];
 }
 
-class _ExchangeTableRows extends ConsumerWidget {
+class ExchangeTableLayoutProperties extends Equatable {
+  const ExchangeTableLayoutProperties({
+    required this.tableHeight,
+  });
+
+  final double tableHeight;
+
+  double get rowHeight => tableHeight / 10;
+  double get expandedRowHeight => rowHeight * 8;
+  double get nestedRowHeight => expandedRowHeight / 9;
+
+  @override
+  List<Object?> get props => [tableHeight];
+}
+
+const exchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
+
+class _ExchangeTableRows extends ConsumerStatefulWidget {
   const _ExchangeTableRows();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_ExchangeTableRows> createState() => _ExchangeTableRowsState();
+}
+
+class _ExchangeTableRowsState extends ConsumerState<_ExchangeTableRows> {
+  final _scrollController = ScrollController();
+  int? _expandedIndex;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  List<double> offsets = [];
+
+  @override
+  Widget build(BuildContext context) {
     final values = ref.watch(exchangeValuesProvider);
 
-    return Stack(
+    final layoutProperties = context.read<ExchangeTableLayoutProperties>();
+
+    void onExpandChanged(int index, int level, bool isExpanded) {
+      if (isExpanded) {
+        final double offset;
+        if (level == 0) {
+          offset = index * layoutProperties.rowHeight;
+        } else {
+          offset =
+              offsets.last + layoutProperties.rowHeight + layoutProperties.nestedRowHeight * index;
+        }
+
+        offsets.add(offset);
+
+        _scrollController.animateTo(
+          offset,
+          duration: exchangeRowExpandAnimationDuration,
+          curve: Curves.easeInOut,
+        );
+      } else {
+        offsets.removeLast();
+        _scrollController.animateTo(
+          offsets.lastOrNull ?? 0,
+          duration: exchangeRowExpandAnimationDuration,
+          curve: Curves.easeInOut,
+        );
+      }
+      if (level == 0) {
+        setState(() {
+          _expandedIndex = isExpanded ? index : null;
+        });
+      }
+    }
+
+    return SingleChildScrollView(
+      controller: _scrollController,
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(
+        children: values
+            .mapIndexed(
+              (i, e) => ExchangeTableExpandableRow(
+                height: layoutProperties.rowHeight,
+                value: e,
+                index: i,
+                level: 0,
+                onExpandChanged: (index, isExpanded, level) =>
+                    onExpandChanged(index, level, isExpanded),
+                bottomBorder: (i < 9 || i == _expandedIndex) && i - 1 != _expandedIndex,
+                layoutProperties: layoutProperties,
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
+class TableColumnsBackground extends StatelessWidget {
+  const TableColumnsBackground({
+    super.key,
+    required this.columnsCount,
+  });
+
+  final int columnsCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       children: [
-        Positioned.fill(
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  color: Colors.grey,
-                ),
-              ),
-              const VerticalDivider(
-                width: 1,
-                color: Colors.black,
-              ),
-              Expanded(
-                child: Container(
-                  color: Colors.grey[300],
-                ),
-              ),
-            ],
+        Expanded(
+          child: Container(
+            color: Colors.grey,
           ),
         ),
-        Column(
-          children: values
-              .map(
-                (e) => Expanded(
-                  child: ValuesRow(value: e),
-                ),
-              )
-              .toList(),
+        for (var i = 1; i < columnsCount; i++) ...[
+          const VerticalDivider(
+            width: 1,
+            color: Colors.black,
+          ),
+          Expanded(
+            child: Container(
+              color: Colors.grey[300],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class ExchangeTableExpandableRow extends StatefulWidget {
+  const ExchangeTableExpandableRow({
+    super.key,
+    required this.value,
+    required this.height,
+    required this.index,
+    required this.level,
+    required this.onExpandChanged,
+    this.onChildExpandChanged,
+    required this.bottomBorder,
+    required this.layoutProperties,
+  }) : assert(level >= 0 && level < 100, 'Most likely you have infinite loop');
+
+  final double value;
+  final double height;
+  final int index;
+  final int level;
+  final void Function(int index, bool isExpanded, int level) onExpandChanged;
+
+  /// ! Temp
+  final ExchangeTableLayoutProperties layoutProperties;
+
+  /// Should be used only internally
+  final ValueChanged<bool>? onChildExpandChanged;
+  final bool bottomBorder;
+
+  @override
+  State<ExchangeTableExpandableRow> createState() => _ExchangeTableExpandableRowState();
+}
+
+class _ExchangeTableExpandableRowState extends State<ExchangeTableExpandableRow>
+    with SingleTickerProviderStateMixin {
+  late final _controller = AnimationController(
+    duration: exchangeRowExpandAnimationDuration,
+    vsync: this,
+  );
+  late var animation = Tween(
+    begin: 0.0,
+    end: widget.layoutProperties.expandedRowHeight,
+  ).animate(CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeInOut,
+  ));
+
+  var isExpanded = false;
+  var renderChildren = false;
+  var expandedChildrenCount = 0;
+
+  void _toggleExpanded() {
+    if (isExpanded) {
+      // Close
+      setState(() {
+        isExpanded = false;
+        expandedChildrenCount = 0;
+      });
+
+      widget.onExpandChanged(widget.index, isExpanded, widget.level);
+
+      animation = Tween(
+        begin: widget.layoutProperties.expandedRowHeight,
+        end: 0.0,
+      ).animate(CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeInOut,
+      ));
+      _controller.reset();
+      _controller.forward();
+
+      Future.delayed(exchangeRowExpandAnimationDuration, () {
+        setState(() {
+          renderChildren = false;
+        });
+      });
+    } else {
+      // Open
+      setState(() {
+        renderChildren = true;
+      });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          isExpanded = !isExpanded;
+        });
+        widget.onExpandChanged(widget.index, isExpanded, widget.level);
+
+        animation = Tween(
+          begin: 0.0,
+          end: widget.layoutProperties.expandedRowHeight,
+        ).animate(CurvedAnimation(
+          parent: _controller,
+          curve: Curves.easeInOut,
+        ));
+        _controller.reset();
+        _controller.forward();
+      });
+    }
+  }
+
+  void _childExpandedChanged(int index, bool expanded, int level) {
+    widget.onExpandChanged(index, expanded, level);
+
+    setState(() {
+      expandedChildrenCount += expanded ? 1 : -1;
+    });
+
+    animation = Tween(
+      begin: expandedContentHeight,
+      end: nextExpandedContentHeight(expandedChildrenCount),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  double get expandedContentHeight =>
+      widget.layoutProperties.expandedRowHeight * (expandedChildrenCount + 1);
+
+  double nextExpandedContentHeight(int nextExpandedChildrenCount) =>
+      widget.layoutProperties.expandedRowHeight * (nextExpandedChildrenCount + 1);
+
+  @override
+  Widget build(BuildContext context) {
+    // final layoutProperties = context.read<ExchangeTableLayoutProperties>();
+
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: _toggleExpanded,
+          child: AnimatedContainer(
+            duration: exchangeRowExpandAnimationDuration,
+            height: isExpanded ? widget.layoutProperties.rowHeight : widget.height,
+            child: ValuesRow(
+              value: widget.value,
+              level: widget.level,
+              bottomBorder: widget.bottomBorder,
+            ),
+          ),
+        ),
+        SizeTransition(
+          sizeFactor: Animation.fromValueListenable(
+            animation,
+            transformer: (height) => height / expandedContentHeight,
+          ),
+          child: SizedBox(
+            height: expandedContentHeight,
+            child: Column(
+              children: renderChildren
+                  ? betweenValues(widget.value)
+                      .mapIndexed(
+                        (i, e) => ExchangeTableExpandableRow(
+                          height: widget.layoutProperties.nestedRowHeight,
+                          value: e,
+                          index: i,
+                          level: widget.level + 1,
+                          onExpandChanged: (index, value, level) =>
+                              _childExpandedChanged(index, value, level),
+                          bottomBorder: true,
+                          layoutProperties: widget.layoutProperties,
+                        ),
+                      )
+                      .toList()
+                  : [],
+            ),
+          ),
         ),
       ],
     );
@@ -162,31 +441,48 @@ class ValuesRow extends StatelessWidget {
   const ValuesRow({
     super.key,
     required this.value,
-  });
+    this.level = 0,
+    this.bottomBorder = true,
+  }) : assert(level >= 0);
 
   final double value;
+  final int level;
+  final bool bottomBorder;
 
   @override
   Widget build(BuildContext context) {
     final convertedValue = value * 9.2;
 
-    return Row(
-      children: [
-        Expanded(
-          child: ValueItem(
-            value: value,
-            padding: valuePadding,
-            alignment: ValueItemAlignment.right,
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: bottomBorder
+              ? const BorderSide(
+                  color: Colors.black,
+                  width: 1,
+                )
+              : BorderSide.none,
         ),
-        Expanded(
-          child: ValueItem(
-            value: convertedValue,
-            padding: valuePadding,
-            alignment: ValueItemAlignment.left,
+        color: level > 0 ? Colors.black.withOpacity((0.2 * level).clamp(0, 1)) : null,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: ValueItem(
+              value: value,
+              padding: valuePadding,
+              alignment: ValueItemAlignment.right,
+            ),
           ),
-        ),
-      ],
+          Expanded(
+            child: ValueItem(
+              value: convertedValue,
+              padding: valuePadding,
+              alignment: ValueItemAlignment.left,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

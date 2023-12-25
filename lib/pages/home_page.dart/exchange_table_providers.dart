@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'exchange_table_providers.g.dart';
@@ -43,8 +45,27 @@ class ExchangeValuesFromNotifier extends _$ExchangeValuesFromNotifier {
 List<double> exchangeValues(ExchangeValuesRef ref) {
   final from = ref.watch(exchangeValuesFromNotifierProvider);
   final values = [from.value];
-  for (var i = 0; i < 9; i++) {
+  for (var i = 0; i < 10; i++) {
     values.add(values.last + values.first);
+  }
+  return values;
+}
+
+List<double> betweenValues(double from) {
+  final double step;
+  
+  if (from > 10) {
+    final magnitude = (from ~/ 10).toStringAsFixed(0).length - 1;
+    step = pow(10, magnitude).toDouble();
+  } else if (from >= 1) {
+    step = 0.1;
+  } else {
+    step = 0.01;
+  }
+
+  final values = [from + step];
+  for (var i = 0; i < 8; i++) {
+    values.add(values.last + step);
   }
   return values;
 }
