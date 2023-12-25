@@ -6,7 +6,7 @@ part of 'exchange_table_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$exchangeValuesHash() => r'9d4c579c1101070e96666db1ce0c93450823fbaf';
+String _$exchangeValuesHash() => r'2ef3c540dcdc3d5ea210ec6df3d49fb894b5a429';
 
 /// See also [exchangeValues].
 @ProviderFor(exchangeValues)
@@ -38,5 +38,24 @@ final exchangeValuesFromNotifierProvider = AutoDisposeNotifierProvider<
 );
 
 typedef _$ExchangeValuesFromNotifier = AutoDisposeNotifier<ExchangeValuesFrom>;
+String _$exchangeTableExpandedRowsNotifierHash() =>
+    r'aa3019cd525ba18b47ae2807230d3b1c4404832d';
+
+/// See also [ExchangeTableExpandedRowsNotifier].
+@ProviderFor(ExchangeTableExpandedRowsNotifier)
+final exchangeTableExpandedRowsNotifierProvider = AutoDisposeNotifierProvider<
+    ExchangeTableExpandedRowsNotifier,
+    Set<ExchangeTableExpandedRowId>>.internal(
+  ExchangeTableExpandedRowsNotifier.new,
+  name: r'exchangeTableExpandedRowsNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$exchangeTableExpandedRowsNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ExchangeTableExpandedRowsNotifier
+    = AutoDisposeNotifier<Set<ExchangeTableExpandedRowId>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

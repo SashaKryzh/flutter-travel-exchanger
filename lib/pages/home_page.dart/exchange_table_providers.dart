@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:equatable/equatable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'exchange_table_providers.g.dart';
@@ -51,9 +52,56 @@ List<double> exchangeValues(ExchangeValuesRef ref) {
   return values;
 }
 
+// class ExchangeTableState extends Equatable
+
+// class ExchangeTableNotifier extends _$ExchangeTableNotifier {
+//   @override
+//   ExchangeValuesFrom build() {
+
+//   }
+// }
+
+class ExchangeTableExpandedRowId extends Equatable {
+  const ExchangeTableExpandedRowId({
+    required this.level,
+    required this.index,
+  });
+
+  final int level;
+  final int index;
+
+  @override
+  List<Object?> get props => [level, index];
+}
+
+@riverpod
+class ExchangeTableExpandedRowsNotifier extends _$ExchangeTableExpandedRowsNotifier {
+  @override
+  Set<ExchangeTableExpandedRowId> build() {
+    return {};
+  }
+
+  void expand({
+    required int level,
+    required int index,
+  }) {
+    final length = state.length;
+    state = {...state, ExchangeTableExpandedRowId(level: level, index: index)};
+    assert(state.length == length + 1);
+  }
+
+  void collapse() {
+    state = state.take(state.length - 1).toSet();
+  }
+}
+
+//
+// =============================================================================
+//
+
 List<double> betweenValues(double from) {
   final double step;
-  
+
   if (from > 10) {
     final magnitude = (from ~/ 10).toStringAsFixed(0).length - 1;
     step = pow(10, magnitude).toDouble();

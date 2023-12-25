@@ -50,3 +50,10 @@ extension MaterialStateExtensions on Iterable<MaterialState> {
   bool get isDisabled => contains(MaterialState.disabled);
   bool get isError => contains(MaterialState.error);
 }
+
+extension AnimationControllerExtensions on AnimationController {
+  void reforward() {
+    reset();
+    forward();
+  }
+}
