@@ -52,15 +52,6 @@ List<double> exchangeValues(ExchangeValuesRef ref) {
   return values;
 }
 
-// class ExchangeTableState extends Equatable
-
-// class ExchangeTableNotifier extends _$ExchangeTableNotifier {
-//   @override
-//   ExchangeValuesFrom build() {
-
-//   }
-// }
-
 class ExchangeTableExpandedRowId extends Equatable {
   const ExchangeTableExpandedRowId({
     required this.level,
@@ -87,7 +78,7 @@ class ExchangeTableExpandedRowsNotifier extends _$ExchangeTableExpandedRowsNotif
   }) {
     final length = state.length;
     state = {...state, ExchangeTableExpandedRowId(level: level, index: index)};
-    assert(state.length == length + 1);
+    assert(state.length == length + 1, 'This row is already expanded');
   }
 
   void collapse() {
