@@ -6,16 +6,31 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'exchange_table_providers.g.dart';
 
 enum ExchangeValuesFrom {
+  v001(.01),
   v01(.1),
   v1(1),
   v10(10),
   v100(100),
   v1k(1000),
-  v10k(10000);
+  v10k(10000),
+  v100k(100000),
+  v1m(1000000),
+  v10m(10000000),
+  v100m(100000000),
+  v1b(1000000000),
+  v10b(10000000000),
+  v100b(100000000000),
+  v1t(1000000000000);
 
   const ExchangeValuesFrom(this.value);
 
   final double value;
+
+  double? step(int level) {
+    final index = ExchangeValuesFrom.values.indexOf(this);
+    final stepIndex = index - 1 - level;
+    return stepIndex >= 0 ? ExchangeValuesFrom.values[index - 1 - level].value : null;
+  }
 }
 
 @riverpod
@@ -25,20 +40,23 @@ class ExchangeValuesFromNotifier extends _$ExchangeValuesFromNotifier {
     return ExchangeValuesFrom.v1;
   }
 
-  void increase() {
+  bool increase() {
     final currentIndex = ExchangeValuesFrom.values.indexOf(state);
     if (currentIndex == ExchangeValuesFrom.values.length - 1) {
-      return;
+      return false;
     }
     state = ExchangeValuesFrom.values[currentIndex + 1];
+    return true;
   }
 
-  void decrease() {
+  bool decrease() {
     final currentIndex = ExchangeValuesFrom.values.indexOf(state);
-    if (currentIndex == 0) {
-      return;
+    final expanded = ref.read(exchangeTableExpandedRowsNotifierProvider).isNotEmpty;
+    if (currentIndex == 0 || (expanded && currentIndex == 1)) {
+      return false;
     }
     state = ExchangeValuesFrom.values[currentIndex - 1];
+    return true;
   }
 }
 
@@ -90,21 +108,17 @@ class ExchangeTableExpandedRowsNotifier extends _$ExchangeTableExpandedRowsNotif
 // =============================================================================
 //
 
-List<double> betweenValues(double from) {
-  final double step;
+List<double>? betweenValues(ExchangeValuesFrom from, double value, int level) {
+  final step = from.step(level);
 
-  if (from > 10) {
-    final magnitude = (from ~/ 10).toStringAsFixed(0).length - 1;
-    step = pow(10, magnitude).toDouble();
-  } else if (from >= 1) {
-    step = 0.1;
-  } else {
-    step = 0.01;
+  if (step == null) {
+    return null;
   }
 
-  final values = [from + step];
+  final values = [value + step];
   for (var i = 0; i < 8; i++) {
     values.add(values.last + step);
   }
+
   return values;
 }

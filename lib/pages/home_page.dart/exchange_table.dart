@@ -238,20 +238,28 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
     with SingleTickerProviderStateMixin {
   late final _layoutProperties = context.layoutProperties;
 
-  late final _controller =
+  late final _animationController =
       AnimationController(duration: exchangeRowExpandAnimationDuration, vsync: this);
   late var _animation = Tween(begin: 0.0, end: 0.0)
-      .animate(CurvedAnimation(parent: _controller, curve: expandAnimationCurve));
+      .animate(CurvedAnimation(parent: _animationController, curve: expandAnimationCurve));
+
+  bool get _canExpand => ref.read(exchangeValuesFromNotifierProvider).step(widget.level) != null;
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   var _isExpanded = false;
   var _renderChildren = false;
 
-  void _toggleExpanded({required bool isExpanded, required bool isAfterExpanded}) {
+  void _onExpand({required bool isExpanded, required bool isAfterExpanded}) {
     if (isAfterExpanded) {
       ref.read(exchangeTableExpandedRowsNotifierProvider.notifier).collapse();
     } else if (isExpanded) {
       _collapse();
-    } else {
+    } else if (_canExpand) {
       _expand();
     }
   }
@@ -270,11 +278,11 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
         begin: 0.0,
         end: _layoutProperties.expandedRowHeight,
       ).animate(CurvedAnimation(
-        parent: _controller,
+        parent: _animationController,
         curve: expandAnimationCurve,
       ));
     });
-    _controller.reforward();
+    _animationController.reforward();
   }
 
   void _collapse({bool updateNotifier = true}) {
@@ -288,11 +296,11 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
         begin: _layoutProperties.expandedRowHeight,
         end: 0.0,
       ).animate(CurvedAnimation(
-        parent: _controller,
+        parent: _animationController,
         curve: expandAnimationCurve,
       ));
     });
-    _controller.reforward();
+    _animationController.reforward();
 
     Future.delayed(exchangeRowExpandAnimationDuration, () {
       setState(() {
@@ -338,7 +346,7 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
     return Column(
       children: [
         GestureDetector(
-          onTap: () => _toggleExpanded(isExpanded: isExpanded, isAfterExpanded: isAfterExpanded),
+          onTap: () => _onExpand(isExpanded: isExpanded, isAfterExpanded: isAfterExpanded),
           child: AnimatedContainer(
             duration: exchangeRowExpandAnimationDuration,
             height: rowHeight,
@@ -352,8 +360,12 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
         SizeTransition(
           sizeFactor: adjustedAnimation,
           child: Column(
+            // TODO: handle swipe less when level doesn't exists for a smaller number
             children: _renderChildren
-                ? betweenValues(widget.value).mapIndexed(
+                ? (betweenValues(ref.read(exchangeValuesFromNotifierProvider), widget.value,
+                            widget.level) ??
+                        [])
+                    .mapIndexed(
                     (i, e) {
                       return _ExpandableRow(
                         value: e,
