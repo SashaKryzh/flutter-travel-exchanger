@@ -32,3 +32,28 @@ class TableColumnsBackground extends StatelessWidget {
     );
   }
 }
+
+class TableColumnsBackgroundWrapper extends StatelessWidget {
+  const TableColumnsBackgroundWrapper({
+    super.key,
+    required this.child,
+    required this.columnsCount,
+  });
+
+  final Widget child;
+  final int columnsCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: TableColumnsBackground(
+            columnsCount: columnsCount,
+          ),
+        ),
+        child,
+      ],
+    );
+  }
+}

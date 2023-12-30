@@ -91,24 +91,20 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
       child: ProxyProvider0(
         create: (_) => _SlideAnimationProvider(animation),
         update: (_, __) => _SlideAnimationProvider(animation),
-        child: Stack(
-          children: [
-            const TableColumnsBackground(
-              columnsCount: 2,
-            ),
-            LayoutBuilder(
-              builder: (context, constraints) => Provider(
-                create: (_) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints: constraints,
-                    child: const _ExchangeTableContent(),
-                  ),
+        child: TableColumnsBackgroundWrapper(
+          columnsCount: 2,
+          child: LayoutBuilder(
+            builder: (context, constraints) => Provider(
+              create: (_) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: constraints,
+                  child: const _ExchangeTableContent(),
                 ),
               ),
             ),
-          ],
+          ),
         ),
       ),
     );
