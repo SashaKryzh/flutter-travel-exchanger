@@ -382,7 +382,7 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
 // =============================================================================
 //
 
-class _ValuesRow extends StatelessWidget {
+class _ValuesRow extends ConsumerWidget {
   const _ValuesRow({
     required this.value,
     required this.level,
@@ -394,8 +394,8 @@ class _ValuesRow extends StatelessWidget {
   final bool bottomBorder;
 
   @override
-  Widget build(BuildContext context) {
-    final convertedValue = value * 9.2;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final convertedValues = ref.watch(convertedValuesProvider(value));
 
     return Container(
       decoration: BoxDecoration(
@@ -419,7 +419,7 @@ class _ValuesRow extends StatelessWidget {
           ),
           Expanded(
             child: _ValueItem(
-              value: convertedValue,
+              value: convertedValues.$1,
               alignment: _ValueItemAlignment.left,
             ),
           ),

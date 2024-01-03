@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_exchanger/domain/converter_providers.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
@@ -9,6 +10,8 @@ class HomeAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final between = ref.watch(exchangeBetweenProvider);
+
     return Container(
       decoration: const BoxDecoration(
         border: Border(
@@ -31,7 +34,7 @@ class HomeAppBar extends ConsumerWidget {
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: valuePadding),
-                    child: const Text('PLN').textAlignX(
+                    child: Text(between.between.$1.name(context)).textAlignX(
                       TextAlign.end,
                     ),
                   ),
@@ -39,7 +42,7 @@ class HomeAppBar extends ConsumerWidget {
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: valuePadding),
-                    child: const Text('EUR').textAlignX(
+                    child: Text(between.between.$2.name(context)).textAlignX(
                       TextAlign.start,
                     ),
                   ),
