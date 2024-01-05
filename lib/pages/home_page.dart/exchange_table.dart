@@ -94,8 +94,9 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
         child: TableColumnsBackgroundWrapper(
           columnsCount: 2,
           child: LayoutBuilder(
-            builder: (context, constraints) => Provider(
+            builder: (context, constraints) => ProxyProvider0(
               create: (_) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
+              update: (_, __) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: ConstrainedBox(

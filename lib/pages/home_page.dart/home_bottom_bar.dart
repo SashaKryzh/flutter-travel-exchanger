@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/domain/converter_providers.dart';
 import 'package:travel_exchanger/domain/currency.dart';
-import 'package:travel_exchanger/utils/logger.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 
 class HomeBottomBar extends ConsumerWidget {
@@ -22,6 +22,7 @@ class HomeBottomBar extends ConsumerWidget {
       ),
       child: const SafeArea(
         top: false,
+        maintainBottomViewPadding: true,
         child: _Content(),
       ),
     );
@@ -54,12 +55,12 @@ class _Content extends StatelessWidget {
 class _CurrencyButtons extends ConsumerWidget {
   const _CurrencyButtons();
 
-  void onTap(Exchangeable exchangeable) {
-    logger.d(exchangeable);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    void onTap(Exchangeable exchangeable) {
+      context.go('/${exchangeable.code}');
+    }
+
     final between = ref.watch(exchangeBetweenProvider);
     final e3 = between.between.$3;
 

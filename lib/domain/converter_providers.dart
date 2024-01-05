@@ -5,14 +5,6 @@ import 'package:travel_exchanger/domain/currency.dart';
 
 part 'converter_providers.g.dart';
 
-@riverpod
-Future<List<Exchangeable>> exchangeList(ExchangeListRef ref) async {
-  final List<Exchangeable> currencies =
-      await ref.watch(currenciesRepositoryProvider).getCurrencies();
-
-  return currencies..add(Time());
-}
-
 class ExchangeBetweenState extends Equatable {
   const ExchangeBetweenState(this.between);
 

@@ -13,11 +13,16 @@ CurrenciesRepository currenciesRepository(CurrenciesRepositoryRef ref) {
 }
 
 class CurrenciesRepository {
-  Future<List<Currency>> getCurrencies() async {
+  List<Exchangeable> getCurrencies() {
     return [
       pln,
       eur,
       uah,
+      Time(),
     ];
+  }
+
+  Exchangeable getCurrencyFromCode(String code) {
+    return getCurrencies().firstWhere((element) => element.code == code);
   }
 }

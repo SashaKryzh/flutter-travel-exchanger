@@ -6,21 +6,6 @@ part of 'converter_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$exchangeListHash() => r'1447c7c0df842af763897f40dc00e66fc1160d4c';
-
-/// See also [exchangeList].
-@ProviderFor(exchangeList)
-final exchangeListProvider =
-    AutoDisposeFutureProvider<List<Exchangeable>>.internal(
-  exchangeList,
-  name: r'exchangeListProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$exchangeListHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef ExchangeListRef = AutoDisposeFutureProviderRef<List<Exchangeable>>;
 String _$exchangeBetweenHash() => r'83ad84be5e83610af0db1f682fd66c840b7cb21e';
 
 /// See also [ExchangeBetween].
