@@ -36,10 +36,10 @@ class _Content extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(
-        top: 6,
+        top: 8,
         left: 12,
         right: 12,
-        bottom: 6,
+        bottom: 8,
       ),
       child: const Stack(
         alignment: Alignment.center,

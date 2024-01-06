@@ -142,6 +142,7 @@ class _InputContainer extends HookConsumerWidget {
                     isCollapsed: true,
                   ),
                   showCursor: false,
+                  enableInteractiveSelection: false,
                   onChanged: (_) => setAmount(),
                   onTap: setFrom,
                   // Remove default behavior on enter.
@@ -205,6 +206,13 @@ class CurrencyInputFormatter extends TextInputFormatter {
     final decimalSeparatorInText = newText.contains(decimalSeparator);
     final decimalDigits =
         decimalSeparatorInText ? newText.length - newText.indexOf(decimalSeparator) - 1 : 0;
+
+    if (newText.length == 1 && decimalSeparatorInText) {
+      return newValue.copyWith(
+        text: '0$decimalSeparator',
+        selection: const TextSelection.collapsed(offset: 2),
+      );
+    }
 
     // More than two decimal digits.
     if (decimalDigits > 2) {

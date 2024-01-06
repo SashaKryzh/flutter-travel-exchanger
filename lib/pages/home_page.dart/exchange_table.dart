@@ -149,10 +149,10 @@ class _ExchangeTableContent extends ConsumerStatefulWidget {
 }
 
 class _ExchangeTableContentState extends ConsumerState<_ExchangeTableContent> {
-  late final _layoutProperties = context.layoutProperties;
-
   final _scrollController = ScrollController();
   final _offsets = <double>[];
+
+  late _ExchangeTableLayoutProperties _layoutProperties;
 
   @override
   void dispose() {
@@ -188,6 +188,8 @@ class _ExchangeTableContentState extends ConsumerState<_ExchangeTableContent> {
 
   @override
   Widget build(BuildContext context) {
+    _layoutProperties = context.watchLayoutProperties;
+
     ref.listen(exchangeTableExpandedRowsNotifierProvider, (prev, next) {
       if (prev == null || prev.length < next.length) {
         _expand(level: next.last.level, index: next.last.index);
@@ -200,7 +202,7 @@ class _ExchangeTableContentState extends ConsumerState<_ExchangeTableContent> {
 
     return SingleChildScrollView(
       controller: _scrollController,
-      physics: const NeverScrollableScrollPhysics(),
+      physics: const NeverScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
       child: Column(
         children: values.mapIndexed(
           (i, e) {
@@ -233,14 +235,14 @@ class _ExpandableRow extends ConsumerStatefulWidget {
 
 class _ExpandableRowState extends ConsumerState<_ExpandableRow>
     with SingleTickerProviderStateMixin {
-  late final _layoutProperties = context.layoutProperties;
-
   late final _animationController =
       AnimationController(duration: exchangeRowExpandAnimationDuration, vsync: this);
   late var _animation = Tween(begin: 0.0, end: 0.0)
       .animate(CurvedAnimation(parent: _animationController, curve: expandAnimationCurve));
 
   bool get _canExpand => ref.read(exchangeValuesFromNotifierProvider).step(widget.level) != null;
+
+  late _ExchangeTableLayoutProperties _layoutProperties;
 
   @override
   void dispose() {
@@ -308,6 +310,8 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
 
   @override
   Widget build(BuildContext context) {
+    _layoutProperties = context.watchLayoutProperties;
+
     final index = widget.index;
 
     final expandedIndex = ref
@@ -481,5 +485,6 @@ class _ValueItem extends StatelessWidget {
 //
 
 extension on BuildContext {
-  _ExchangeTableLayoutProperties get layoutProperties => read<_ExchangeTableLayoutProperties>();
+  _ExchangeTableLayoutProperties get watchLayoutProperties =>
+      watch<_ExchangeTableLayoutProperties>();
 }
