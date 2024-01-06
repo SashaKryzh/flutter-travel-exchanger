@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:travel_exchanger/domain/converter_providers.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_providers.dart';
-import 'package:travel_exchanger/utils/hooks/use_listen.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 import 'package:travel_exchanger/widgets/glass_container.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
@@ -64,33 +65,45 @@ class _InputContainer extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final focusNode = useFocusNode();
-    final controller = useTextEditingController();
     final isFirstBuild = usePrevious(false) ?? true;
 
-    final prevFocused = usePrevious(focusNode.hasFocus) ?? false;
+    final focusNode = useFocusNode();
+    final controller = useTextEditingController();
 
-    useListen(controller, () {
-      if (!prevFocused && focusNode.hasFocus) {
-        controller.text = controller.text.characters.last;
-      }
-    });
+    final isSelected = _state.from == exchangeable;
+    final value = _state.valueFor(exchangeable);
+
+    final prevValue = usePrevious(value);
+    final prevIsSelected = usePrevious(isSelected) ?? false;
+    final justReceivedFocus = useState(isSelected);
+
+    final decimalDigitsUsed = useRef(0);
+
+    if (!justReceivedFocus.value) {
+      justReceivedFocus.value = !prevIsSelected && isSelected;
+    } else if (!isSelected) {
+      justReceivedFocus.value = false;
+    }
+
+    if (isFirstBuild) {
+      decimalDigitsUsed.value = isSelected ? 0 : 2;
+      controller.text = formatValue(value, decimalDigits: decimalDigitsUsed.value);
+    } else if (!isSelected) {
+      final valueChanged = prevValue?.toStringAsFixed(2) != value.toStringAsFixed(2);
+      decimalDigitsUsed.value = valueChanged ? 2 : decimalDigitsUsed.value;
+      controller.text = formatValue(value, decimalDigits: decimalDigitsUsed.value);
+    }
 
     void setAmount() {
-      final amount = double.tryParse(controller.text) ?? 0;
+      justReceivedFocus.value = false;
+      decimalDigitsUsed.value = controller.text.contains(decimalSeparator) ? 2 : 0;
+      final amount = format().tryParse(controller.text)?.toDouble() ?? 0;
       _notifier.setAmount(amount);
     }
 
     void setFrom() {
       _notifier.setFrom(exchangeable);
       focusNode.requestFocus();
-    }
-
-    final isSelected = _state.from == exchangeable;
-    final value = _state.valueFor(exchangeable);
-
-    if (isFirstBuild || !isSelected) {
-      controller.text = value.toString();
     }
 
     return GestureDetector(
@@ -116,21 +129,26 @@ class _InputContainer extends HookConsumerWidget {
               IgnorePointer(
                 child: TextField(
                   controller: controller,
-                  onTap: setFrom,
-                  onChanged: (_) => setAmount(),
-                  style: const TextStyle(color: Colors.white),
-                  autofocus: isSelected,
                   focusNode: focusNode,
-                  textAlign: TextAlign.center,
+                  autofocus: isSelected,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(justReceivedFocus.value ? 0.6 : 1),
+                  ),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                     isCollapsed: true,
                   ),
                   showCursor: false,
+                  onChanged: (_) => setAmount(),
+                  onTap: setFrom,
+                  // Remove default behavior on enter.
+                  onEditingComplete: () {},
                   inputFormatters: [
-                    CustomNumberInputFormatter(),
+                    ReplaceFormatter(justReceivedFocus.value),
+                    CurrencyInputFormatter(),
                   ],
                 ),
               ),
@@ -145,14 +163,95 @@ class _InputContainer extends HookConsumerWidget {
   }
 }
 
-class CustomNumberInputFormatter extends TextInputFormatter {
-  final RegExp _regExp = RegExp(r'^\d*[.,]?\d{0,2}$');
+String get decimalSeparator => NumberFormat().symbols.DECIMAL_SEP;
+
+NumberFormat format({int decimalDigits = 2}) => NumberFormat.simpleCurrency(
+      name: '',
+      decimalDigits: decimalDigits,
+    );
+
+String formatValue(double value, {int decimalDigits = 2}) {
+  return format(decimalDigits: decimalDigits).format(value).trim();
+}
+
+class CurrencyInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    // Intl.defaultLocale = 'uk_UA';
+
+    var newText = newValue.text;
+
+    logger.d('oldValue: "${oldValue.text}"; newValue: "$newText"');
+
+    if (newText.isEmpty) {
+      return newValue;
+    }
+
+    // Replace entered decimal separator with the default one.
+    if (newText.length > oldValue.text.length && ',.'.contains(newText.characters.last)) {
+      newText = newText.substring(0, newText.length - 1) + decimalSeparator;
+    }
+
+    // More than one decimal separator.
+    if (newText.indexOf(decimalSeparator) != newText.lastIndexOf(decimalSeparator)) {
+      return oldValue;
+    }
+
+    // Contains space.
+    if (newText.contains(' ')) {
+      return oldValue;
+    }
+
+    final decimalSeparatorInText = newText.contains(decimalSeparator);
+    final decimalDigits =
+        decimalSeparatorInText ? newText.length - newText.indexOf(decimalSeparator) - 1 : 0;
+
+    // More than two decimal digits.
+    if (decimalDigits > 2) {
+      return oldValue;
+    }
+
+    final value = format().tryParse(newText)?.toDouble();
+    if (value == null) {
+      return oldValue;
+    }
+    newText = formatValue(value, decimalDigits: decimalDigits);
+    // Add decimal separator if it was removed.
+    if (decimalDigits == 0 && decimalSeparatorInText) {
+      newText += decimalSeparator;
+    }
+
+    logger.d('oldValue: "${oldValue.text}"; Updated to newText: "$newText"');
+
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
+  }
+}
+
+class ReplaceFormatter extends TextInputFormatter {
+  ReplaceFormatter(this.replaceWithNextCharacter);
+
+  final bool replaceWithNextCharacter;
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    if (_regExp.hasMatch(newValue.text)) {
+    if (!replaceWithNextCharacter) {
       return newValue;
     }
-    return oldValue;
+
+    var newText = newValue.text;
+    final diff = newText.length - oldValue.text.length;
+    if (diff > 0) {
+      newText = newText.characters.last;
+    } else if (diff < 0) {
+      newText = '';
+    }
+
+    return newValue.copyWith(
+      text: newText,
+      selection: TextSelection.collapsed(offset: newText.length),
+    );
   }
 }
