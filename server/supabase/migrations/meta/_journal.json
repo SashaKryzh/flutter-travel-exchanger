@@ -1,0 +1,34 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1704748908075,
+      "tag": "0000_lying_jubilee",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1705157385631,
+      "tag": "0001_odd_makkari",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1705161400783,
+      "tag": "0002_whole_wrecking_crew",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1705161762728,
+      "tag": "0003_mature_valkyrie",
+      "breakpoints": true
+    }
+  ]
+}

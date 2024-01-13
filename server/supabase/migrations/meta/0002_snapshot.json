@@ -1,0 +1,65 @@
+{
+  "id": "907b585d-fbc6-4df7-b7b1-8c647698f002",
+  "prevId": "6dc51b4f-2176-4a0a-95d2-689502ba67eb",
+  "version": "5",
+  "dialect": "pg",
+  "tables": {
+    "rates": {
+      "name": "rates",
+      "schema": "",
+      "columns": {
+        "base": {
+          "name": "base",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target": {
+          "name": "target",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rate": {
+          "name": "rate",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "rates_base_target_pk": {
+          "name": "rates_base_target_pk",
+          "columns": [
+            "base",
+            "target"
+          ]
+        },
+        "id": {
+          "name": "id",
+          "columns": [
+            "base",
+            "target"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

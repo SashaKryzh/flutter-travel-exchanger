@@ -1,0 +1,15 @@
+{
+	"scripts": {
+		"generate": "drizzle-kit generate:pg"
+	},
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^6.18.0",
+		"@typescript-eslint/parser": "^6.18.0",
+		"drizzle-kit": "^0.20.10",
+		"eslint": "^8.56.0"
+	},
+	"dependencies": {
+		"drizzle-orm": "^0.29.3",
+		"postgres": "^3.4.3"
+	}
+}
