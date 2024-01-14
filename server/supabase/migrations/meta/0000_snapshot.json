@@ -1,5 +1,5 @@
 {
-  "id": "97fdabf4-81be-4faf-b972-59da6789601f",
+  "id": "72293479-a9b0-4a55-9382-60fe50c3a101",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -22,7 +22,13 @@
         },
         "rate": {
           "name": "rate",
-          "type": "numeric",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true
         }
@@ -32,13 +38,6 @@
       "compositePrimaryKeys": {
         "rates_base_target_pk": {
           "name": "rates_base_target_pk",
-          "columns": [
-            "base",
-            "target"
-          ]
-        },
-        "id": {
-          "name": "id",
           "columns": [
             "base",
             "target"
