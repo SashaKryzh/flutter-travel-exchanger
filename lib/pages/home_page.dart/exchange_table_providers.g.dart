@@ -21,7 +21,7 @@ final exchangeValuesProvider = AutoDisposeProvider<List<double>>.internal(
 );
 
 typedef ExchangeValuesRef = AutoDisposeProviderRef<List<double>>;
-String _$convertedValuesHash() => r'f2823e1f7735e9804d375ac04775fff85d52c6d9';
+String _$convertedValuesHash() => r'dee8b9c615bf0f13237ae9419c317ef45e15895d';
 
 /// Copied from Dart SDK
 class _SystemHash {

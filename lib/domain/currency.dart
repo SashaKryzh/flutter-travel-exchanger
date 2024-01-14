@@ -1,33 +1,17 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-sealed class Exchangeable {
-  abstract final String code;
-
-  String name(BuildContext context);
-}
-
-final class Currency extends Exchangeable {
-  @override
-  final String code;
-  final String symbol;
-
-  Currency({
+class Currency extends Equatable {
+  const Currency({
     required this.code,
-    required this.symbol,
   });
 
-  @override
+  final String code;
+
   String name(BuildContext context) {
     return code;
   }
-}
-
-final class Time extends Exchangeable {
-  @override
-  final code = 'time';
 
   @override
-  String name(BuildContext context) {
-    return 'Time';
-  }
+  List<Object?> get props => [code];
 }

@@ -1,27 +1,25 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'currencies_repository.dart';
+part of 'rates_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currenciesRepositoryHash() =>
-    r'8fcc08a8982e73dabf75d22ceebf260034f4ecf6';
+String _$ratesRepositoryHash() => r'17d53c36fccce87713e122cff50510930e88e068';
 
-/// See also [currenciesRepository].
-@ProviderFor(currenciesRepository)
-final currenciesRepositoryProvider =
-    AutoDisposeProvider<CurrenciesRepository>.internal(
-  currenciesRepository,
-  name: r'currenciesRepositoryProvider',
+/// See also [ratesRepository].
+@ProviderFor(ratesRepository)
+final ratesRepositoryProvider = AutoDisposeProvider<RatesRepository>.internal(
+  ratesRepository,
+  name: r'ratesRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$currenciesRepositoryHash,
+      : _$ratesRepositoryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef CurrenciesRepositoryRef = AutoDisposeProviderRef<CurrenciesRepository>;
+typedef RatesRepositoryRef = AutoDisposeProviderRef<RatesRepository>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

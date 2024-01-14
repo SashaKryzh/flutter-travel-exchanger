@@ -57,8 +57,8 @@ class _CurrencyButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void onTap(Exchangeable exchangeable) {
-      context.go('/${exchangeable.code}');
+    void onTap(Currency currency) {
+      context.go('/${currency.code}');
     }
 
     final between = ref.watch(exchangeBetweenProvider);
@@ -69,14 +69,14 @@ class _CurrencyButtons extends ConsumerWidget {
       children: [
         Expanded(
           child: _CurrencyButton(
-            exchangeable: between.between.$1,
+            currency: between.between.$1,
             onTap: () => onTap(between.between.$1),
           ),
         ),
         const SizedSpacer(12),
         Expanded(
           child: _CurrencyButton(
-            exchangeable: between.between.$2,
+            currency: between.between.$2,
             onTap: () => onTap(between.between.$2),
           ),
         ),
@@ -84,7 +84,7 @@ class _CurrencyButtons extends ConsumerWidget {
           const SizedSpacer(12),
           Expanded(
             child: _CurrencyButton(
-              exchangeable: e3,
+              currency: e3,
               onTap: () => onTap(e3),
             ),
           ),
@@ -96,11 +96,11 @@ class _CurrencyButtons extends ConsumerWidget {
 
 class _CurrencyButton extends StatelessWidget {
   const _CurrencyButton({
-    required this.exchangeable,
+    required this.currency,
     required this.onTap,
   });
 
-  final Exchangeable exchangeable;
+  final Currency currency;
   final VoidCallback? onTap;
 
   @override
@@ -114,7 +114,7 @@ class _CurrencyButton extends StatelessWidget {
           color: Colors.grey[300],
         ),
         child: Center(
-          child: Text(exchangeable.name(context)),
+          child: Text(currency.name(context)),
         ),
       ),
     );
@@ -126,7 +126,7 @@ class _SwapButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    void swap(Exchangeable from, Exchangeable to) {
+    void swap(Currency from, Currency to) {
       ref.read(exchangeBetweenProvider.notifier).swap(from, to);
     }
 

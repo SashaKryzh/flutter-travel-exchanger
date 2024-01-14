@@ -16,9 +16,9 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$CustomAmountState {
-  Exchangeable get from => throw _privateConstructorUsedError;
-  ((Exchangeable, double), (Exchangeable, double), (Exchangeable, double)?)
-      get values => throw _privateConstructorUsedError;
+  Currency get from => throw _privateConstructorUsedError;
+  ((Currency, double), (Currency, double), (Currency, double)?) get values =>
+      throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $CustomAmountStateCopyWith<CustomAmountState> get copyWith =>
@@ -32,12 +32,8 @@ abstract class $CustomAmountStateCopyWith<$Res> {
       _$CustomAmountStateCopyWithImpl<$Res, CustomAmountState>;
   @useResult
   $Res call(
-      {Exchangeable from,
-      (
-        (Exchangeable, double),
-        (Exchangeable, double),
-        (Exchangeable, double)?
-      ) values});
+      {Currency from,
+      ((Currency, double), (Currency, double), (Currency, double)?) values});
 }
 
 /// @nodoc
@@ -60,15 +56,11 @@ class _$CustomAmountStateCopyWithImpl<$Res, $Val extends CustomAmountState>
       from: null == from
           ? _value.from
           : from // ignore: cast_nullable_to_non_nullable
-              as Exchangeable,
+              as Currency,
       values: null == values
           ? _value.values
           : values // ignore: cast_nullable_to_non_nullable
-              as (
-              (Exchangeable, double),
-              (Exchangeable, double),
-              (Exchangeable, double)?
-            ),
+              as ((Currency, double), (Currency, double), (Currency, double)?),
     ) as $Val);
   }
 }
@@ -82,12 +74,8 @@ abstract class _$$CustomAmountStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Exchangeable from,
-      (
-        (Exchangeable, double),
-        (Exchangeable, double),
-        (Exchangeable, double)?
-      ) values});
+      {Currency from,
+      ((Currency, double), (Currency, double), (Currency, double)?) values});
 }
 
 /// @nodoc
@@ -108,15 +96,11 @@ class __$$CustomAmountStateImplCopyWithImpl<$Res>
       from: null == from
           ? _value.from
           : from // ignore: cast_nullable_to_non_nullable
-              as Exchangeable,
+              as Currency,
       values: null == values
           ? _value.values
           : values // ignore: cast_nullable_to_non_nullable
-              as (
-              (Exchangeable, double),
-              (Exchangeable, double),
-              (Exchangeable, double)?
-            ),
+              as ((Currency, double), (Currency, double), (Currency, double)?),
     ));
   }
 }
@@ -128,13 +112,9 @@ class _$CustomAmountStateImpl extends _CustomAmountState {
       : super._();
 
   @override
-  final Exchangeable from;
+  final Currency from;
   @override
-  final (
-    (Exchangeable, double),
-    (Exchangeable, double),
-    (Exchangeable, double)?
-  ) values;
+  final ((Currency, double), (Currency, double), (Currency, double)?) values;
 
   @override
   String toString() {
@@ -163,19 +143,18 @@ class _$CustomAmountStateImpl extends _CustomAmountState {
 
 abstract class _CustomAmountState extends CustomAmountState {
   factory _CustomAmountState(
-      {required final Exchangeable from,
+      {required final Currency from,
       required final (
-        (Exchangeable, double),
-        (Exchangeable, double),
-        (Exchangeable, double)?
+        (Currency, double),
+        (Currency, double),
+        (Currency, double)?
       ) values}) = _$CustomAmountStateImpl;
   _CustomAmountState._() : super._();
 
   @override
-  Exchangeable get from;
+  Currency get from;
   @override
-  ((Exchangeable, double), (Exchangeable, double), (Exchangeable, double)?)
-      get values;
+  ((Currency, double), (Currency, double), (Currency, double)?) get values;
   @override
   @JsonKey(ignore: true)
   _$$CustomAmountStateImplCopyWith<_$CustomAmountStateImpl> get copyWith =>

@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/domain/converter_providers.dart';
-import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/domain/rates_providers.dart';
 
 part 'exchange_table_providers.g.dart';
 
@@ -108,14 +108,15 @@ class ExchangeTableExpandedRowsNotifier extends _$ExchangeTableExpandedRowsNotif
 (double, double?) convertedValues(ConvertedValuesRef ref, double value) {
   final between = ref.watch(exchangeBetweenProvider);
 
-  // final from = between.between.$1;
+  final from = between.between.$1;
   final to1 = between.between.$2;
   final to2 = between.between.$3;
 
-  final rate1 = (to1 as Currency).code == 'UAH' ? 9.8 : 1 / 9.8;
+  final rate1 = ref.watch(rateProvider(from, to1));
+  final rate2 = to2 != null ? ref.watch(rateProvider(from, to2)) : null;
 
   final converted1 = value * rate1;
-  final converted2 = to2 != null ? value * rate1 : null;
+  final converted2 = rate2 != null ? value * rate2 : null;
 
   return (converted1, converted2);
 }

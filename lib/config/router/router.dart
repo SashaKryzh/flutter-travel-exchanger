@@ -32,7 +32,7 @@ final _router = GoRouter(
                 );
               },
               child: CustomAmountPage(
-                exchangeableCode: currency,
+                code: currency,
               ),
             );
           },

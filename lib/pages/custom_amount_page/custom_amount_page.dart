@@ -17,15 +17,15 @@ late CustomAmountConverter _notifier;
 class CustomAmountPage extends ConsumerWidget {
   const CustomAmountPage({
     super.key,
-    required this.exchangeableCode,
+    required this.code,
   });
 
-  final String exchangeableCode;
+  final String code;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _state = ref.watch(customAmountConverterProvider(exchangeableCode));
-    _notifier = ref.read(customAmountConverterProvider(exchangeableCode).notifier);
+    _state = ref.watch(customAmountConverterProvider(code));
+    _notifier = ref.read(customAmountConverterProvider(code).notifier);
 
     final between = ref.watch(exchangeBetweenProvider).between;
     final third = between.$3;
@@ -40,9 +40,9 @@ class CustomAmountPage extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _InputContainer(exchangeable: between.$1),
-                _InputContainer(exchangeable: between.$2),
-                if (third != null) _InputContainer(exchangeable: third),
+                _InputContainer(currency: between.$1),
+                _InputContainer(currency: between.$2),
+                if (third != null) _InputContainer(currency: third),
               ].separated(const SizedSpacer(16)),
             ),
           ),
@@ -58,10 +58,10 @@ const containerBlur = 7.0;
 
 class _InputContainer extends HookConsumerWidget {
   const _InputContainer({
-    required this.exchangeable,
+    required this.currency,
   });
 
-  final Exchangeable exchangeable;
+  final Currency currency;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -70,8 +70,8 @@ class _InputContainer extends HookConsumerWidget {
     final focusNode = useFocusNode();
     final controller = useTextEditingController();
 
-    final isSelected = _state.from == exchangeable;
-    final value = _state.valueFor(exchangeable);
+    final isSelected = _state.from == currency;
+    final value = _state.valueFor(currency);
 
     final prevValue = usePrevious(value);
     final prevIsSelected = usePrevious(isSelected) ?? false;
@@ -102,7 +102,7 @@ class _InputContainer extends HookConsumerWidget {
     }
 
     void setFrom() {
-      _notifier.setFrom(exchangeable);
+      _notifier.setFrom(currency);
       focusNode.requestFocus();
     }
 
@@ -124,7 +124,7 @@ class _InputContainer extends HookConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(exchangeable.name(context)),
+              Text(currency.name(context)),
               const SizedSpacer(10),
               IgnorePointer(
                 child: TextField(
@@ -238,6 +238,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
   }
 }
 
+// TODO: handle when it was prefiled and the first entered char is '.'
 class ReplaceFormatter extends TextInputFormatter {
   ReplaceFormatter(this.replaceWithNextCharacter);
 

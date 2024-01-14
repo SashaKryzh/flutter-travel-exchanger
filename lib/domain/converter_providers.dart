@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:travel_exchanger/domain/currencies_repository.dart';
+import 'package:travel_exchanger/domain/currencies_provider.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 
 part 'converter_providers.g.dart';
@@ -8,7 +8,7 @@ part 'converter_providers.g.dart';
 class ExchangeBetweenState extends Equatable {
   const ExchangeBetweenState(this.between);
 
-  final (Exchangeable, Exchangeable, Exchangeable?) between;
+  final (Currency, Currency, Currency?) between;
 
   bool get isTwo => between.$3 == null;
   bool get isThree => !isTwo;
@@ -26,8 +26,8 @@ class ExchangeBetween extends _$ExchangeBetween {
     );
   }
 
-  void swap(Exchangeable from, Exchangeable to) {
-    Exchangeable getNew(Exchangeable current) {
+  void swap(Currency from, Currency to) {
+    Currency getNew(Currency current) {
       return current == from
           ? to
           : current == to
