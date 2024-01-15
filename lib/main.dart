@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,7 +8,6 @@ import 'package:travel_exchanger/app.dart';
 import 'package:travel_exchanger/config/env.dart';
 import 'package:travel_exchanger/data/rates_repository.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
-import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/utils/provider_observer.dart';
 
 Future<void> main() async {
@@ -19,7 +20,10 @@ Future<void> main() async {
   );
 
   final sharedPreferences = await SharedPreferences.getInstance();
-  final rates = await RatesRepository(Supabase.instance.client).fetchRates();
+
+  final ratesRepository = RatesRepository(Supabase.instance.client, sharedPreferences);
+  await ratesRepository.initRates();
+  unawaited(ratesRepository.updateRatesIfExpired());
 
   runApp(
     ProviderScope(
@@ -28,7 +32,7 @@ Future<void> main() async {
       ],
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-        ratesProvider.overrideWith((ref) => rates),
+        ratesRepositoryProvider.overrideWithValue(ratesRepository),
       ],
       child: const App(),
     ),

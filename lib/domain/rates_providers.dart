@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:travel_exchanger/data/rates_repository.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rate.dart';
 import 'package:travel_exchanger/utils/logger.dart';
@@ -8,7 +9,8 @@ part 'rates_providers.g.dart';
 
 @riverpod
 List<Rate> rates(RatesRef ref) {
-  return [];
+  final rates = ref.watch(ratesRepositoryProvider).rates;
+  return rates;
 }
 
 @riverpod
