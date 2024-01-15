@@ -1,17 +1,23 @@
 import 'package:equatable/equatable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:travel_exchanger/data/exchange_between_repository.dart';
 import 'package:travel_exchanger/domain/currencies_provider.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 
 part 'converter_providers.g.dart';
 
+typedef Between = (Currency, Currency, Currency?);
+
 class ExchangeBetweenState extends Equatable {
   const ExchangeBetweenState(this.between);
 
-  final (Currency, Currency, Currency?) between;
+  final Between between;
 
   bool get isTwo => between.$3 == null;
   bool get isThree => !isTwo;
+
+  bool contains(Currency currency) =>
+      between.$1 == currency || between.$2 == currency || between.$3 == currency;
 
   @override
   List<Object?> get props => [between];
@@ -21,9 +27,11 @@ class ExchangeBetweenState extends Equatable {
 class ExchangeBetween extends _$ExchangeBetween {
   @override
   ExchangeBetweenState build() {
-    return ExchangeBetweenState(
-      (pln, uah, null),
-    );
+    final storedBetween = ref.read(exchangeBetweenRepositoryProvider).getExchangeBetween();
+
+    final initialBetween = storedBetween ?? (pln, uah, null);
+
+    return ExchangeBetweenState(initialBetween);
   }
 
   void swap(Currency from, Currency to) {
@@ -44,5 +52,7 @@ class ExchangeBetween extends _$ExchangeBetween {
         c != null ? getNew(c) : null,
       ),
     );
+
+    ref.read(exchangeBetweenRepositoryProvider).setExchangeBetween(state.between);
   }
 }

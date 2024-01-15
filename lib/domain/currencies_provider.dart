@@ -4,8 +4,8 @@ import 'package:travel_exchanger/domain/rates_providers.dart';
 
 part 'currencies_provider.g.dart';
 
-final pln = Currency(code: 'PLN');
-final uah = Currency(code: 'UAH');
+const pln = Currency(code: 'PLN');
+const uah = Currency(code: 'UAH');
 
 @riverpod
 List<Currency> currencies(CurrenciesRef ref) {

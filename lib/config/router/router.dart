@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_page.dart';
 import 'package:travel_exchanger/pages/home_page.dart/home_page.dart';
+import 'package:travel_exchanger/pages/select_currency_page/select_currency_page.dart';
 
 part 'router.g.dart';
 
@@ -15,6 +16,16 @@ final _router = GoRouter(
       path: '/',
       builder: (context, state) => const HomePage(),
       routes: [
+        GoRoute(
+          path: 'select',
+          redirect: (context, state) =>
+              state.uri.queryParameters['currencyCode'] == null ? '/' : null,
+          builder: (context, state) {
+            final currencyCode = state.uri.queryParameters['currencyCode']!;
+
+            return SelectCurrencyPage(currencyCode: currencyCode);
+          },
+        ),
         GoRoute(
           path: ':currency',
           redirect: (context, state) => state.pathParameters['currency'] == null ? '/' : null,

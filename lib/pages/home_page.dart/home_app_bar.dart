@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/domain/converter_providers.dart';
+import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
@@ -11,6 +13,10 @@ class HomeAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final between = ref.watch(exchangeBetweenProvider);
+
+    void onCurrencyTap(Currency currency) {
+      context.go('/select?currencyCode=${currency.code}');
+    }
 
     return Container(
       decoration: const BoxDecoration(
@@ -32,18 +38,24 @@ class HomeAppBar extends ConsumerWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: valuePadding),
-                    child: Text(between.between.$1.name(context)).textAlignX(
-                      TextAlign.end,
+                  child: GestureDetector(
+                    onTap: () => onCurrencyTap(between.between.$1),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: valuePadding),
+                      child: Text(between.between.$1.name(context)).textAlignX(
+                        TextAlign.end,
+                      ),
                     ),
                   ),
                 ),
                 Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: valuePadding),
-                    child: Text(between.between.$2.name(context)).textAlignX(
-                      TextAlign.start,
+                  child: GestureDetector(
+                    onTap: () => onCurrencyTap(between.between.$2),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: valuePadding),
+                      child: Text(between.between.$2.name(context)).textAlignX(
+                        TextAlign.start,
+                      ),
                     ),
                   ),
                 ),
