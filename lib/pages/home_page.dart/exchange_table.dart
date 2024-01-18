@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart' hide Provider;
 import 'package:provider/provider.dart';
+import 'package:travel_exchanger/domain/converter_providers.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
@@ -92,7 +93,7 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
         create: (_) => _SlideAnimationProvider(animation),
         update: (_, __) => _SlideAnimationProvider(animation),
         child: TableColumnsBackgroundWrapper(
-          columnsCount: 2,
+          columnsCount: ref.watch(exchangeBetweenProvider).length,
           child: LayoutBuilder(
             builder: (context, constraints) => ProxyProvider0(
               create: (_) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
@@ -401,6 +402,7 @@ class _ValuesRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final convertedValues = ref.watch(convertedValuesProvider(value));
+    final isThree = convertedValues.$2 != null;
 
     return Container(
       decoration: BoxDecoration(
@@ -419,22 +421,29 @@ class _ValuesRow extends ConsumerWidget {
           Expanded(
             child: _ValueItem(
               value: value,
-              alignment: _ValueItemAlignment.right,
+              alignment: ColumnAlignment.right,
             ),
           ),
           Expanded(
             child: _ValueItem(
               value: convertedValues.$1,
-              alignment: _ValueItemAlignment.left,
+              alignment:  isThree ? ColumnAlignment.center : ColumnAlignment.left,
             ),
           ),
+          if (convertedValues.$2 != null)
+            Expanded(
+              child: _ValueItem(
+                value: convertedValues.$2!,
+                alignment: ColumnAlignment.left,
+              ),
+            ),
         ],
       ),
     );
   }
 }
 
-enum _ValueItemAlignment {
+enum ColumnAlignment {
   left,
   center,
   right,
@@ -447,7 +456,7 @@ class _ValueItem extends StatelessWidget {
   });
 
   final double value;
-  final _ValueItemAlignment alignment;
+  final ColumnAlignment alignment;
 
   @override
   Widget build(BuildContext context) {
@@ -464,9 +473,9 @@ class _ValueItem extends StatelessWidget {
         position: adjustedAnimation,
         child: Align(
           alignment: switch (alignment) {
-            _ValueItemAlignment.left => Alignment.centerLeft,
-            _ValueItemAlignment.center => Alignment.center,
-            _ValueItemAlignment.right => Alignment.centerRight,
+            ColumnAlignment.left => Alignment.centerLeft,
+            ColumnAlignment.center => Alignment.center,
+            ColumnAlignment.right => Alignment.centerRight,
           },
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: valuePadding),

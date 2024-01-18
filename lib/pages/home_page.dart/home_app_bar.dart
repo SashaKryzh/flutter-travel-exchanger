@@ -28,7 +28,7 @@ class HomeAppBar extends ConsumerWidget {
         ),
       ),
       child: TableColumnsBackgroundWrapper(
-        columnsCount: 2,
+        columnsCount: ref.watch(exchangeBetweenProvider).length,
         child: SafeArea(
           bottom: false,
           child: Padding(
@@ -38,31 +38,60 @@ class HomeAppBar extends ConsumerWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: GestureDetector(
+                  child: _ColumnHeader(
+                    currency: between.between.$1,
+                    alignment: ColumnAlignment.right,
                     onTap: () => onCurrencyTap(between.between.$1),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: valuePadding),
-                      child: Text(between.between.$1.name(context)).textAlignX(
-                        TextAlign.end,
-                      ),
-                    ),
                   ),
                 ),
                 Expanded(
-                  child: GestureDetector(
+                  child: _ColumnHeader(
+                    currency: between.between.$2,
+                    alignment: between.isThree ? ColumnAlignment.center : ColumnAlignment.left,
                     onTap: () => onCurrencyTap(between.between.$2),
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: valuePadding),
-                      child: Text(between.between.$2.name(context)).textAlignX(
-                        TextAlign.start,
-                      ),
-                    ),
                   ),
                 ),
+                if (between.isThree)
+                  Expanded(
+                    child: _ColumnHeader(
+                      currency: between.between.$3!,
+                      alignment: ColumnAlignment.left,
+                      onTap: () => onCurrencyTap(between.between.$3!),
+                    ),
+                  ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ColumnHeader extends StatelessWidget {
+  const _ColumnHeader({
+    required this.currency,
+    required this.alignment,
+    required this.onTap,
+  });
+
+  final Currency currency;
+  final ColumnAlignment alignment;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final textAlign = switch (alignment) {
+      ColumnAlignment.left => TextAlign.start,
+      ColumnAlignment.center => TextAlign.center,
+      ColumnAlignment.right => TextAlign.end,
+    };
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: valuePadding),
+        child: Text(currency.name(context)).textAlignX(textAlign),
       ),
     );
   }

@@ -7,6 +7,7 @@ import 'package:travel_exchanger/utils/logger.dart';
 
 part 'rates_providers.g.dart';
 
+// TODO: watch rates updates when expired and returned new values from the API.
 @riverpod
 List<Rate> rates(RatesRef ref) {
   final rates = ref.watch(ratesRepositoryProvider).rates;

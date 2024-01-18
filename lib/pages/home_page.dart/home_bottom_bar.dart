@@ -108,7 +108,7 @@ class _CurrencyButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(8)),
           color: Colors.grey[300],
@@ -133,11 +133,16 @@ class _SwapButtons extends ConsumerWidget {
     final between = ref.watch(exchangeBetweenProvider);
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: between.isThree ? MainAxisAlignment.spaceEvenly : MainAxisAlignment.center,
       children: [
         _SwapButton(
           onTap: () => swap(between.between.$1, between.between.$2),
         ),
+        if (between.isThree) ...[
+          _SwapButton(
+            onTap: () => swap(between.between.$2, between.between.$3!),
+          ),
+        ],
       ],
     );
   }

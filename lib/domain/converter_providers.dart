@@ -15,6 +15,7 @@ class ExchangeBetweenState extends Equatable {
 
   bool get isTwo => between.$3 == null;
   bool get isThree => !isTwo;
+  int get length => isTwo ? 2 : 3;
 
   bool contains(Currency currency) =>
       between.$1 == currency || between.$2 == currency || between.$3 == currency;
@@ -29,7 +30,8 @@ class ExchangeBetween extends _$ExchangeBetween {
   ExchangeBetweenState build() {
     final storedBetween = ref.read(exchangeBetweenRepositoryProvider).getExchangeBetween();
 
-    final initialBetween = storedBetween ?? (pln, uah, null);
+    // final initialBetween = storedBetween ?? (pln, uah, eur);
+    final initialBetween = (pln, uah, eur);
 
     return ExchangeBetweenState(initialBetween);
   }

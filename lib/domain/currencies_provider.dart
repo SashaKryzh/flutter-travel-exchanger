@@ -6,6 +6,7 @@ part 'currencies_provider.g.dart';
 
 const pln = Currency(code: 'PLN');
 const uah = Currency(code: 'UAH');
+const eur = Currency(code: 'EUR');
 
 @riverpod
 List<Currency> currencies(CurrenciesRef ref) {
