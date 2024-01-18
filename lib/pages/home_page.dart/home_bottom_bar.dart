@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/domain/converter_providers.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
@@ -58,7 +58,11 @@ class _CurrencyButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void onTap(Currency currency) {
-      context.go('/${currency.code}');
+      CustomAmountRoute(currencyCode: currency.code).go(context);
+    }
+
+    void onLongTap(Currency currency) {
+      SelectCurrencyRoute(currencyCode: currency.code).go(context);
     }
 
     final between = ref.watch(exchangeBetweenProvider);
@@ -71,6 +75,7 @@ class _CurrencyButtons extends ConsumerWidget {
           child: _CurrencyButton(
             currency: between.between.$1,
             onTap: () => onTap(between.between.$1),
+            onLongTap: () => onLongTap(between.between.$1),
           ),
         ),
         const SizedSpacer(12),
@@ -78,6 +83,7 @@ class _CurrencyButtons extends ConsumerWidget {
           child: _CurrencyButton(
             currency: between.between.$2,
             onTap: () => onTap(between.between.$2),
+            onLongTap: () => onLongTap(between.between.$2),
           ),
         ),
         if (e3 != null) ...[
@@ -86,6 +92,7 @@ class _CurrencyButtons extends ConsumerWidget {
             child: _CurrencyButton(
               currency: e3,
               onTap: () => onTap(e3),
+              onLongTap: () => onLongTap(e3),
             ),
           ),
         ],
@@ -98,15 +105,18 @@ class _CurrencyButton extends StatelessWidget {
   const _CurrencyButton({
     required this.currency,
     required this.onTap,
+    required this.onLongTap,
   });
 
   final Currency currency;
   final VoidCallback? onTap;
+  final VoidCallback? onLongTap;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      onLongPress: onLongTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(

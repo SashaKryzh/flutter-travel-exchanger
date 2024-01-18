@@ -3,6 +3,85 @@
 part of 'router.dart';
 
 // **************************************************************************
+// GoRouterGenerator
+// **************************************************************************
+
+List<RouteBase> get $appRoutes => [
+      $homeRoute,
+    ];
+
+RouteBase get $homeRoute => GoRouteData.$route(
+      path: '/',
+      factory: $HomeRouteExtension._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'select-currency/:currencyCode',
+          factory: $SelectCurrencyRouteExtension._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'custom-amount/:currencyCode',
+          factory: $CustomAmountRouteExtension._fromState,
+        ),
+      ],
+    );
+
+extension $HomeRouteExtension on HomeRoute {
+  static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
+
+  String get location => GoRouteData.$location(
+        '/',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $SelectCurrencyRouteExtension on SelectCurrencyRoute {
+  static SelectCurrencyRoute _fromState(GoRouterState state) =>
+      SelectCurrencyRoute(
+        currencyCode: state.pathParameters['currencyCode']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/select-currency/${Uri.encodeComponent(currencyCode)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $CustomAmountRouteExtension on CustomAmountRoute {
+  static CustomAmountRoute _fromState(GoRouterState state) => CustomAmountRoute(
+        currencyCode: state.pathParameters['currencyCode']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/custom-amount/${Uri.encodeComponent(currencyCode)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+// **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 

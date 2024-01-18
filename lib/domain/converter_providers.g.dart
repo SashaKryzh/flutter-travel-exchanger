@@ -6,7 +6,7 @@ part of 'converter_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$exchangeBetweenHash() => r'827ddcd30a831dfd142dc47ff85c1bfe29013f78';
+String _$exchangeBetweenHash() => r'2858b56383934e3d9de8e5ad4a599bb8a2a1c5da';
 
 /// See also [ExchangeBetween].
 @ProviderFor(ExchangeBetween)

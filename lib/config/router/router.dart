@@ -10,45 +10,59 @@ part 'router.g.dart';
 @riverpod
 GoRouter router(RouterRef ref) => _router;
 
-final _router = GoRouter(
+final _router = GoRouter(routes: $appRoutes);
+
+@TypedGoRoute<HomeRoute>(
+  path: '/',
   routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const HomePage(),
-      routes: [
-        GoRoute(
-          path: 'select',
-          redirect: (context, state) =>
-              state.uri.queryParameters['currencyCode'] == null ? '/' : null,
-          builder: (context, state) {
-            final currencyCode = state.uri.queryParameters['currencyCode']!;
-
-            return SelectCurrencyPage(currencyCode: currencyCode);
-          },
-        ),
-        GoRoute(
-          path: ':currency',
-          redirect: (context, state) => state.pathParameters['currency'] == null ? '/' : null,
-          pageBuilder: (context, state) {
-            final currency = state.pathParameters['currency']!;
-
-            return CustomTransitionPage(
-              transitionDuration: const Duration(milliseconds: 100),
-              reverseTransitionDuration: const Duration(milliseconds: 100),
-              opaque: false,
-              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-              child: CustomAmountPage(
-                code: currency,
-              ),
-            );
-          },
-        ),
-      ],
-    ),
+    TypedGoRoute<SelectCurrencyRoute>(path: 'select-currency/:currencyCode'),
+    TypedGoRoute<CustomAmountRoute>(path: 'custom-amount/:currencyCode'),
   ],
-);
+)
+class HomeRoute extends GoRouteData {
+  const HomeRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const HomePage();
+  }
+}
+
+class SelectCurrencyRoute extends GoRouteData {
+  const SelectCurrencyRoute({
+    required this.currencyCode,
+  });
+
+  final String currencyCode;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return SelectCurrencyPage(currencyCode: currencyCode);
+  }
+}
+
+class CustomAmountRoute extends GoRouteData {
+  const CustomAmountRoute({
+    required this.currencyCode,
+  });
+
+  final String currencyCode;
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return CustomTransitionPage(
+      transitionDuration: const Duration(milliseconds: 100),
+      reverseTransitionDuration: const Duration(milliseconds: 100),
+      opaque: false,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+      child: CustomAmountPage(
+        code: currencyCode,
+      ),
+    );
+  }
+}

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/domain/converter_providers.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table.dart';
@@ -15,7 +15,7 @@ class HomeAppBar extends ConsumerWidget {
     final between = ref.watch(exchangeBetweenProvider);
 
     void onCurrencyTap(Currency currency) {
-      context.go('/select?currencyCode=${currency.code}');
+      SelectCurrencyRoute(currencyCode: currency.code).go(context);
     }
 
     return Container(
