@@ -20,13 +20,26 @@ class SelectCurrencyPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allCurrencies = ref.watch(currenciesProvider);
     final exchangeBetween = ref.read(exchangeBetweenProvider);
+    final exchangeBetweenNotifier = ref.read(exchangeBetweenProvider.notifier);
     final selectedCurrency = allCurrencies.getCurrencyFromCode(currencyCode);
 
     final query = useState('');
     final filteredCurrencies = ref.watch(searchCurrenciesProvider(query.value));
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          TextButton(
+            onPressed: () {
+              exchangeBetween.isTwo
+                  ? exchangeBetweenNotifier.addThird()
+                  : exchangeBetweenNotifier.removeThird();
+              context.pop();
+            },
+            child: Text(exchangeBetween.isTwo ? 'Show third currency' : 'Hide third currency'),
+          )
+        ],
+      ),
       body: Column(
         children: [
           Expanded(

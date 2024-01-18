@@ -30,10 +30,20 @@ class ExchangeBetween extends _$ExchangeBetween {
   ExchangeBetweenState build() {
     final storedBetween = ref.read(exchangeBetweenRepositoryProvider).getExchangeBetween();
 
-    // final initialBetween = storedBetween ?? (pln, uah, eur);
-    final initialBetween = (pln, uah, eur);
+    final initialBetween = storedBetween ?? (pln, uah, eur);
 
     return ExchangeBetweenState(initialBetween);
+  }
+
+  void addThird([Currency? currency]) {
+    currency ??= eur;
+    state = ExchangeBetweenState((state.between.$1, state.between.$2, currency));
+    ref.read(exchangeBetweenRepositoryProvider).setExchangeBetween(state.between);
+  }
+
+  void removeThird() {
+    state = ExchangeBetweenState((state.between.$1, state.between.$2, null));
+    ref.read(exchangeBetweenRepositoryProvider).setExchangeBetween(state.between);
   }
 
   void swap(Currency from, Currency to) {
