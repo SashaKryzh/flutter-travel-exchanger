@@ -1,49 +1,50 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:travel_exchanger/data/shared_preferences.dart';
-import 'package:travel_exchanger/domain/converter_providers.dart';
-import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 
 part 'exchange_between_repository.g.dart';
 
 @riverpod
 ExchangeBetweenRepository exchangeBetweenRepository(ExchangeBetweenRepositoryRef ref) {
-  return ExchangeBetweenRepository(ref.watch(sharedPreferencesProvider));
+  throw Exception('Exchange between repository provider should be overridden');
 }
 
 class ExchangeBetweenRepository {
   static const _key = 'exchangeBetween';
 
-  const ExchangeBetweenRepository(this._sharedPreferences);
+  ExchangeBetweenRepository(this._sharedPreferences);
 
   final SharedPreferences _sharedPreferences;
 
-  Between? getExchangeBetween() {
-    final string = _sharedPreferences.getString(_key);
-    if (string == null) {
-      return null;
+  Between? _between;
+  Between? get between => _between;
+
+  Future<void> init() async {
+    try {
+      final string = _sharedPreferences.getString(_key);
+      if (string == null) {
+        return;
+      }
+      _between = await compute(
+        (e) => Between.fromJson(jsonDecode(e) as Map<String, dynamic>),
+        string,
+      );
+    } catch (e, stackTrace) {
+      logger.e('Error fetching local exchange between', error: e, stackTrace: stackTrace);
     }
-    return _decode(string);
   }
 
   Future<void> setExchangeBetween(Between between) async {
-    await _sharedPreferences.setString(_key, _encode(between));
+    _between = between;
+    await _sharedPreferences.setString(_key, jsonEncode(between.toJson()));
   }
 
   Future<void> clear() async {
+    _between = null;
     await _sharedPreferences.remove(_key);
-  }
-
-  String _encode(Between between) {
-    return '${between.$1.code}-${between.$2.code}${between.$3 != null ? '-${between.$3!.code}' : ''}';
-  }
-
-  Between _decode(String string) {
-    final split = string.split('-');
-    return (
-      Currency(code: split[0]),
-      Currency(code: split[1]),
-      split.length == 3 ? Currency(code: split[2]) : null,
-    );
   }
 }

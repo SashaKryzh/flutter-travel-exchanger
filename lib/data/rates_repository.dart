@@ -12,7 +12,7 @@ part 'rates_repository.g.dart';
 
 @riverpod
 RatesRepository ratesRepository(RatesRepositoryRef ref) {
-  throw UnimplementedError();
+  throw Exception('Rates repository provider should be overridden');
 }
 
 class RatesRepository {
@@ -45,7 +45,8 @@ class RatesRepository {
   Future<void> updateRatesIfExpired() async {
     final lastStored = _getStoredTimestamp();
 
-    if (lastStored.isAfter(DateTime.now().subtract(const Duration(hours: 1)))) {
+    if (_rates.isNotEmpty &&
+        lastStored.isAfter(DateTime.now().subtract(const Duration(hours: 1)))) {
       logger.d('Rates are not expired');
       return;
     }
@@ -65,8 +66,8 @@ class RatesRepository {
 
     try {
       final response = await _supabase.functions.invoke('rates', method: HttpMethod.get);
-      final data = GetRatesResponse.fromJson(response.data);
-      rates = data.rates;
+      final data = GetRatesResponseDto.fromJson(response.data as Map<String, dynamic>);
+      rates = data.rates.map((e) => e.toDomain()).toList();
     } on FunctionException catch (e) {
       logger.e('FunctionException: ${e.status} ${e.reasonPhrase} ${e.details}');
       rates = [];
@@ -91,13 +92,19 @@ class RatesRepository {
   }
 
   Future<List<Rate>?> _fetchStoredRates() async {
-    final jsonString = _sharedPreferences.getString(_ratesKey);
-    if (jsonString == null) {
-      return null;
-    }
+    try {
+      final jsonString = _sharedPreferences.getString(_ratesKey);
+      if (jsonString == null) {
+        return null;
+      }
 
-    final json = await compute(jsonDecode, jsonString) as List<dynamic>;
-    return json.map((e) => Rate.fromJson(e)).toList();
+      final json = await compute(jsonDecode, jsonString) as List<dynamic>;
+      return json.map((e) => Rate.fromJson(e as Map<String, dynamic>)).toList();
+    } catch (e, stackTrace) {
+      logger.e('Error fetching stored rates', error: e, stackTrace: stackTrace);
+      _clear();
+      return [];
+    }
   }
 
   Future<void> _storeRates(List<Rate> rates) async {
@@ -109,6 +116,13 @@ class RatesRepository {
     await Future.wait([
       _sharedPreferences.setString(_timestampKey, DateTime.now().toIso8601String()),
       _sharedPreferences.setString(_ratesKey, jsonString),
+    ]);
+  }
+
+  Future<void> _clear() async {
+    await Future.wait([
+      _sharedPreferences.remove(_timestampKey),
+      _sharedPreferences.remove(_ratesKey),
     ]);
   }
 }

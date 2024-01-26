@@ -7,7 +7,7 @@ part of 'exchange_between_repository.dart';
 // **************************************************************************
 
 String _$exchangeBetweenRepositoryHash() =>
-    r'3283611bd65ff7af38c5cc25458de8dd6bbe69b2';
+    r'a770bb38082ffe3ee30f4f524cb1de2e985c566b';
 
 /// See also [exchangeBetweenRepository].
 @ProviderFor(exchangeBetweenRepository)

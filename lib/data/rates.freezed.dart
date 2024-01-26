@@ -14,35 +14,35 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
-GetRatesResponse _$GetRatesResponseFromJson(Map<String, dynamic> json) {
-  return _GetRatesResponse.fromJson(json);
+GetRatesResponseDto _$GetRatesResponseDtoFromJson(Map<String, dynamic> json) {
+  return _GetRatesResponseDto.fromJson(json);
 }
 
 /// @nodoc
-mixin _$GetRatesResponse {
+mixin _$GetRatesResponseDto {
   bool get success => throw _privateConstructorUsedError;
   String get base => throw _privateConstructorUsedError;
-  List<Rate> get rates => throw _privateConstructorUsedError;
+  List<RateDto> get rates => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $GetRatesResponseCopyWith<GetRatesResponse> get copyWith =>
+  $GetRatesResponseDtoCopyWith<GetRatesResponseDto> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $GetRatesResponseCopyWith<$Res> {
-  factory $GetRatesResponseCopyWith(
-          GetRatesResponse value, $Res Function(GetRatesResponse) then) =
-      _$GetRatesResponseCopyWithImpl<$Res, GetRatesResponse>;
+abstract class $GetRatesResponseDtoCopyWith<$Res> {
+  factory $GetRatesResponseDtoCopyWith(
+          GetRatesResponseDto value, $Res Function(GetRatesResponseDto) then) =
+      _$GetRatesResponseDtoCopyWithImpl<$Res, GetRatesResponseDto>;
   @useResult
-  $Res call({bool success, String base, List<Rate> rates});
+  $Res call({bool success, String base, List<RateDto> rates});
 }
 
 /// @nodoc
-class _$GetRatesResponseCopyWithImpl<$Res, $Val extends GetRatesResponse>
-    implements $GetRatesResponseCopyWith<$Res> {
-  _$GetRatesResponseCopyWithImpl(this._value, this._then);
+class _$GetRatesResponseDtoCopyWithImpl<$Res, $Val extends GetRatesResponseDto>
+    implements $GetRatesResponseDtoCopyWith<$Res> {
+  _$GetRatesResponseDtoCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -68,28 +68,28 @@ class _$GetRatesResponseCopyWithImpl<$Res, $Val extends GetRatesResponse>
       rates: null == rates
           ? _value.rates
           : rates // ignore: cast_nullable_to_non_nullable
-              as List<Rate>,
+              as List<RateDto>,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$GetRatesResponseImplCopyWith<$Res>
-    implements $GetRatesResponseCopyWith<$Res> {
-  factory _$$GetRatesResponseImplCopyWith(_$GetRatesResponseImpl value,
-          $Res Function(_$GetRatesResponseImpl) then) =
-      __$$GetRatesResponseImplCopyWithImpl<$Res>;
+abstract class _$$GetRatesResponseDtoImplCopyWith<$Res>
+    implements $GetRatesResponseDtoCopyWith<$Res> {
+  factory _$$GetRatesResponseDtoImplCopyWith(_$GetRatesResponseDtoImpl value,
+          $Res Function(_$GetRatesResponseDtoImpl) then) =
+      __$$GetRatesResponseDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool success, String base, List<Rate> rates});
+  $Res call({bool success, String base, List<RateDto> rates});
 }
 
 /// @nodoc
-class __$$GetRatesResponseImplCopyWithImpl<$Res>
-    extends _$GetRatesResponseCopyWithImpl<$Res, _$GetRatesResponseImpl>
-    implements _$$GetRatesResponseImplCopyWith<$Res> {
-  __$$GetRatesResponseImplCopyWithImpl(_$GetRatesResponseImpl _value,
-      $Res Function(_$GetRatesResponseImpl) _then)
+class __$$GetRatesResponseDtoImplCopyWithImpl<$Res>
+    extends _$GetRatesResponseDtoCopyWithImpl<$Res, _$GetRatesResponseDtoImpl>
+    implements _$$GetRatesResponseDtoImplCopyWith<$Res> {
+  __$$GetRatesResponseDtoImplCopyWithImpl(_$GetRatesResponseDtoImpl _value,
+      $Res Function(_$GetRatesResponseDtoImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -99,7 +99,7 @@ class __$$GetRatesResponseImplCopyWithImpl<$Res>
     Object? base = null,
     Object? rates = null,
   }) {
-    return _then(_$GetRatesResponseImpl(
+    return _then(_$GetRatesResponseDtoImpl(
       success: null == success
           ? _value.success
           : success // ignore: cast_nullable_to_non_nullable
@@ -111,30 +111,30 @@ class __$$GetRatesResponseImplCopyWithImpl<$Res>
       rates: null == rates
           ? _value._rates
           : rates // ignore: cast_nullable_to_non_nullable
-              as List<Rate>,
+              as List<RateDto>,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$GetRatesResponseImpl implements _GetRatesResponse {
-  _$GetRatesResponseImpl(
+class _$GetRatesResponseDtoImpl implements _GetRatesResponseDto {
+  _$GetRatesResponseDtoImpl(
       {required this.success,
       required this.base,
-      required final List<Rate> rates})
+      required final List<RateDto> rates})
       : _rates = rates;
 
-  factory _$GetRatesResponseImpl.fromJson(Map<String, dynamic> json) =>
-      _$$GetRatesResponseImplFromJson(json);
+  factory _$GetRatesResponseDtoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GetRatesResponseDtoImplFromJson(json);
 
   @override
   final bool success;
   @override
   final String base;
-  final List<Rate> _rates;
+  final List<RateDto> _rates;
   @override
-  List<Rate> get rates {
+  List<RateDto> get rates {
     if (_rates is EqualUnmodifiableListView) return _rates;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_rates);
@@ -142,14 +142,14 @@ class _$GetRatesResponseImpl implements _GetRatesResponse {
 
   @override
   String toString() {
-    return 'GetRatesResponse(success: $success, base: $base, rates: $rates)';
+    return 'GetRatesResponseDto(success: $success, base: $base, rates: $rates)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$GetRatesResponseImpl &&
+            other is _$GetRatesResponseDtoImpl &&
             (identical(other.success, success) || other.success == success) &&
             (identical(other.base, base) || other.base == base) &&
             const DeepCollectionEquality().equals(other._rates, _rates));
@@ -163,35 +163,35 @@ class _$GetRatesResponseImpl implements _GetRatesResponse {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$GetRatesResponseImplCopyWith<_$GetRatesResponseImpl> get copyWith =>
-      __$$GetRatesResponseImplCopyWithImpl<_$GetRatesResponseImpl>(
+  _$$GetRatesResponseDtoImplCopyWith<_$GetRatesResponseDtoImpl> get copyWith =>
+      __$$GetRatesResponseDtoImplCopyWithImpl<_$GetRatesResponseDtoImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$GetRatesResponseImplToJson(
+    return _$$GetRatesResponseDtoImplToJson(
       this,
     );
   }
 }
 
-abstract class _GetRatesResponse implements GetRatesResponse {
-  factory _GetRatesResponse(
+abstract class _GetRatesResponseDto implements GetRatesResponseDto {
+  factory _GetRatesResponseDto(
       {required final bool success,
       required final String base,
-      required final List<Rate> rates}) = _$GetRatesResponseImpl;
+      required final List<RateDto> rates}) = _$GetRatesResponseDtoImpl;
 
-  factory _GetRatesResponse.fromJson(Map<String, dynamic> json) =
-      _$GetRatesResponseImpl.fromJson;
+  factory _GetRatesResponseDto.fromJson(Map<String, dynamic> json) =
+      _$GetRatesResponseDtoImpl.fromJson;
 
   @override
   bool get success;
   @override
   String get base;
   @override
-  List<Rate> get rates;
+  List<RateDto> get rates;
   @override
   @JsonKey(ignore: true)
-  _$$GetRatesResponseImplCopyWith<_$GetRatesResponseImpl> get copyWith =>
+  _$$GetRatesResponseDtoImplCopyWith<_$GetRatesResponseDtoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

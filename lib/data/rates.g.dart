@@ -6,18 +6,18 @@ part of 'rates.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$GetRatesResponseImpl _$$GetRatesResponseImplFromJson(
+_$GetRatesResponseDtoImpl _$$GetRatesResponseDtoImplFromJson(
         Map<String, dynamic> json) =>
-    _$GetRatesResponseImpl(
+    _$GetRatesResponseDtoImpl(
       success: json['success'] as bool,
       base: json['base'] as String,
       rates: (json['rates'] as List<dynamic>)
-          .map((e) => Rate.fromJson(e as Map<String, dynamic>))
+          .map((e) => RateDto.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
-Map<String, dynamic> _$$GetRatesResponseImplToJson(
-        _$GetRatesResponseImpl instance) =>
+Map<String, dynamic> _$$GetRatesResponseDtoImplToJson(
+        _$GetRatesResponseDtoImpl instance) =>
     <String, dynamic>{
       'success': instance.success,
       'base': instance.base,

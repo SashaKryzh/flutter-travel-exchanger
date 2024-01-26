@@ -14,4 +14,21 @@ class Currency extends Equatable {
 
   @override
   List<Object?> get props => [code];
+
+  factory Currency.fromJson(Map<String, dynamic> json) {
+    return Currency(
+      code: json['code'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'code': code,
+      };
+
+  static const time = Currency(code: 'time');
+
+  // For testing
+  static const uah = Currency(code: 'UAH');
+  static const pln = Currency(code: 'PLN');
+  static const eur = Currency(code: 'EUR');
 }

@@ -18,19 +18,19 @@ List<Rate> rates(RatesRef ref) {
 double rate(RateRef ref, Currency fromm, Currency to) {
   final rates = ref.watch(ratesProvider);
 
-  final fromTo = rates.firstWhereOrNull((e) => e.base == fromm.code && e.target == to.code);
+  final fromTo = rates.firstWhereOrNull((e) => e.base == fromm && e.target == to);
   if (fromTo != null) {
     return fromTo.rate;
   }
 
-  final toFrom = rates.firstWhereOrNull((e) => e.base == to.code && e.target == fromm.code);
+  final toFrom = rates.firstWhereOrNull((e) => e.base == to && e.target == fromm);
   if (toFrom != null) {
     return 1 / toFrom.rate;
   }
 
   try {
-    final fromBase = rates.firstWhere((e) => e.target == fromm.code);
-    final baseTo = rates.firstWhere((e) => e.base == fromBase.base && e.target == to.code);
+    final fromBase = rates.firstWhere((e) => e.target == fromm);
+    final baseTo = rates.firstWhere((e) => e.base == fromBase.base && e.target == to);
 
     return 1 / fromBase.rate * baseTo.rate;
   } catch (e) {

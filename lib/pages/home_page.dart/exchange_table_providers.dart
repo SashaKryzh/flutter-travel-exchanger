@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:travel_exchanger/domain/converter_providers.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 
 part 'exchange_table_providers.g.dart';
@@ -108,9 +108,9 @@ class ExchangeTableExpandedRowsNotifier extends _$ExchangeTableExpandedRowsNotif
 (double, double?) convertedValues(ConvertedValuesRef ref, double value) {
   final between = ref.watch(exchangeBetweenProvider);
 
-  final from = between.between.$1;
-  final to1 = between.between.$2;
-  final to2 = between.between.$3;
+  final from = between.from;
+  final to1 = between.to1;
+  final to2 = between.to2;
 
   final rate1 = ref.watch(rateProvider(from, to1));
   final rate2 = to2 != null ? ref.watch(rateProvider(from, to2)) : null;

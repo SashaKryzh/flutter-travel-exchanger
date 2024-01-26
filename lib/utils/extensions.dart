@@ -9,7 +9,7 @@ extension BuildContextExtensions on BuildContext {
 
   DefaultTextStyle get defaultTextStyle => DefaultTextStyle.of(this);
 
-  ModalRoute? get modalRoute => ModalRoute.of(this);
+  ModalRoute<dynamic>? get modalRoute => ModalRoute.of(this);
 
   FocusScopeNode get focusScope => FocusScope.of(this);
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
-import 'package:travel_exchanger/domain/converter_providers.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
@@ -39,24 +39,24 @@ class HomeAppBar extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _ColumnHeader(
-                    currency: between.between.$1,
+                    currency: between.from,
                     alignment: ColumnAlignment.right,
-                    onTap: () => onCurrencyTap(between.between.$1),
+                    onTap: () => onCurrencyTap(between.from),
                   ),
                 ),
                 Expanded(
                   child: _ColumnHeader(
-                    currency: between.between.$2,
+                    currency: between.to1,
                     alignment: between.isThree ? ColumnAlignment.center : ColumnAlignment.left,
-                    onTap: () => onCurrencyTap(between.between.$2),
+                    onTap: () => onCurrencyTap(between.to1),
                   ),
                 ),
                 if (between.isThree)
                   Expanded(
                     child: _ColumnHeader(
-                      currency: between.between.$3!,
+                      currency: between.to2!,
                       alignment: ColumnAlignment.left,
-                      onTap: () => onCurrencyTap(between.between.$3!),
+                      onTap: () => onCurrencyTap(between.to2!),
                     ),
                   ),
               ],

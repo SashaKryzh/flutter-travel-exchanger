@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart' hide Provider;
 import 'package:provider/provider.dart';
-import 'package:travel_exchanger/domain/converter_providers.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';

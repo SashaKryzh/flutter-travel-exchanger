@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:travel_exchanger/domain/converter_providers.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/currencies_provider.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
@@ -64,7 +64,7 @@ class CustomAmountConverter extends _$CustomAmountConverter {
   }
 
   Values _calculateValues({Currency? from, double? amount}) {
-    final between = ref.read(exchangeBetweenProvider).between;
+    final between = ref.read(exchangeBetweenProvider);
     final from1 = from ?? state.from;
     final amount1 = amount ?? state.fromValue;
 
@@ -77,11 +77,11 @@ class CustomAmountConverter extends _$CustomAmountConverter {
       return amount1 * rate;
     }
 
-    final third = between.$3;
+    final third = between.to2;
 
     return (
-      (between.$1, convert(between.$1)),
-      (between.$2, convert(between.$2)),
+      (between.from, convert(between.from)),
+      (between.to1, convert(between.to1)),
       third != null ? (third, convert(third)) : null,
     );
   }

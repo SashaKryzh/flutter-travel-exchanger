@@ -20,7 +20,7 @@ final ratesProvider = AutoDisposeProvider<List<Rate>>.internal(
 );
 
 typedef RatesRef = AutoDisposeProviderRef<List<Rate>>;
-String _$rateHash() => r'7f6d066c861de4f6afdbe2caa2586a9d26d572d7';
+String _$rateHash() => r'3a69f3a72e5e26b36d0022e81b391c4b2f552419';
 
 /// Copied from Dart SDK
 class _SystemHash {

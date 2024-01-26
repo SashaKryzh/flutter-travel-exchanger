@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_exchanger/app.dart';
 import 'package:travel_exchanger/config/env.dart';
+import 'package:travel_exchanger/data/exchange_between_repository.dart';
 import 'package:travel_exchanger/data/rates_repository.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
 import 'package:travel_exchanger/utils/provider_observer.dart';
@@ -25,6 +26,9 @@ Future<void> main() async {
   await ratesRepository.initRates();
   unawaited(ratesRepository.updateRatesIfExpired());
 
+  final exchangeBetweenRepository = ExchangeBetweenRepository(sharedPreferences);
+  await exchangeBetweenRepository.init();
+
   runApp(
     ProviderScope(
       observers: const [
@@ -33,6 +37,7 @@ Future<void> main() async {
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPreferences),
         ratesRepositoryProvider.overrideWithValue(ratesRepository),
+        exchangeBetweenRepositoryProvider.overrideWithValue(exchangeBetweenRepository),
       ],
       child: const App(),
     ),

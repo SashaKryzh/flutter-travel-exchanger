@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_exchanger/domain/converter_providers.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_providers.dart';
 import 'package:travel_exchanger/utils/logger.dart';
@@ -27,8 +27,8 @@ class CustomAmountPage extends ConsumerWidget {
     _state = ref.watch(customAmountConverterProvider(code));
     _notifier = ref.read(customAmountConverterProvider(code).notifier);
 
-    final between = ref.watch(exchangeBetweenProvider).between;
-    final third = between.$3;
+    final between = ref.watch(exchangeBetweenProvider);
+    final third = between.to2;
 
     return GestureDetector(
       onTap: () => Navigator.pop(context),
@@ -40,8 +40,8 @@ class CustomAmountPage extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _InputContainer(currency: between.$1),
-                _InputContainer(currency: between.$2),
+                _InputContainer(currency: between.from),
+                _InputContainer(currency: between.to1),
                 if (third != null) _InputContainer(currency: third),
               ].separated(const SizedSpacer(16)),
             ),

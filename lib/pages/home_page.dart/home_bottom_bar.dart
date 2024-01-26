@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
-import 'package:travel_exchanger/domain/converter_providers.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 
@@ -66,33 +66,33 @@ class _CurrencyButtons extends ConsumerWidget {
     }
 
     final between = ref.watch(exchangeBetweenProvider);
-    final e3 = between.between.$3;
+    final to2 = between.to2;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Expanded(
           child: _CurrencyButton(
-            currency: between.between.$1,
-            onTap: () => onTap(between.between.$1),
-            onLongTap: () => onLongTap(between.between.$1),
+            currency: between.from,
+            onTap: () => onTap(between.from),
+            onLongTap: () => onLongTap(between.from),
           ),
         ),
         const SizedSpacer(12),
         Expanded(
           child: _CurrencyButton(
-            currency: between.between.$2,
-            onTap: () => onTap(between.between.$2),
-            onLongTap: () => onLongTap(between.between.$2),
+            currency: between.to1,
+            onTap: () => onTap(between.to1),
+            onLongTap: () => onLongTap(between.to1),
           ),
         ),
-        if (e3 != null) ...[
+        if (to2 != null) ...[
           const SizedSpacer(12),
           Expanded(
             child: _CurrencyButton(
-              currency: e3,
-              onTap: () => onTap(e3),
-              onLongTap: () => onLongTap(e3),
+              currency: to2,
+              onTap: () => onTap(to2),
+              onLongTap: () => onLongTap(to2),
             ),
           ),
         ],
@@ -146,11 +146,11 @@ class _SwapButtons extends ConsumerWidget {
       mainAxisAlignment: between.isThree ? MainAxisAlignment.spaceEvenly : MainAxisAlignment.center,
       children: [
         _SwapButton(
-          onTap: () => swap(between.between.$1, between.between.$2),
+          onTap: () => swap(between.from, between.to1),
         ),
         if (between.isThree) ...[
           _SwapButton(
-            onTap: () => swap(between.between.$2, between.between.$3!),
+            onTap: () => swap(between.to1, between.to2!),
           ),
         ],
       ],

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:travel_exchanger/domain/converter_providers.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/currencies_provider.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
@@ -32,8 +32,8 @@ class SelectCurrencyPage extends HookConsumerWidget {
           TextButton(
             onPressed: () {
               exchangeBetween.isTwo
-                  ? exchangeBetweenNotifier.addThird()
-                  : exchangeBetweenNotifier.removeThird();
+                  ? exchangeBetweenNotifier.showThird()
+                  : exchangeBetweenNotifier.hideThird();
               context.pop();
             },
             child: Text(exchangeBetween.isTwo ? 'Show third currency' : 'Hide third currency'),
