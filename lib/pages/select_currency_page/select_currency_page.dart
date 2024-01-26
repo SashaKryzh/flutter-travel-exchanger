@@ -202,6 +202,9 @@ class TimeListTile extends ConsumerWidget {
                     onChanged: (text) => _text = text,
                   ),
                 ),
+                const Flexible(
+                  child: Text('PLN'),
+                ),
               ],
             ),
             actions: [
@@ -231,7 +234,7 @@ class TimeListTile extends ConsumerWidget {
           children: [
             Expanded(
               child: Text(
-                '${_currency.code} (${convertSecondlyRateToHourly(currentRate?.rate ?? 0)})',
+                '${_currency.code} (${convertSecondlyRateToHourly(currentRate?.rate ?? 0)} PLN)',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -252,10 +255,10 @@ class TimeListTile extends ConsumerWidget {
 
 const secondsInHour = 3600;
 
-double convertHourlyRateToSecondlyRate(double hourRate) {
-  return hourRate / secondsInHour;
+double convertHourlyRateToSecondlyRate(double hourlyRate) {
+  return hourlyRate / secondsInHour;
 }
 
-double convertSecondlyRateToHourly(double hourRate) {
-  return hourRate / secondsInHour;
+double convertSecondlyRateToHourly(double secondlyRate) {
+  return secondlyRate * secondsInHour;
 }
