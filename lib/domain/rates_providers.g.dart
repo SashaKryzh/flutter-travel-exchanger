@@ -6,11 +6,11 @@ part of 'rates_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$ratesHash() => r'c0a59ae494218f8c043f44f2587b376dfcf4a648';
+String _$ratesHash() => r'0dce5370857e13296eeaabe6a8405d8dc4369136';
 
 /// See also [rates].
 @ProviderFor(rates)
-final ratesProvider = AutoDisposeProvider<List<Rate>>.internal(
+final ratesProvider = AutoDisposeProvider<RatesData>.internal(
   rates,
   name: r'ratesProvider',
   debugGetCreateSourceHash:
@@ -19,8 +19,22 @@ final ratesProvider = AutoDisposeProvider<List<Rate>>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef RatesRef = AutoDisposeProviderRef<List<Rate>>;
-String _$rateHash() => r'3a69f3a72e5e26b36d0022e81b391c4b2f552419';
+typedef RatesRef = AutoDisposeProviderRef<RatesData>;
+String _$ratesStreamHash() => r'eeed37e7528b6b349e59d9cd8b1080350ca7643e';
+
+/// See also [ratesStream].
+@ProviderFor(ratesStream)
+final ratesStreamProvider = AutoDisposeStreamProvider<RatesData>.internal(
+  ratesStream,
+  name: r'ratesStreamProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$ratesStreamHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef RatesStreamRef = AutoDisposeStreamProviderRef<RatesData>;
+String _$rateHash() => r'f6d4ae9cabc7f0cb51495f629bd5802c2b47b492';
 
 /// Copied from Dart SDK
 class _SystemHash {

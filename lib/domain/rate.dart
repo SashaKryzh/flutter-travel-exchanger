@@ -21,3 +21,13 @@ enum RateSource {
   api,
   custom,
 }
+
+@freezed
+class RatesData with _$RatesData {
+  factory RatesData(
+    Currency base,
+    List<Rate> rates,
+  ) = _RatesData;
+
+  factory RatesData.fromJson(Map<String, dynamic> json) => _$RatesDataFromJson(json);
+}

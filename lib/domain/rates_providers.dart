@@ -7,34 +7,71 @@ import 'package:travel_exchanger/utils/logger.dart';
 
 part 'rates_providers.g.dart';
 
-// TODO: watch rates updates when expired and returned new values from the API.
 @riverpod
-List<Rate> rates(RatesRef ref) {
-  final rates = ref.watch(ratesRepositoryProvider).rates;
-  return rates;
+RatesData rates(RatesRef ref) {
+  ref.watch(ratesStreamProvider);
+  return ref.watch(ratesRepositoryProvider).ratesData;
+}
+
+@riverpod
+Stream<RatesData> ratesStream(RatesStreamRef ref) {
+  return ref.watch(ratesRepositoryProvider).ratesDataStream;
 }
 
 @riverpod
 double rate(RateRef ref, Currency fromm, Currency to) {
-  final rates = ref.watch(ratesProvider);
+  final ratesData = ref.watch(ratesProvider);
+  final rates = ratesData.rates.sortedCustomFirst();
 
-  final fromTo = rates.firstWhereOrNull((e) => e.base == fromm && e.target == to);
+  // from -> to
+  final fromTo = rates.fromTo(fromm, to);
   if (fromTo != null) {
     return fromTo.rate;
   }
 
-  final toFrom = rates.firstWhereOrNull((e) => e.base == to && e.target == fromm);
+  // to -> from
+  final toFrom = rates.fromTo(to, fromm);
   if (toFrom != null) {
     return 1 / toFrom.rate;
   }
 
-  try {
-    final fromBase = rates.firstWhere((e) => e.target == fromm);
-    final baseTo = rates.firstWhere((e) => e.base == fromBase.base && e.target == to);
+  // We should't use custom rates for indirect conversions
+  rates.removeWhere((e) => e.source == RateSource.custom && e.base != Currency.time);
 
-    return 1 / fromBase.rate * baseTo.rate;
-  } catch (e) {
-    logger.e('Rate not found for $fromm $to');
+  try {
+    if ([fromm, to].contains(Currency.time)) {
+      final timeRate = rates.firstWhere((e) => e.base == Currency.time);
+      final baseTimeTo = rates.fromTo(ratesData.base, timeRate.target);
+
+      if (fromm == Currency.time) {
+        final baseTo = rates.fromTo(ratesData.base, to);
+        return timeRate.rate * 1 / baseTimeTo!.rate * baseTo!.rate;
+      } else {
+        final baseFrom = rates.fromTo(ratesData.base, fromm);
+        return 1 / baseFrom!.rate * baseTimeTo!.rate / timeRate.rate;
+      }
+    } else {
+      final baseFrom = rates.fromTo(ratesData.base, fromm);
+      final baseTo = rates.fromTo(ratesData.base, to);
+
+      return 1 / baseFrom!.rate * baseTo!.rate;
+    }
+  } catch (e, stackTrace) {
+    logger.e('Rate not found for $fromm -> $to', error: e, stackTrace: stackTrace);
     return 0;
+  }
+}
+
+extension on List<Rate> {
+  Rate? fromTo(Currency from, Currency to) {
+    return firstWhereOrNull((e) => e.base == from && e.target == to);
+  }
+
+  List<Rate> sortedCustomFirst() {
+    return [...this]..sort((a, b) => switch ((a.source, b.source)) {
+          (RateSource.custom, RateSource.api) => -1,
+          (RateSource.api, RateSource.custom) => 1,
+          _ => 0,
+        });
   }
 }

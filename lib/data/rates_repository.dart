@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -5,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_exchanger/data/rates.dart';
+import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rate.dart';
 import 'package:travel_exchanger/utils/logger.dart';
 
@@ -17,69 +19,112 @@ RatesRepository ratesRepository(RatesRepositoryRef ref) {
 
 class RatesRepository {
   static const _timestampKey = 'ratesTimestamp';
-  static const _ratesKey = 'rates';
+  static const _ratesDataKey = 'ratesData';
 
   RatesRepository(this._supabase, this._sharedPreferences);
 
   final SupabaseClient _supabase;
   final SharedPreferences _sharedPreferences;
 
-  List<Rate> _rates = [];
+  final _ratesDataController = StreamController<RatesData>.broadcast();
+  Stream<RatesData> get ratesDataStream => _ratesDataController.stream;
 
-  List<Rate> get rates {
-    assert(_rates.isNotEmpty, 'Rates not loaded');
-    return _rates;
+  late RatesData _ratesData;
+  RatesData get ratesData => _ratesData;
+  set _setRatesData(RatesData value) {
+    _ratesData = value;
+    _ratesDataController.add(value);
   }
 
   Future<void> initRates() async {
     final stored = await _fetchStoredRates();
-    if (stored != null && stored.isNotEmpty) {
-      _rates = stored;
+    if (stored != null && stored.rates.isNotEmpty) {
+      _setRatesData = stored;
     } else {
-      _rates = await _fetchAndStoreRates();
+      _ratesData = RatesData(Currency.eur, []);
+      final remoteRates = await _fetchRemoteRates();
+      final mergedRates = _mergeWithRemoteRates(remoteRates.rates);
+      _setRatesData = RatesData(remoteRates.base, mergedRates);
+      _storeRates(_ratesData);
     }
 
-    assert(_rates.isNotEmpty, 'Rates not loaded');
+    assert(_ratesData.rates.isNotEmpty, 'Remote base not initialized');
   }
 
   Future<void> updateRatesIfExpired() async {
     final lastStored = _getStoredTimestamp();
 
-    if (_rates.isNotEmpty &&
+    if (_ratesData.rates.remoteRates.isNotEmpty &&
         lastStored.isAfter(DateTime.now().subtract(const Duration(hours: 1)))) {
       logger.d('Rates are not expired');
       return;
     }
 
-    final rates = await _fetchAndStoreRates();
-    if (rates.isEmpty) {
+    final remoteRates = await _fetchRemoteRates();
+    if (remoteRates.rates.isEmpty) {
       return;
     }
 
-    _rates = rates;
+    final mergedRates = _mergeWithRemoteRates(remoteRates.rates);
+    _setRatesData = RatesData(remoteRates.base, mergedRates);
+    _storeRates(_ratesData);
   }
 
-  Future<List<Rate>> _fetchAndStoreRates() async {
+  Future<void> setCustomRate(Currency from, Currency to, double rate) async {
+    final newRate = Rate(
+      base: from,
+      target: to,
+      rate: rate,
+      updatedAt: DateTime.now(),
+      source: RateSource.custom,
+    );
+
+    await removeCustomRateBetween(from, to, notify: false);
+    final rates = [..._ratesData.rates];
+    rates.add(newRate);
+
+    _setRatesData = _ratesData.copyWith(rates: rates);
+    await _storeRates(_ratesData);
+  }
+
+  Future<void> removeCustomRateBetween(Currency a, Currency b, {bool notify = true}) async {
+    final rates = [..._ratesData.rates];
+    rates.removeWhere(
+      (e) =>
+          e.source == RateSource.custom &&
+          (e.base == a && e.target == b || e.base == b && e.target == a),
+    );
+
+    if (notify) {
+      _setRatesData = _ratesData.copyWith(rates: rates);
+    } else {
+      _ratesData = _ratesData.copyWith(rates: rates);
+    }
+    await _storeRates(_ratesData);
+  }
+
+  Future<RatesData> _fetchRemoteRates() async {
     logger.d('Fetching rates');
 
-    List<Rate> rates;
+    RatesData ratesData;
 
     try {
       final response = await _supabase.functions.invoke('rates', method: HttpMethod.get);
       final data = GetRatesResponseDto.fromJson(response.data as Map<String, dynamic>);
-      rates = data.rates.map((e) => e.toDomain()).toList();
+      ratesData = RatesData(
+        Currency(code: data.base),
+        data.rates.map((e) => e.toDomain()).toList(),
+      );
     } on FunctionException catch (e) {
       logger.e('FunctionException: ${e.status} ${e.reasonPhrase} ${e.details}');
-      rates = [];
+      ratesData = RatesData(Currency.eur, []);
     }
 
-    if (rates.isEmpty) {
-      logger.e('Rates are empty');
+    if (ratesData.rates.isEmpty) {
+      logger.e('Remote rates are empty');
     }
 
-    _storeRates(rates);
-
-    return rates;
+    return ratesData;
   }
 
   DateTime _getStoredTimestamp() {
@@ -91,38 +136,53 @@ class RatesRepository {
     return DateTime.parse(timestamp);
   }
 
-  Future<List<Rate>?> _fetchStoredRates() async {
+  Future<RatesData?> _fetchStoredRates() async {
     try {
-      final jsonString = _sharedPreferences.getString(_ratesKey);
+      final jsonString = _sharedPreferences.getString(_ratesDataKey);
       if (jsonString == null) {
         return null;
       }
 
-      final json = await compute(jsonDecode, jsonString) as List<dynamic>;
-      return json.map((e) => Rate.fromJson(e as Map<String, dynamic>)).toList();
+      final ratesData = await compute((e) {
+        final json = jsonDecode(e) as Map<String, dynamic>;
+        return RatesData.fromJson(json);
+      }, jsonString);
+
+      return ratesData;
     } catch (e, stackTrace) {
       logger.e('Error fetching stored rates', error: e, stackTrace: stackTrace);
       _clear();
-      return [];
+      return null;
     }
   }
 
-  Future<void> _storeRates(List<Rate> rates) async {
+  List<Rate> _mergeWithRemoteRates(List<Rate> remoteRates) {
+    final customRates = _ratesData.rates.customRates;
+    final mergedRates = customRates + remoteRates;
+    return mergedRates.toSet().toList();
+  }
+
+  Future<void> _storeRates(RatesData ratesData) async {
     logger.d('Storing rates locally');
 
-    final json = rates.map((e) => e.toJson()).toList();
-    final jsonString = await compute(jsonEncode, json);
+    final json = ratesData.toJson();
+    final ratesDataJsonString = await compute(jsonEncode, json);
 
     await Future.wait([
       _sharedPreferences.setString(_timestampKey, DateTime.now().toIso8601String()),
-      _sharedPreferences.setString(_ratesKey, jsonString),
+      _sharedPreferences.setString(_ratesDataKey, ratesDataJsonString),
     ]);
   }
 
   Future<void> _clear() async {
     await Future.wait([
       _sharedPreferences.remove(_timestampKey),
-      _sharedPreferences.remove(_ratesKey),
+      _sharedPreferences.remove(_ratesDataKey),
     ]);
   }
+}
+
+extension on List<Rate> {
+  List<Rate> get remoteRates => where((e) => e.source == RateSource.api).toList();
+  List<Rate> get customRates => where((e) => e.source == RateSource.custom).toList();
 }

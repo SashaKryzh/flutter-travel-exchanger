@@ -27,3 +27,17 @@ const _$RateSourceEnumMap = {
   RateSource.api: 'api',
   RateSource.custom: 'custom',
 };
+
+_$RatesDataImpl _$$RatesDataImplFromJson(Map<String, dynamic> json) =>
+    _$RatesDataImpl(
+      Currency.fromJson(json['base'] as Map<String, dynamic>),
+      (json['rates'] as List<dynamic>)
+          .map((e) => Rate.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$RatesDataImplToJson(_$RatesDataImpl instance) =>
+    <String, dynamic>{
+      'base': instance.base.toJson(),
+      'rates': instance.rates.map((e) => e.toJson()).toList(),
+    };

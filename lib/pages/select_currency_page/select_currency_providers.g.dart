@@ -6,7 +6,7 @@ part of 'select_currency_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchCurrenciesHash() => r'e47dbc90afd8222a1242dc05ec2236b29b68029c';
+String _$searchCurrenciesHash() => r'970b1fbce3b3f51cd495d354010fd14822dcb3a4';
 
 /// Copied from Dart SDK
 class _SystemHash {

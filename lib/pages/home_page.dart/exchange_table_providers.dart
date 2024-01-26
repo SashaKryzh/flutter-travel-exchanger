@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
+import 'package:travel_exchanger/domain/value.dart';
 
 part 'exchange_table_providers.g.dart';
 
@@ -105,7 +106,7 @@ class ExchangeTableExpandedRowsNotifier extends _$ExchangeTableExpandedRowsNotif
 }
 
 @riverpod
-(double, double?) convertedValues(ConvertedValuesRef ref, double value) {
+(Value, Value?) convertedValues(ConvertedValuesRef ref, double value) {
   final between = ref.watch(exchangeBetweenProvider);
 
   final from = between.from;
@@ -118,7 +119,10 @@ class ExchangeTableExpandedRowsNotifier extends _$ExchangeTableExpandedRowsNotif
   final converted1 = value * rate1;
   final converted2 = rate2 != null ? value * rate2 : null;
 
-  return (converted1, converted2);
+  return (
+    Value(converted1, to1),
+    converted2 != null ? Value(converted2, to2!) : null,
+  );
 }
 
 //

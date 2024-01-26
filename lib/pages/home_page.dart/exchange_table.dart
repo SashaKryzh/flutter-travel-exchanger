@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart' hide Provider;
 import 'package:provider/provider.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
@@ -403,6 +404,7 @@ class _ValuesRow extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final convertedValues = ref.watch(convertedValuesProvider(value));
     final isThree = convertedValues.$2 != null;
+    final currency = ref.watch(exchangeBetweenProvider).from;
 
     return Container(
       decoration: BoxDecoration(
@@ -420,14 +422,14 @@ class _ValuesRow extends ConsumerWidget {
         children: [
           Expanded(
             child: _ValueItem(
-              value: value,
+              value: Value(value, currency),
               alignment: ColumnAlignment.right,
             ),
           ),
           Expanded(
             child: _ValueItem(
               value: convertedValues.$1,
-              alignment:  isThree ? ColumnAlignment.center : ColumnAlignment.left,
+              alignment: isThree ? ColumnAlignment.center : ColumnAlignment.left,
             ),
           ),
           if (convertedValues.$2 != null)
@@ -455,7 +457,7 @@ class _ValueItem extends StatelessWidget {
     required this.alignment,
   });
 
-  final double value;
+  final Value value;
   final ColumnAlignment alignment;
 
   @override
@@ -480,7 +482,7 @@ class _ValueItem extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: valuePadding),
             child: Text(
-              value.toStringAsFixed(2),
+              value.format(),
             ),
           ),
         ),

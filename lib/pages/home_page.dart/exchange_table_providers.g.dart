@@ -21,7 +21,7 @@ final exchangeValuesProvider = AutoDisposeProvider<List<double>>.internal(
 );
 
 typedef ExchangeValuesRef = AutoDisposeProviderRef<List<double>>;
-String _$convertedValuesHash() => r'61b32a1763bba877ecbe824a95cf599903062a6c';
+String _$convertedValuesHash() => r'3824b50cd4f4b14585b4cee6db93f1057084bfd2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -49,7 +49,7 @@ class _SystemHash {
 const convertedValuesProvider = ConvertedValuesFamily();
 
 /// See also [convertedValues].
-class ConvertedValuesFamily extends Family<(double, double?)> {
+class ConvertedValuesFamily extends Family<(Value, Value?)> {
   /// See also [convertedValues].
   const ConvertedValuesFamily();
 
@@ -87,7 +87,7 @@ class ConvertedValuesFamily extends Family<(double, double?)> {
 }
 
 /// See also [convertedValues].
-class ConvertedValuesProvider extends AutoDisposeProvider<(double, double?)> {
+class ConvertedValuesProvider extends AutoDisposeProvider<(Value, Value?)> {
   /// See also [convertedValues].
   ConvertedValuesProvider(
     double value,
@@ -122,7 +122,7 @@ class ConvertedValuesProvider extends AutoDisposeProvider<(double, double?)> {
 
   @override
   Override overrideWith(
-    (double, double?) Function(ConvertedValuesRef provider) create,
+    (Value, Value?) Function(ConvertedValuesRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -139,7 +139,7 @@ class ConvertedValuesProvider extends AutoDisposeProvider<(double, double?)> {
   }
 
   @override
-  AutoDisposeProviderElement<(double, double?)> createElement() {
+  AutoDisposeProviderElement<(Value, Value?)> createElement() {
     return _ConvertedValuesProviderElement(this);
   }
 
@@ -157,13 +157,13 @@ class ConvertedValuesProvider extends AutoDisposeProvider<(double, double?)> {
   }
 }
 
-mixin ConvertedValuesRef on AutoDisposeProviderRef<(double, double?)> {
+mixin ConvertedValuesRef on AutoDisposeProviderRef<(Value, Value?)> {
   /// The parameter `value` of this provider.
   double get value;
 }
 
 class _ConvertedValuesProviderElement
-    extends AutoDisposeProviderElement<(double, double?)>
+    extends AutoDisposeProviderElement<(Value, Value?)>
     with ConvertedValuesRef {
   _ConvertedValuesProviderElement(super.provider);
 

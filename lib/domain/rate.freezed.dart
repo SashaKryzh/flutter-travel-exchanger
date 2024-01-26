@@ -230,3 +230,161 @@ abstract class _Rate implements Rate {
   _$$RateImplCopyWith<_$RateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+RatesData _$RatesDataFromJson(Map<String, dynamic> json) {
+  return _RatesData.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RatesData {
+  Currency get base => throw _privateConstructorUsedError;
+  List<Rate> get rates => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RatesDataCopyWith<RatesData> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RatesDataCopyWith<$Res> {
+  factory $RatesDataCopyWith(RatesData value, $Res Function(RatesData) then) =
+      _$RatesDataCopyWithImpl<$Res, RatesData>;
+  @useResult
+  $Res call({Currency base, List<Rate> rates});
+}
+
+/// @nodoc
+class _$RatesDataCopyWithImpl<$Res, $Val extends RatesData>
+    implements $RatesDataCopyWith<$Res> {
+  _$RatesDataCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? base = null,
+    Object? rates = null,
+  }) {
+    return _then(_value.copyWith(
+      base: null == base
+          ? _value.base
+          : base // ignore: cast_nullable_to_non_nullable
+              as Currency,
+      rates: null == rates
+          ? _value.rates
+          : rates // ignore: cast_nullable_to_non_nullable
+              as List<Rate>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RatesDataImplCopyWith<$Res>
+    implements $RatesDataCopyWith<$Res> {
+  factory _$$RatesDataImplCopyWith(
+          _$RatesDataImpl value, $Res Function(_$RatesDataImpl) then) =
+      __$$RatesDataImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({Currency base, List<Rate> rates});
+}
+
+/// @nodoc
+class __$$RatesDataImplCopyWithImpl<$Res>
+    extends _$RatesDataCopyWithImpl<$Res, _$RatesDataImpl>
+    implements _$$RatesDataImplCopyWith<$Res> {
+  __$$RatesDataImplCopyWithImpl(
+      _$RatesDataImpl _value, $Res Function(_$RatesDataImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? base = null,
+    Object? rates = null,
+  }) {
+    return _then(_$RatesDataImpl(
+      null == base
+          ? _value.base
+          : base // ignore: cast_nullable_to_non_nullable
+              as Currency,
+      null == rates
+          ? _value._rates
+          : rates // ignore: cast_nullable_to_non_nullable
+              as List<Rate>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RatesDataImpl implements _RatesData {
+  _$RatesDataImpl(this.base, final List<Rate> rates) : _rates = rates;
+
+  factory _$RatesDataImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RatesDataImplFromJson(json);
+
+  @override
+  final Currency base;
+  final List<Rate> _rates;
+  @override
+  List<Rate> get rates {
+    if (_rates is EqualUnmodifiableListView) return _rates;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_rates);
+  }
+
+  @override
+  String toString() {
+    return 'RatesData(base: $base, rates: $rates)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RatesDataImpl &&
+            (identical(other.base, base) || other.base == base) &&
+            const DeepCollectionEquality().equals(other._rates, _rates));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, base, const DeepCollectionEquality().hash(_rates));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RatesDataImplCopyWith<_$RatesDataImpl> get copyWith =>
+      __$$RatesDataImplCopyWithImpl<_$RatesDataImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RatesDataImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RatesData implements RatesData {
+  factory _RatesData(final Currency base, final List<Rate> rates) =
+      _$RatesDataImpl;
+
+  factory _RatesData.fromJson(Map<String, dynamic> json) =
+      _$RatesDataImpl.fromJson;
+
+  @override
+  Currency get base;
+  @override
+  List<Rate> get rates;
+  @override
+  @JsonKey(ignore: true)
+  _$$RatesDataImplCopyWith<_$RatesDataImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

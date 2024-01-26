@@ -6,7 +6,7 @@ part 'select_currency_providers.g.dart';
 
 @riverpod
 List<Currency> searchCurrencies(SearchCurrenciesRef ref, String query) {
-  final currencies = ref.watch(currenciesProvider);
+  final currencies = ref.watch(currenciesProvider).where((e) => e != Currency.time).toList();
 
   query = query.trim();
 
