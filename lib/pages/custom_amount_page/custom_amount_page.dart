@@ -148,7 +148,10 @@ class _InputContainer extends HookConsumerWidget {
                   // Remove default behavior on enter.
                   onEditingComplete: () {},
                   inputFormatters: [
-                    ReplaceFormatter(justReceivedFocus.value),
+                    ReplaceFormatter(
+                      replaceWithNextCharacter: justReceivedFocus.value,
+                      onReplaced: () => justReceivedFocus.value = false,
+                    ),
                     CurrencyInputFormatter(),
                   ],
                 ),
@@ -180,26 +183,31 @@ class CurrencyInputFormatter extends TextInputFormatter {
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     // Intl.defaultLocale = 'uk_UA';
 
-    var newText = newValue.text;
+    logger.d(
+      'CurrencyInputFormatter: oldValue = "${oldValue.text}"; newValue = "${newValue.text}"',
+    );
 
-    logger.d('oldValue: "${oldValue.text}"; newValue: "$newText"');
+    var newText = newValue.text;
 
     if (newText.isEmpty) {
       return newValue;
     }
 
     // Replace entered decimal separator with the default one.
-    if (newText.length > oldValue.text.length && ',.'.contains(newText.characters.last)) {
+    if ((newText.length == 1 || newText.length > oldValue.text.length) &&
+        ',.'.contains(newText.characters.last)) {
       newText = newText.substring(0, newText.length - 1) + decimalSeparator;
     }
 
     // More than one decimal separator.
     if (newText.indexOf(decimalSeparator) != newText.lastIndexOf(decimalSeparator)) {
+      _logNewText(oldValue.text);
       return oldValue;
     }
 
     // Contains space.
     if (newText.contains(' ')) {
+      _logNewText(oldValue.text);
       return oldValue;
     }
 
@@ -208,6 +216,8 @@ class CurrencyInputFormatter extends TextInputFormatter {
         decimalSeparatorInText ? newText.length - newText.indexOf(decimalSeparator) - 1 : 0;
 
     if (newText.length == 1 && decimalSeparatorInText) {
+      final newText = '0$decimalSeparator';
+      _logNewText(newText);
       return newValue.copyWith(
         text: '0$decimalSeparator',
         selection: const TextSelection.collapsed(offset: 2),
@@ -216,11 +226,13 @@ class CurrencyInputFormatter extends TextInputFormatter {
 
     // More than two decimal digits.
     if (decimalDigits > 2) {
+      _logNewText(oldValue.text);
       return oldValue;
     }
 
     final value = format().tryParse(newText)?.toDouble();
     if (value == null) {
+      _logNewText(oldValue.text);
       return oldValue;
     }
     newText = formatValue(value, decimalDigits: decimalDigits);
@@ -229,20 +241,26 @@ class CurrencyInputFormatter extends TextInputFormatter {
       newText += decimalSeparator;
     }
 
-    logger.d('oldValue: "${oldValue.text}"; Updated to newText: "$newText"');
-
+    _logNewText(newText);
     return newValue.copyWith(
       text: newText,
       selection: TextSelection.collapsed(offset: newText.length),
     );
   }
+
+  void _logNewText(String newText) {
+    logger.d('CurrencyInputFormatter: newText = "$newText"');
+  }
 }
 
-// TODO: handle when it was prefiled and the first entered char is '.'
 class ReplaceFormatter extends TextInputFormatter {
-  ReplaceFormatter(this.replaceWithNextCharacter);
+  const ReplaceFormatter({
+    required this.replaceWithNextCharacter,
+    required this.onReplaced,
+  });
 
   final bool replaceWithNextCharacter;
+  final VoidCallback onReplaced;
 
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
@@ -252,12 +270,17 @@ class ReplaceFormatter extends TextInputFormatter {
 
     var newText = newValue.text;
     final diff = newText.length - oldValue.text.length;
+
     if (diff > 0) {
+      // Entered character
       newText = newText.characters.last;
     } else if (diff < 0) {
+      // Deleted character
       newText = '';
     }
 
+    logger.d('ReplaceFormatter: newText = "$newText"');
+    onReplaced.call();
     return newValue.copyWith(
       text: newText,
       selection: TextSelection.collapsed(offset: newText.length),
