@@ -172,7 +172,7 @@ class _ConvertedValuesProviderElement
 }
 
 String _$exchangeValuesFromNotifierHash() =>
-    r'bc59cd3345cb4a4271a2c0f9231829e935ee97a2';
+    r'9ab9a16f7c6f9ba31493500cc513add04bd5d409';
 
 /// See also [ExchangeValuesFromNotifier].
 @ProviderFor(ExchangeValuesFromNotifier)
@@ -189,7 +189,7 @@ final exchangeValuesFromNotifierProvider = AutoDisposeNotifierProvider<
 
 typedef _$ExchangeValuesFromNotifier = AutoDisposeNotifier<ExchangeValuesFrom>;
 String _$exchangeTableExpandedRowsHash() =>
-    r'7865151eb44f61aacc3819fa64862354caea393c';
+    r'43484dfb4d5a4d61e7c35db397a96f886320c74b';
 
 /// See also [ExchangeTableExpandedRows].
 @ProviderFor(ExchangeTableExpandedRows)

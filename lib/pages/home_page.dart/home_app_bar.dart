@@ -8,6 +8,8 @@ import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
 class HomeAppBar extends ConsumerWidget {
+  static const verticalPadding = 6.0;
+
   const HomeAppBar({super.key});
 
   @override
@@ -31,36 +33,47 @@ class HomeAppBar extends ConsumerWidget {
         columnsCount: ref.watch(exchangeBetweenProvider).length,
         child: SafeArea(
           bottom: false,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 6,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _ColumnHeader(
-                    currency: between.from,
-                    alignment: ColumnAlignment.right,
-                    onTap: () => onCurrencyTap(between.from),
-                  ),
+          child: Stack(
+            alignment: Alignment.centerLeft,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: verticalPadding,
                 ),
-                Expanded(
-                  child: _ColumnHeader(
-                    currency: between.to1,
-                    alignment: between.isThree ? ColumnAlignment.center : ColumnAlignment.left,
-                    onTap: () => onCurrencyTap(between.to1),
-                  ),
-                ),
-                if (between.isThree)
-                  Expanded(
-                    child: _ColumnHeader(
-                      currency: between.to2!,
-                      alignment: ColumnAlignment.left,
-                      onTap: () => onCurrencyTap(between.to2!),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _ColumnHeader(
+                        currency: between.from,
+                        alignment: ColumnAlignment.right,
+                        onTap: () => onCurrencyTap(between.from),
+                      ),
                     ),
-                  ),
-              ],
-            ),
+                    Expanded(
+                      child: _ColumnHeader(
+                        currency: between.to1,
+                        alignment: between.isThree ? ColumnAlignment.center : ColumnAlignment.left,
+                        onTap: () => onCurrencyTap(between.to1),
+                      ),
+                    ),
+                    if (between.isThree)
+                      Expanded(
+                        child: _ColumnHeader(
+                          currency: between.to2!,
+                          alignment: ColumnAlignment.left,
+                          onTap: () => onCurrencyTap(between.to2!),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              IconButton(
+                onPressed: () => const SettingsRoute().go(context),
+                padding: const EdgeInsets.all(verticalPadding),
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.settings),
+              ),
+            ],
           ),
         ),
       ),
