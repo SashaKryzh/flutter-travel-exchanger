@@ -172,7 +172,7 @@ class _ConvertedValuesProviderElement
 }
 
 String _$exchangeValuesFromNotifierHash() =>
-    r'a734b8659ccc2196255a75573350cd7246cda9c7';
+    r'bc59cd3345cb4a4271a2c0f9231829e935ee97a2';
 
 /// See also [ExchangeValuesFromNotifier].
 @ProviderFor(ExchangeValuesFromNotifier)
@@ -188,24 +188,23 @@ final exchangeValuesFromNotifierProvider = AutoDisposeNotifierProvider<
 );
 
 typedef _$ExchangeValuesFromNotifier = AutoDisposeNotifier<ExchangeValuesFrom>;
-String _$exchangeTableExpandedRowsNotifierHash() =>
-    r'55a8f0fa76d6bd1ee68b0058d6befb531b39a5a5';
+String _$exchangeTableExpandedRowsHash() =>
+    r'7865151eb44f61aacc3819fa64862354caea393c';
 
-/// See also [ExchangeTableExpandedRowsNotifier].
-@ProviderFor(ExchangeTableExpandedRowsNotifier)
-final exchangeTableExpandedRowsNotifierProvider = AutoDisposeNotifierProvider<
-    ExchangeTableExpandedRowsNotifier,
-    Set<ExchangeTableExpandedRowId>>.internal(
-  ExchangeTableExpandedRowsNotifier.new,
-  name: r'exchangeTableExpandedRowsNotifierProvider',
+/// See also [ExchangeTableExpandedRows].
+@ProviderFor(ExchangeTableExpandedRows)
+final exchangeTableExpandedRowsProvider = AutoDisposeNotifierProvider<
+    ExchangeTableExpandedRows, ExchangeTableExpandedRowsState>.internal(
+  ExchangeTableExpandedRows.new,
+  name: r'exchangeTableExpandedRowsProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$exchangeTableExpandedRowsNotifierHash,
+      : _$exchangeTableExpandedRowsHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ExchangeTableExpandedRowsNotifier
-    = AutoDisposeNotifier<Set<ExchangeTableExpandedRowId>>;
+typedef _$ExchangeTableExpandedRows
+    = AutoDisposeNotifier<ExchangeTableExpandedRowsState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

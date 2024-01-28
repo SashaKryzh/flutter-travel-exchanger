@@ -142,7 +142,7 @@ class _ExchangeTableLayoutProperties extends Equatable {
 // =============================================================================
 //
 
-/// Handles expansion of rows
+/// Handles scroll to expanded row
 class _ExchangeTableContent extends ConsumerStatefulWidget {
   const _ExchangeTableContent();
 
@@ -164,6 +164,7 @@ class _ExchangeTableContentState extends ConsumerState<_ExchangeTableContent> {
 
   void _expand({required int level, required int index}) {
     final double offset;
+
     if (level == 0) {
       offset = index * _layoutProperties.rowHeight;
     } else {
@@ -180,6 +181,11 @@ class _ExchangeTableContentState extends ConsumerState<_ExchangeTableContent> {
     _scrollTo(_offsets.lastOrNull ?? 0);
   }
 
+  void _collapseAll() {
+    _offsets.clear();
+    _scrollTo(0);
+  }
+
   void _scrollTo(double offset) {
     _scrollController.animateTo(
       offset,
@@ -192,9 +198,13 @@ class _ExchangeTableContentState extends ConsumerState<_ExchangeTableContent> {
   Widget build(BuildContext context) {
     _layoutProperties = context.watchLayoutProperties;
 
-    ref.listen(exchangeTableExpandedRowsNotifierProvider, (prev, next) {
-      if (prev == null || prev.length < next.length) {
-        _expand(level: next.last.level, index: next.last.index);
+    ref.listen(exchangeTableExpandedRowsProvider, (prev, next) {
+      if (prev == next) return;
+
+      if (prev == null || prev.rows.length < next.rows.length) {
+        _expand(level: next.rows.last.level, index: next.rows.last.index);
+      } else if (next.rows.isEmpty && _offsets.length > 1) {
+        _collapseAll();
       } else {
         _collapse();
       }
@@ -204,17 +214,18 @@ class _ExchangeTableContentState extends ConsumerState<_ExchangeTableContent> {
 
     return SingleChildScrollView(
       controller: _scrollController,
+      // Fixes scroll behavior on Android.
       physics: const NeverScrollableScrollPhysics().applyTo(const BouncingScrollPhysics()),
       child: Column(
-        children: values.mapIndexed(
-          (i, e) {
-            return _ExpandableRow(
-              level: 0,
-              index: i,
-              value: e,
-            );
-          },
-        ).toList(),
+        children: values
+            .mapIndexed(
+              (index, value) => _ExpandableRow(
+                level: 0,
+                index: index,
+                value: value,
+              ),
+            )
+            .toList(),
       ),
     );
   }
@@ -227,9 +238,9 @@ class _ExpandableRow extends ConsumerStatefulWidget {
     required this.value,
   }) : assert(level >= 0 && level < 100, 'Most likely you have infinite loop');
 
-  final double value;
-  final int index;
   final int level;
+  final int index;
+  final double value;
 
   @override
   ConsumerState<_ExpandableRow> createState() => _ExpandableRowState();
@@ -255,20 +266,10 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
   var _isExpanded = false;
   var _renderChildren = false;
 
-  void _onExpand({required bool isExpanded, required bool isAfterExpanded}) {
-    if (isAfterExpanded) {
-      ref.read(exchangeTableExpandedRowsNotifierProvider.notifier).collapse();
-    } else if (isExpanded) {
-      _collapse();
-    } else if (_canExpand) {
-      _expand();
-    }
-  }
-
   void _expand({bool updateNotifier = true}) {
     if (updateNotifier) {
       ref
-          .read(exchangeTableExpandedRowsNotifierProvider.notifier)
+          .read(exchangeTableExpandedRowsProvider.notifier)
           .expand(level: widget.level, index: widget.index);
     }
 
@@ -288,7 +289,7 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
 
   void _collapse({bool updateNotifier = true}) {
     if (updateNotifier) {
-      ref.read(exchangeTableExpandedRowsNotifierProvider.notifier).collapse();
+      ref.read(exchangeTableExpandedRowsProvider.notifier).collapse();
     }
 
     setState(() {
@@ -317,19 +318,33 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
     final index = widget.index;
 
     final expandedIndex = ref
-        .watch(exchangeTableExpandedRowsNotifierProvider
-            .select((rows) => rows.firstWhereOrNull((e) => e.level == widget.level)))
+        .watch(exchangeTableExpandedRowsProvider
+            .select((state) => state.rows.firstWhereOrNull((e) => e.level == widget.level)))
         ?.index;
 
-    final isExpanded = index == expandedIndex;
+    final isExpandedState = index == expandedIndex;
     final isAfterExpanded = index - 1 == expandedIndex;
 
-    if (_isExpanded != isExpanded) {
-      isExpanded ? _expand(updateNotifier: false) : _collapse(updateNotifier: false);
+    if (_isExpanded != isExpandedState) {
+      isExpandedState ? _expand(updateNotifier: false) : _collapse(updateNotifier: false);
+    }
+
+    void onTap() {
+      if (_isExpanded || isAfterExpanded) {
+        ref.read(exchangeTableExpandedRowsProvider.notifier).collapse();
+      } else if (_canExpand) {
+        _expand();
+      }
+    }
+
+    void onLongPress() {
+      if (_isExpanded || isAfterExpanded) {
+        ref.read(exchangeTableExpandedRowsProvider.notifier).collapseAll();
+      }
     }
 
     final bool showBottomBorder;
-    if (isExpanded) {
+    if (isExpandedState) {
       showBottomBorder = true;
     } else if (index < 9 && !isAfterExpanded) {
       showBottomBorder = true;
@@ -337,7 +352,7 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
       showBottomBorder = false;
     }
 
-    final rowHeight = widget.level == 0 || isExpanded || isAfterExpanded
+    final rowHeight = widget.level == 0 || isExpandedState || isAfterExpanded
         ? _layoutProperties.rowHeight
         : _layoutProperties.nestedRowHeight;
 
@@ -349,7 +364,8 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
     return Column(
       children: [
         GestureDetector(
-          onTap: () => _onExpand(isExpanded: isExpanded, isAfterExpanded: isAfterExpanded),
+          onTap: onTap,
+          onLongPress: onLongPress,
           child: AnimatedContainer(
             duration: exchangeRowExpandAnimationDuration,
             height: rowHeight,
@@ -363,7 +379,6 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
         SizeTransition(
           sizeFactor: adjustedAnimation,
           child: Column(
-            // TODO: handle swipe less when level doesn't exists for a smaller number
             children: _renderChildren
                 ? (betweenValues(ref.read(exchangeValuesFromNotifierProvider), widget.value,
                             widget.level) ??

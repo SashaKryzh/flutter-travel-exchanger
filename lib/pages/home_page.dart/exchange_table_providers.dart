@@ -1,10 +1,12 @@
 import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/domain/value.dart';
 
 part 'exchange_table_providers.g.dart';
+part 'exchange_table_providers.freezed.dart';
 
 enum ExchangeValuesFrom {
   v001(.01),
@@ -26,6 +28,10 @@ enum ExchangeValuesFrom {
   const ExchangeValuesFrom(this.value);
 
   final double value;
+
+  int get maxExpandLevel {
+    return ExchangeValuesFrom.values.indexOf(this) - 1;
+  }
 
   double? step(int level) {
     final index = ExchangeValuesFrom.values.indexOf(this);
@@ -52,14 +58,25 @@ class ExchangeValuesFromNotifier extends _$ExchangeValuesFromNotifier {
 
   bool decrease() {
     final currentIndex = ExchangeValuesFrom.values.indexOf(state);
-    final expanded = ref.read(exchangeTableExpandedRowsNotifierProvider).isNotEmpty;
-    if (currentIndex == 0 || (expanded && currentIndex == 1)) {
+    if (currentIndex == 0) {
       return false;
     }
-    state = ExchangeValuesFrom.values[currentIndex - 1];
+
+    final expandedRowsState = ref.read(exchangeTableExpandedRowsProvider);
+    final expandedLevel = expandedRowsState.rows.lastOrNull?.level ?? -1;
+    final nextValuesFrom = ExchangeValuesFrom.values[currentIndex - 1];
+    if (nextValuesFrom.maxExpandLevel < expandedLevel) {
+      return false;
+    }
+
+    state = nextValuesFrom;
     return true;
   }
 }
+
+//
+// =============================================================================
+//
 
 @riverpod
 List<double> exchangeValues(ExchangeValuesRef ref) {
@@ -71,8 +88,27 @@ List<double> exchangeValues(ExchangeValuesRef ref) {
   return values;
 }
 
-class ExchangeTableExpandedRowId extends Equatable {
-  const ExchangeTableExpandedRowId({
+List<double>? betweenValues(ExchangeValuesFrom from, double value, int level) {
+  final step = from.step(level);
+
+  if (step == null) {
+    return null;
+  }
+
+  final values = [value + step];
+  for (var i = 0; i < 8; i++) {
+    values.add(values.last + step);
+  }
+
+  return values;
+}
+
+//
+// =============================================================================
+//
+
+class ExpandableRowState extends Equatable {
+  const ExpandableRowState({
     required this.level,
     required this.index,
   });
@@ -82,28 +118,56 @@ class ExchangeTableExpandedRowId extends Equatable {
 
   @override
   List<Object?> get props => [level, index];
+
+  ExpandableRowState copyWith({
+    int? level,
+    int? index,
+  }) {
+    return ExpandableRowState(
+      level: level ?? this.level,
+      index: index ?? this.index,
+    );
+  }
+}
+
+@freezed
+class ExchangeTableExpandedRowsState with _$ExchangeTableExpandedRowsState {
+  factory ExchangeTableExpandedRowsState(
+    Set<ExpandableRowState> rows,
+  ) = _ExchangeTableExpandedRowsState;
 }
 
 @riverpod
-class ExchangeTableExpandedRowsNotifier extends _$ExchangeTableExpandedRowsNotifier {
+class ExchangeTableExpandedRows extends _$ExchangeTableExpandedRows {
   @override
-  Set<ExchangeTableExpandedRowId> build() {
-    return {};
+  ExchangeTableExpandedRowsState build() {
+    return ExchangeTableExpandedRowsState({});
   }
 
-  void expand({
-    required int level,
-    required int index,
-  }) {
-    final length = state.length;
-    state = {...state, ExchangeTableExpandedRowId(level: level, index: index)};
-    assert(state.length == length + 1, 'This row is already expanded');
+  void expand({required int level, required int index}) {
+    final length = state.rows.length;
+    state = state.copyWith(
+      rows: {...state.rows, ExpandableRowState(level: level, index: index)},
+    );
+    assert(state.rows.length == length + 1, 'This row is already expanded');
   }
 
   void collapse() {
-    state = state.take(state.length - 1).toSet();
+    state = state.copyWith(
+      rows: state.rows.take(state.rows.length - 1).toSet(),
+    );
+  }
+
+  void collapseAll() {
+    state = state.copyWith(
+      rows: {},
+    );
   }
 }
+
+//
+// =============================================================================
+//
 
 @riverpod
 (Value, Value?) convertedValues(ConvertedValuesRef ref, double value) {
@@ -123,23 +187,4 @@ class ExchangeTableExpandedRowsNotifier extends _$ExchangeTableExpandedRowsNotif
     Value(converted1, to1),
     converted2 != null ? Value(converted2, to2!) : null,
   );
-}
-
-//
-// =============================================================================
-//
-
-List<double>? betweenValues(ExchangeValuesFrom from, double value, int level) {
-  final step = from.step(level);
-
-  if (step == null) {
-    return null;
-  }
-
-  final values = [value + step];
-  for (var i = 0; i < 8; i++) {
-    values.add(values.last + step);
-  }
-
-  return values;
 }

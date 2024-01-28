@@ -6,7 +6,7 @@ part of 'rates_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$ratesHash() => r'0dce5370857e13296eeaabe6a8405d8dc4369136';
+String _$ratesHash() => r'458a8720156bb6ac095521f25f2b0dfa35488774';
 
 /// See also [rates].
 @ProviderFor(rates)
@@ -51,7 +51,7 @@ final timeRateDataStreamProvider =
 );
 
 typedef TimeRateDataStreamRef = AutoDisposeStreamProviderRef<TimeRateData?>;
-String _$rateHash() => r'ef79b919f25f41e28dc9b1952b2fe30782a1f755';
+String _$rateHash() => r'62fdc93e0ce35d6e762659259482447951c04172';
 
 /// Copied from Dart SDK
 class _SystemHash {
