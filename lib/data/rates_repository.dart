@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -113,8 +114,19 @@ class RatesRepository {
         Currency(data.base),
         data.rates.map((e) => e.toDomain()).toList(),
       );
-    } on FunctionException catch (e) {
-      logger.e('FunctionException: ${e.status} ${e.reasonPhrase} ${e.details}');
+    } on FunctionException catch (e, stackTrace) {
+      logger.e(
+        'FunctionException: ${e.status} ${e.reasonPhrase} ${e.details}',
+        error: e,
+        stackTrace: stackTrace,
+      );
+      ratesData = RatesData(Currency.eur, []);
+    } on SocketException catch (e, stackTrace) {
+      logger.e(
+        'SocketException: ${e.message}',
+        error: e,
+        stackTrace: stackTrace,
+      );
       ratesData = RatesData(Currency.eur, []);
     }
 
