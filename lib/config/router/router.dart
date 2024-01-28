@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_page.dart';
 import 'package:travel_exchanger/pages/home_page.dart/home_page.dart';
+import 'package:travel_exchanger/pages/select_currency_page/search_currency/search_currency_page.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_page.dart';
 
 part 'router.g.dart';
@@ -39,6 +41,35 @@ class SelectCurrencyRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) {
     return SelectCurrencyPage(currencyCode: currencyCode);
   }
+}
+
+@TypedGoRoute<SearchCurrencyRoute>(
+  path: '/search-currency',
+)
+class SearchCurrencyRoute extends GoRouteData {
+  const SearchCurrencyRoute(
+    this.$extra,
+  );
+
+  final SearchCurrencyRouteExtra $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return SearchCurrencyPage(
+      selectedCurrency: $extra.selectedCurrency,
+      onSelectCurrency: $extra.onSelectCurrency,
+    );
+  }
+}
+
+class SearchCurrencyRouteExtra {
+  const SearchCurrencyRouteExtra({
+    required this.selectedCurrency,
+    required this.onSelectCurrency,
+  });
+
+  final Currency? selectedCurrency;
+  final ValueChanged<Currency> onSelectCurrency;
 }
 
 class CustomAmountRoute extends GoRouteData {

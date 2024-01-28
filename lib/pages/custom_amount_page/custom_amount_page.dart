@@ -28,7 +28,7 @@ class CustomAmountPage extends ConsumerWidget {
     _notifier = ref.read(customAmountConverterProvider(code).notifier);
 
     final between = ref.watch(exchangeBetweenProvider);
-    final third = between.to2;
+    final to2 = between.to2;
 
     return GestureDetector(
       onTap: () => Navigator.pop(context),
@@ -42,7 +42,7 @@ class CustomAmountPage extends ConsumerWidget {
               children: [
                 _InputContainer(currency: between.from),
                 _InputContainer(currency: between.to1),
-                if (third != null) _InputContainer(currency: third),
+                if (to2 != null) _InputContainer(currency: to2),
               ].separated(const SizedSpacer(16)),
             ),
           ),

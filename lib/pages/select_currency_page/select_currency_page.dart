@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/data/rates_repository.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/currencies_provider.dart';
@@ -18,6 +19,8 @@ class SelectCurrencyPage extends HookConsumerWidget {
 
   final String currencyCode;
 
+  bool filter(Currency e) => e != Currency.time;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allCurrencies = ref.watch(currenciesProvider);
@@ -26,7 +29,10 @@ class SelectCurrencyPage extends HookConsumerWidget {
     final selectedCurrency = allCurrencies.getCurrencyFromCode(currencyCode);
 
     final query = useState('');
-    final filteredCurrencies = ref.watch(searchCurrenciesProvider(query.value));
+    final filteredCurrencies = ref.watch(searchCurrenciesProvider(
+      query.value,
+      filter: filter,
+    ));
 
     void selectCurrency(Currency newSelectedCurrency) {
       ref.read(exchangeBetweenProvider.notifier).swap(selectedCurrency, newSelectedCurrency);
@@ -85,31 +91,47 @@ class SelectCurrencyPage extends HookConsumerWidget {
               ),
             ),
           ),
-          Container(
-            decoration: const BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: Colors.black,
-                  width: 1,
-                ),
-              ),
-            ),
-            child: SafeArea(
-              top: false,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: TextField(
-                  autofocus: true,
-                  onChanged: (text) => query.value = text,
-                  decoration: const InputDecoration(
-                    hintText: 'Search',
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                ),
-              ),
-            ),
+          SearchField(
+            onChanged: (text) => query.value = text,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class SearchField extends StatelessWidget {
+  const SearchField({
+    super.key,
+    required this.onChanged,
+  });
+
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: Colors.black,
+            width: 1,
+          ),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: TextField(
+            autofocus: true,
+            onChanged: onChanged,
+            decoration: const InputDecoration(
+              hintText: 'Search',
+              prefixIcon: Icon(Icons.search),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -175,55 +197,64 @@ class TimeListTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final currentRate =
+        ref.watch(ratesProvider).rates.where((e) => e.base == _currency).firstOrNull;
+
     void onSettingsTap() async {
       var _text = '';
+      var _currency = currentRate?.target ?? Currency.pln;
 
       Future<void> setTimeRate() async {
         final hourRate = double.tryParse(_text) ?? 0;
         final secondRate = convertHourlyRateToSecondlyRate(hourRate);
-        await ref
-            .read(ratesRepositoryProvider)
-            .setCustomRate(Currency.time, Currency.pln, secondRate);
+        await ref.read(ratesRepositoryProvider).setCustomRate(Currency.time, _currency, secondRate);
         context.pop();
       }
 
       await showDialog<void>(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            content: Row(
-              children: [
-                const Flexible(
-                  child: Text('1 hour = '),
-                ),
-                Expanded(
-                  child: TextField(
-                    keyboardType: TextInputType.number,
-                    onChanged: (text) => _text = text,
+          return StatefulBuilder(
+            builder: (context, setState) => AlertDialog(
+              content: Row(
+                children: [
+                  const Flexible(
+                    child: Text('1 hour = '),
                   ),
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      onChanged: (text) => _text = text,
+                    ),
+                  ),
+                  Flexible(
+                    child: GestureDetector(
+                      onTap: () => SearchCurrencyRoute(
+                        SearchCurrencyRouteExtra(
+                          selectedCurrency: currentRate?.target,
+                          onSelectCurrency: (e) => setState(() => _currency = e),
+                        ),
+                      ).push<void>(context),
+                      child: Text(_currency.name(context)),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: context.pop,
+                  child: const Text('Cancel'),
                 ),
-                const Flexible(
-                  child: Text('PLN'),
+                ElevatedButton(
+                  onPressed: setTimeRate,
+                  child: const Text('Save'),
                 ),
               ],
             ),
-            actions: [
-              TextButton(
-                onPressed: context.pop,
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: setTimeRate,
-                child: const Text('Save'),
-              ),
-            ],
           );
         },
       );
     }
-
-    final currentRate =
-        ref.watch(ratesProvider).rates.where((e) => e.base == _currency).firstOrNull;
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -234,7 +265,7 @@ class TimeListTile extends ConsumerWidget {
           children: [
             Expanded(
               child: Text(
-                '${_currency.code} (${convertSecondlyRateToHourly(currentRate?.rate ?? 0)} PLN)',
+                '${_currency.code} (${convertSecondlyRateToHourly(currentRate?.rate ?? 0)} ${currentRate?.target.name(context)})',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),

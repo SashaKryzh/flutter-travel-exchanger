@@ -6,7 +6,7 @@ part of 'select_currency_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchCurrenciesHash() => r'970b1fbce3b3f51cd495d354010fd14822dcb3a4';
+String _$searchCurrenciesHash() => r'f550e325b7a154879dbefbaa2c0e7fa39e15873f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -40,10 +40,12 @@ class SearchCurrenciesFamily extends Family<List<Currency>> {
 
   /// See also [searchCurrencies].
   SearchCurrenciesProvider call(
-    String query,
-  ) {
+    String query, {
+    bool Function(Currency)? filter,
+  }) {
     return SearchCurrenciesProvider(
       query,
+      filter: filter,
     );
   }
 
@@ -53,6 +55,7 @@ class SearchCurrenciesFamily extends Family<List<Currency>> {
   ) {
     return call(
       provider.query,
+      filter: provider.filter,
     );
   }
 
@@ -75,11 +78,13 @@ class SearchCurrenciesFamily extends Family<List<Currency>> {
 class SearchCurrenciesProvider extends AutoDisposeProvider<List<Currency>> {
   /// See also [searchCurrencies].
   SearchCurrenciesProvider(
-    String query,
-  ) : this._internal(
+    String query, {
+    bool Function(Currency)? filter,
+  }) : this._internal(
           (ref) => searchCurrencies(
             ref as SearchCurrenciesRef,
             query,
+            filter: filter,
           ),
           from: searchCurrenciesProvider,
           name: r'searchCurrenciesProvider',
@@ -91,6 +96,7 @@ class SearchCurrenciesProvider extends AutoDisposeProvider<List<Currency>> {
           allTransitiveDependencies:
               SearchCurrenciesFamily._allTransitiveDependencies,
           query: query,
+          filter: filter,
         );
 
   SearchCurrenciesProvider._internal(
@@ -101,9 +107,11 @@ class SearchCurrenciesProvider extends AutoDisposeProvider<List<Currency>> {
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.query,
+    required this.filter,
   }) : super.internal();
 
   final String query;
+  final bool Function(Currency)? filter;
 
   @override
   Override overrideWith(
@@ -119,6 +127,7 @@ class SearchCurrenciesProvider extends AutoDisposeProvider<List<Currency>> {
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         query: query,
+        filter: filter,
       ),
     );
   }
@@ -130,13 +139,16 @@ class SearchCurrenciesProvider extends AutoDisposeProvider<List<Currency>> {
 
   @override
   bool operator ==(Object other) {
-    return other is SearchCurrenciesProvider && other.query == query;
+    return other is SearchCurrenciesProvider &&
+        other.query == query &&
+        other.filter == filter;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, query.hashCode);
+    hash = _SystemHash.combine(hash, filter.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -145,6 +157,9 @@ class SearchCurrenciesProvider extends AutoDisposeProvider<List<Currency>> {
 mixin SearchCurrenciesRef on AutoDisposeProviderRef<List<Currency>> {
   /// The parameter `query` of this provider.
   String get query;
+
+  /// The parameter `filter` of this provider.
+  bool Function(Currency)? get filter;
 }
 
 class _SearchCurrenciesProviderElement
@@ -154,6 +169,9 @@ class _SearchCurrenciesProviderElement
 
   @override
   String get query => (origin as SearchCurrenciesProvider).query;
+  @override
+  bool Function(Currency)? get filter =>
+      (origin as SearchCurrenciesProvider).filter;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

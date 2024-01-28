@@ -44,6 +44,9 @@ extension WidgetX on Widget {
 
   @widgetFactory
   Widget sliver() => SliverToBoxAdapter(child: this);
+
+  @widgetFactory
+  Widget expanded({Key? key, int flex = 1}) => Expanded(key: key, flex: flex, child: this);
 }
 
 extension WidgetListX on List<Widget> {

@@ -81,6 +81,10 @@ class RatesRepository {
 
     await removeCustomRateBetween(from, to, notify: false);
     final rates = [..._ratesData.rates];
+    // TODO: remove
+    if (from == Currency.time) {
+      rates.removeWhere((e) => e.base == Currency.time);
+    }
     rates.add(newRate);
 
     _setRatesData = _ratesData.copyWith(rates: rates);

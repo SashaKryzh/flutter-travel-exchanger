@@ -8,6 +8,7 @@ part of 'router.dart';
 
 List<RouteBase> get $appRoutes => [
       $homeRoute,
+      $searchCurrencyRoute,
     ];
 
 RouteBase get $homeRoute => GoRouteData.$route(
@@ -79,6 +80,33 @@ extension $CustomAmountRouteExtension on CustomAmountRoute {
       context.pushReplacement(location);
 
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $searchCurrencyRoute => GoRouteData.$route(
+      path: '/search-currency',
+      factory: $SearchCurrencyRouteExtension._fromState,
+    );
+
+extension $SearchCurrencyRouteExtension on SearchCurrencyRoute {
+  static SearchCurrencyRoute _fromState(GoRouterState state) =>
+      SearchCurrencyRoute(
+        state.extra as SearchCurrencyRouteExtra,
+      );
+
+  String get location => GoRouteData.$location(
+        '/search-currency',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
 
 // **************************************************************************

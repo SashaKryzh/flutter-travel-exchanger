@@ -34,7 +34,7 @@ final ratesStreamProvider = AutoDisposeStreamProvider<RatesData>.internal(
 );
 
 typedef RatesStreamRef = AutoDisposeStreamProviderRef<RatesData>;
-String _$rateHash() => r'f6d4ae9cabc7f0cb51495f629bd5802c2b47b492';
+String _$rateHash() => r'e43b5572efc9b7123e008af821c79fa4fbc62833';
 
 /// Copied from Dart SDK
 class _SystemHash {
