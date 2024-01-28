@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,6 @@ import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
-import 'package:travel_exchanger/utils/logger.dart';
 
 const exchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
 const expandAnimationCurve = Curves.easeInOut;
@@ -104,7 +105,9 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: ConstrainedBox(
                   constraints: constraints,
-                  child: const _ExchangeTableContent(),
+                  child: const PinchDetector(
+                    child: _ExchangeTableContent(),
+                  ),
                 ),
               ),
             ),
@@ -375,26 +378,23 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
             ),
           ),
         ),
-        _ScaleDownDetector(
-          level: widget.level,
-          child: SizeTransition(
-            sizeFactor: adjustedAnimation,
-            child: Column(
-              children: _renderChildren
-                  ? (betweenValues(ref.read(exchangeValuesFromNotifierProvider), widget.value,
-                              widget.level) ??
-                          [])
-                      .mapIndexed(
-                      (i, e) {
-                        return _ExpandableRow(
-                          value: e,
-                          index: i,
-                          level: widget.level + 1,
-                        );
-                      },
-                    ).toList()
-                  : [],
-            ),
+        SizeTransition(
+          sizeFactor: adjustedAnimation,
+          child: Column(
+            children: _renderChildren
+                ? (betweenValues(ref.read(exchangeValuesFromNotifierProvider), widget.value,
+                            widget.level) ??
+                        [])
+                    .mapIndexed(
+                    (i, e) {
+                      return _ExpandableRow(
+                        value: e,
+                        index: i,
+                        level: widget.level + 1,
+                      );
+                    },
+                  ).toList()
+                : [],
           ),
         ),
       ],
@@ -402,23 +402,30 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
   }
 }
 
-class _ScaleDownDetector extends ConsumerStatefulWidget {
-  const _ScaleDownDetector({
+class PinchDetector extends ConsumerStatefulWidget {
+  const PinchDetector({
     super.key,
-    required this.level,
     required this.child,
   });
 
-  final int level;
   final Widget child;
 
   @override
-  ConsumerState<_ScaleDownDetector> createState() => _ScaleDownDetectorState();
+  ConsumerState<PinchDetector> createState() => _ScaleDownDetectorState();
 }
 
-class _ScaleDownDetectorState extends ConsumerState<_ScaleDownDetector> {
+class _ScaleDownDetectorState extends ConsumerState<PinchDetector> {
+  static const longPinchDuration = Duration(milliseconds: 500);
+
   var _activated = false;
   var _invalid = false;
+
+  Timer? _timer;
+
+  void _restartTimer() {
+    _timer?.cancel();
+    _timer = Timer(longPinchDuration, _collapseAll);
+  }
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
     if (_invalid) {
@@ -433,6 +440,8 @@ class _ScaleDownDetectorState extends ConsumerState<_ScaleDownDetector> {
     if (details.verticalScale < 0.9 && !_activated) {
       _collapse();
       _activated = true;
+    } else if (_activated) {
+      _restartTimer();
     }
   }
 
@@ -441,20 +450,42 @@ class _ScaleDownDetectorState extends ConsumerState<_ScaleDownDetector> {
     _invalid = false;
   }
 
+  void _onScaleEnd(ScaleEndDetails details) {
+    _timer?.cancel();
+  }
+
   void _collapse() {
     ref.read(exchangeTableExpandedRowsProvider.notifier).collapse();
   }
 
+  void _collapseAll() {
+    ref.read(exchangeTableExpandedRowsProvider.notifier).collapseAll();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isLastLevel = ref.watch(exchangeTableExpandedRowsProvider.select(
-      (e) => e.rows.lastOrNull?.level == widget.level,
-    ));
+    final expanded = ref.watch(exchangeTableExpandedRowsProvider).rows.isNotEmpty;
+    final layoutProperties = context.watchLayoutProperties;
 
-    return GestureDetector(
-      onScaleStart: isLastLevel ? _onScaleStart : null,
-      onScaleUpdate: isLastLevel ? _onScaleUpdate : null,
-      child: widget.child,
+    return Stack(
+      children: [
+        widget.child,
+        Padding(
+          padding: EdgeInsets.only(top: layoutProperties.rowHeight),
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onScaleStart: expanded ? _onScaleStart : null,
+            onScaleUpdate: expanded ? _onScaleUpdate : null,
+            onScaleEnd: expanded ? _onScaleEnd : null,
+            child: IgnorePointer(
+              child: SizedBox(
+                width: double.infinity,
+                height: layoutProperties.expandedRowHeight,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
