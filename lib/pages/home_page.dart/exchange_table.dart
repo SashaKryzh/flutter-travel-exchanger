@@ -8,6 +8,7 @@ import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 
 const exchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
 const expandAnimationCurve = Curves.easeInOut;
@@ -315,13 +316,11 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
   Widget build(BuildContext context) {
     _layoutProperties = context.watchLayoutProperties;
 
+    final levelState = ref.watch(exchangeTableExpandedRowsProvider
+        .select((e) => e.rows.firstWhereOrNull((e) => e.level == widget.level)));
+
     final index = widget.index;
-
-    final expandedIndex = ref
-        .watch(exchangeTableExpandedRowsProvider
-            .select((state) => state.rows.firstWhereOrNull((e) => e.level == widget.level)))
-        ?.index;
-
+    final expandedIndex = levelState?.index;
     final isExpandedState = index == expandedIndex;
     final isAfterExpanded = index - 1 == expandedIndex;
 
@@ -376,26 +375,86 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
             ),
           ),
         ),
-        SizeTransition(
-          sizeFactor: adjustedAnimation,
-          child: Column(
-            children: _renderChildren
-                ? (betweenValues(ref.read(exchangeValuesFromNotifierProvider), widget.value,
-                            widget.level) ??
-                        [])
-                    .mapIndexed(
-                    (i, e) {
-                      return _ExpandableRow(
-                        value: e,
-                        index: i,
-                        level: widget.level + 1,
-                      );
-                    },
-                  ).toList()
-                : [],
+        _ScaleDownDetector(
+          level: widget.level,
+          child: SizeTransition(
+            sizeFactor: adjustedAnimation,
+            child: Column(
+              children: _renderChildren
+                  ? (betweenValues(ref.read(exchangeValuesFromNotifierProvider), widget.value,
+                              widget.level) ??
+                          [])
+                      .mapIndexed(
+                      (i, e) {
+                        return _ExpandableRow(
+                          value: e,
+                          index: i,
+                          level: widget.level + 1,
+                        );
+                      },
+                    ).toList()
+                  : [],
+            ),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ScaleDownDetector extends ConsumerStatefulWidget {
+  const _ScaleDownDetector({
+    super.key,
+    required this.level,
+    required this.child,
+  });
+
+  final int level;
+  final Widget child;
+
+  @override
+  ConsumerState<_ScaleDownDetector> createState() => _ScaleDownDetectorState();
+}
+
+class _ScaleDownDetectorState extends ConsumerState<_ScaleDownDetector> {
+  var _activated = false;
+  var _invalid = false;
+
+  void _onScaleUpdate(ScaleUpdateDetails details) {
+    if (_invalid) {
+      return;
+    }
+
+    if (details.pointerCount > 2 || (1 - details.horizontalScale > 0.05)) {
+      _invalid = true;
+      return;
+    }
+
+    if (details.verticalScale < 0.9 && !_activated) {
+      _collapse();
+      _activated = true;
+    }
+  }
+
+  void _onScaleStart(ScaleStartDetails details) {
+    _activated = false;
+    _invalid = false;
+  }
+
+  void _collapse() {
+    ref.read(exchangeTableExpandedRowsProvider.notifier).collapse();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isLastLevel = ref.watch(exchangeTableExpandedRowsProvider.select(
+      (e) => e.rows.lastOrNull?.level == widget.level,
+    ));
+
+    return GestureDetector(
+      onScaleStart: isLastLevel ? _onScaleStart : null,
+      onScaleUpdate: isLastLevel ? _onScaleUpdate : null,
+      child: widget.child,
     );
   }
 }
