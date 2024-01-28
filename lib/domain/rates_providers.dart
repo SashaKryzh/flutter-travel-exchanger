@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/data/rates_repository.dart';
+import 'package:travel_exchanger/data/time_rate_repository.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rate.dart';
 import 'package:travel_exchanger/utils/logger.dart';
@@ -10,12 +11,29 @@ part 'rates_providers.g.dart';
 @riverpod
 RatesData rates(RatesRef ref) {
   ref.watch(ratesStreamProvider);
-  return ref.watch(ratesRepositoryProvider).ratesData;
+  ref.watch(timeRateDataStreamProvider);
+
+  final rates = ref.watch(ratesRepositoryProvider).ratesData;
+  final timeRate = ref.watch(timeRateRepositoryProvider).data?.toRate();
+
+  final newData = rates.copyWith(
+    rates: [
+      ...rates.rates,
+      if (timeRate != null) timeRate,
+    ],
+  );
+
+  return newData;
 }
 
 @riverpod
 Stream<RatesData> ratesStream(RatesStreamRef ref) {
   return ref.watch(ratesRepositoryProvider).ratesDataStream;
+}
+
+@riverpod
+Stream<TimeRateData?> timeRateDataStream(TimeRateDataStreamRef ref) {
+  return ref.watch(timeRateRepositoryProvider).timeRateDataStream;
 }
 
 @riverpod
@@ -36,12 +54,12 @@ double rate(RateRef ref, Currency fromm, Currency to) {
   }
 
   // We should't use custom rates for indirect conversions
-  rates.removeWhere((e) => e.source == RateSource.custom && e.base != Currency.time);
+  rates.removeWhere((e) => e.source == RateSource.custom && !e.from.isTime);
 
   try {
     if ([fromm, to].contains(Currency.time)) {
-      final timeRate = rates.firstWhere((e) => e.base == Currency.time);
-      final baseTimeTo = rates.fromTo(ratesData.base, timeRate.target);
+      final timeRate = rates.firstWhere((e) => e.from.isTime);
+      final baseTimeTo = rates.fromTo(ratesData.base, timeRate.to);
 
       if (fromm == Currency.time) {
         final baseTo = rates.fromTo(ratesData.base, to);
@@ -64,7 +82,7 @@ double rate(RateRef ref, Currency fromm, Currency to) {
 
 extension on List<Rate> {
   Rate? fromTo(Currency from, Currency to) {
-    return firstWhereOrNull((e) => e.base == from && e.target == to);
+    return firstWhereOrNull((e) => e.from == from && e.to == to);
   }
 
   List<Rate> sortedCustomFirst() {

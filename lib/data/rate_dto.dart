@@ -6,9 +6,21 @@ part 'rate_dto.freezed.dart';
 part 'rate_dto.g.dart';
 
 @freezed
+class GetRatesResponseDto with _$GetRatesResponseDto {
+  factory GetRatesResponseDto({
+    required bool success,
+    required String base,
+    required List<RateDto> rates,
+  }) = _GetRatesResponseDto;
+
+  factory GetRatesResponseDto.fromJson(Map<String, dynamic> json) =>
+      _$GetRatesResponseDtoFromJson(json);
+}
+
+@freezed
 class RateDto with _$RateDto {
   const RateDto._();
-  
+
   factory RateDto({
     required String base,
     required String target,
@@ -20,10 +32,9 @@ class RateDto with _$RateDto {
 
   Rate toDomain({RateSource source = RateSource.api}) {
     return Rate(
-      base: Currency(code: base),
-      target: Currency(code: target),
+      from: Currency(base),
+      to: Currency(target),
       rate: rate,
-      updatedAt: updatedAt,
       source: source,
     );
   }

@@ -7,11 +7,8 @@ part 'currencies_provider.g.dart';
 @riverpod
 List<Currency> currencies(CurrenciesRef ref) {
   final ratesData = ref.watch(ratesProvider);
-  final currencies = ratesData.rates.map((e) => e.target).toSet().toList();
-  if (!currencies.contains(Currency.time)) {
-    currencies.add(Currency.time);
-  }
-  return currencies;
+  final currencies = ratesData.rates.map((e) => e.to).toList()..add(Currency.time);
+  return currencies.toSet().toList();
 }
 
 extension CurrenciesX on List<Currency> {

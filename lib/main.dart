@@ -9,6 +9,7 @@ import 'package:travel_exchanger/config/env.dart';
 import 'package:travel_exchanger/data/exchange_between_repository.dart';
 import 'package:travel_exchanger/data/rates_repository.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
+import 'package:travel_exchanger/data/time_rate_repository.dart';
 import 'package:travel_exchanger/utils/provider_observer.dart';
 
 Future<void> main() async {
@@ -23,8 +24,11 @@ Future<void> main() async {
   final sharedPreferences = await SharedPreferences.getInstance();
 
   final ratesRepository = RatesRepository(Supabase.instance.client, sharedPreferences);
-  await ratesRepository.initRates();
+  await ratesRepository.init();
   unawaited(ratesRepository.updateRatesIfExpired());
+
+  final timeRateRepository = TimeRateRepository(sharedPreferences);
+  await timeRateRepository.init();
 
   final exchangeBetweenRepository = ExchangeBetweenRepository(sharedPreferences);
   await exchangeBetweenRepository.init();
@@ -37,6 +41,7 @@ Future<void> main() async {
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPreferences),
         ratesRepositoryProvider.overrideWithValue(ratesRepository),
+        timeRateRepositoryProvider.overrideWithValue(timeRateRepository),
         exchangeBetweenRepositoryProvider.overrideWithValue(exchangeBetweenRepository),
       ],
       child: const App(),

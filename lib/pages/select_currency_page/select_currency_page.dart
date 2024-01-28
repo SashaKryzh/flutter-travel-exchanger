@@ -3,10 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
-import 'package:travel_exchanger/data/rates_repository.dart';
-import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/data/time_rate_repository.dart';
 import 'package:travel_exchanger/domain/currencies_provider.dart';
 import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
@@ -193,21 +193,20 @@ class TimeListTile extends ConsumerWidget {
   final bool swapable;
   final EdgeInsets padding;
 
-  Currency get _currency => Currency.time;
+  Currency get time => Currency.time;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentRate =
-        ref.watch(ratesProvider).rates.where((e) => e.base == _currency).firstOrNull;
+    final currentRate = ref.watch(ratesProvider).rates.where((e) => e.from == time).firstOrNull;
 
     void onSettingsTap() async {
       var _text = '';
-      var _currency = currentRate?.target ?? Currency.pln;
+      var _currency = currentRate?.to ?? Currency.pln;
 
       Future<void> setTimeRate() async {
         final hourRate = double.tryParse(_text) ?? 0;
-        final secondRate = convertHourlyRateToSecondlyRate(hourRate);
-        await ref.read(ratesRepositoryProvider).setCustomRate(Currency.time, _currency, secondRate);
+        final secondlyRate = convertHourlyRateToSecondlyRate(hourRate);
+        await ref.read(timeRateRepositoryProvider).setTimeRate(_currency, secondlyRate);
         context.pop();
       }
 
@@ -231,7 +230,7 @@ class TimeListTile extends ConsumerWidget {
                     child: GestureDetector(
                       onTap: () => SearchCurrencyRoute(
                         SearchCurrencyRouteExtra(
-                          selectedCurrency: currentRate?.target,
+                          selectedCurrency: currentRate?.to,
                           onSelectCurrency: (e) => setState(() => _currency = e),
                         ),
                       ).push<void>(context),
@@ -265,7 +264,7 @@ class TimeListTile extends ConsumerWidget {
           children: [
             Expanded(
               child: Text(
-                '${_currency.code} (${convertSecondlyRateToHourly(currentRate?.rate ?? 0)} ${currentRate?.target.name(context)})',
+                '${time.code} (${convertSecondlyRateToHourly(currentRate?.rate ?? 0)} ${currentRate?.to.name(context)})',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),

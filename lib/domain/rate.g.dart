@@ -7,19 +7,17 @@ part of 'rate.dart';
 // **************************************************************************
 
 _$RateImpl _$$RateImplFromJson(Map<String, dynamic> json) => _$RateImpl(
-      base: Currency.fromJson(json['base'] as Map<String, dynamic>),
-      target: Currency.fromJson(json['target'] as Map<String, dynamic>),
+      from: Currency.fromJson(json['from'] as Map<String, dynamic>),
+      to: Currency.fromJson(json['to'] as Map<String, dynamic>),
       rate: (json['rate'] as num).toDouble(),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
       source: $enumDecode(_$RateSourceEnumMap, json['source']),
     );
 
 Map<String, dynamic> _$$RateImplToJson(_$RateImpl instance) =>
     <String, dynamic>{
-      'base': instance.base.toJson(),
-      'target': instance.target.toJson(),
+      'from': instance.from.toJson(),
+      'to': instance.to.toJson(),
       'rate': instance.rate,
-      'updatedAt': instance.updatedAt.toIso8601String(),
       'source': _$RateSourceEnumMap[instance.source]!,
     };
 

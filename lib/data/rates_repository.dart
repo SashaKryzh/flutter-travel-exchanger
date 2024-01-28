@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_exchanger/data/rates.dart';
+import 'package:travel_exchanger/data/rate_dto.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rate.dart';
 import 'package:travel_exchanger/utils/logger.dart';
@@ -36,16 +36,15 @@ class RatesRepository {
     _ratesDataController.add(value);
   }
 
-  Future<void> initRates() async {
+  Future<void> init() async {
     final stored = await _fetchStoredRates();
     if (stored != null && stored.rates.isNotEmpty) {
       _setRatesData = stored;
     } else {
-      _ratesData = RatesData(Currency.eur, []);
       final remoteRates = await _fetchRemoteRates();
-      final mergedRates = _mergeWithRemoteRates(remoteRates.rates);
-      _setRatesData = RatesData(remoteRates.base, mergedRates);
-      _storeRates(_ratesData);
+      _setRatesData = RatesData(remoteRates.base, remoteRates.rates);
+      await _storeRates(_ratesData);
+      await _storeRemoteTimestamp();
     }
 
     assert(_ratesData.rates.isNotEmpty, 'Remote base not initialized');
@@ -65,26 +64,22 @@ class RatesRepository {
       return;
     }
 
-    final mergedRates = _mergeWithRemoteRates(remoteRates.rates);
+    final mergedRates = (_ratesData.rates + remoteRates.rates).toSet().toList();
     _setRatesData = RatesData(remoteRates.base, mergedRates);
-    _storeRates(_ratesData);
+    await _storeRates(_ratesData);
+    await _storeRemoteTimestamp();
   }
 
   Future<void> setCustomRate(Currency from, Currency to, double rate) async {
     final newRate = Rate(
-      base: from,
-      target: to,
+      from: from,
+      to: to,
       rate: rate,
-      updatedAt: DateTime.now(),
       source: RateSource.custom,
     );
 
     await removeCustomRateBetween(from, to, notify: false);
     final rates = [..._ratesData.rates];
-    // TODO: remove
-    if (from == Currency.time) {
-      rates.removeWhere((e) => e.base == Currency.time);
-    }
     rates.add(newRate);
 
     _setRatesData = _ratesData.copyWith(rates: rates);
@@ -95,8 +90,7 @@ class RatesRepository {
     final rates = [..._ratesData.rates];
     rates.removeWhere(
       (e) =>
-          e.source == RateSource.custom &&
-          (e.base == a && e.target == b || e.base == b && e.target == a),
+          e.source == RateSource.custom && (e.from == a && e.to == b || e.from == b && e.to == a),
     );
 
     if (notify) {
@@ -116,7 +110,7 @@ class RatesRepository {
       final response = await _supabase.functions.invoke('rates', method: HttpMethod.get);
       final data = GetRatesResponseDto.fromJson(response.data as Map<String, dynamic>);
       ratesData = RatesData(
-        Currency(code: data.base),
+        Currency(data.base),
         data.rates.map((e) => e.toDomain()).toList(),
       );
     } on FunctionException catch (e) {
@@ -160,22 +154,17 @@ class RatesRepository {
     }
   }
 
-  List<Rate> _mergeWithRemoteRates(List<Rate> remoteRates) {
-    final customRates = _ratesData.rates.customRates;
-    final mergedRates = customRates + remoteRates;
-    return mergedRates.toSet().toList();
-  }
-
   Future<void> _storeRates(RatesData ratesData) async {
     logger.d('Storing rates locally');
 
     final json = ratesData.toJson();
     final ratesDataJsonString = await compute(jsonEncode, json);
 
-    await Future.wait([
-      _sharedPreferences.setString(_timestampKey, DateTime.now().toIso8601String()),
-      _sharedPreferences.setString(_ratesDataKey, ratesDataJsonString),
-    ]);
+    await _sharedPreferences.setString(_ratesDataKey, ratesDataJsonString);
+  }
+
+  Future<void> _storeRemoteTimestamp() async {
+    await _sharedPreferences.setString(_timestampKey, DateTime.now().toIso8601String());
   }
 
   Future<void> _clear() async {
@@ -186,7 +175,7 @@ class RatesRepository {
   }
 }
 
-extension on List<Rate> {
+extension ListRateX on List<Rate> {
   List<Rate> get remoteRates => where((e) => e.source == RateSource.api).toList();
   List<Rate> get customRates => where((e) => e.source == RateSource.custom).toList();
 }

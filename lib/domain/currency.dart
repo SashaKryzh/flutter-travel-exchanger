@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 sealed class Currency extends Equatable {
   const Currency._(this.code);
 
-  factory Currency({
-    required String code,
-  }) {
+  factory Currency(String code) {
     if (code == Currency.time.code) {
       return Currency.time;
     } else {
@@ -18,12 +16,15 @@ sealed class Currency extends Equatable {
 
   String name(BuildContext context);
 
+  bool get isMoney => this is MoneyCurrency;
+  bool get isTime => this is TimeCurrency;
+
   @override
   List<Object?> get props => [code];
 
   factory Currency.fromJson(Map<String, dynamic> json) {
     return Currency(
-      code: json['code'] as String,
+      json['code'] as String,
     );
   }
 
@@ -34,9 +35,9 @@ sealed class Currency extends Equatable {
   static const time = TimeCurrency();
 
   // For testing
-  static final uah = Currency(code: 'UAH');
-  static final pln = Currency(code: 'PLN');
-  static final eur = Currency(code: 'EUR');
+  static final uah = Currency('UAH');
+  static final pln = Currency('PLN');
+  static final eur = Currency('EUR');
 }
 
 class MoneyCurrency extends Currency {

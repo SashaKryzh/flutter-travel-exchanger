@@ -6,15 +6,28 @@ part 'rate.g.dart';
 
 @freezed
 class Rate with _$Rate {
+  const Rate._();
+
   factory Rate({
-    required Currency base,
-    required Currency target,
+    required Currency from,
+    required Currency to,
     required double rate,
-    required DateTime updatedAt,
     required RateSource source,
   }) = _Rate;
 
   factory Rate.fromJson(Map<String, dynamic> json) => _$RateFromJson(json);
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Rate) {
+      return from == other.from && to == other.to && source == other.source;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  int get hashCode => Object.hash(from, to, source);
 }
 
 enum RateSource {
@@ -22,6 +35,7 @@ enum RateSource {
   custom,
 }
 
+// TODO: add updated at
 @freezed
 class RatesData with _$RatesData {
   factory RatesData(
