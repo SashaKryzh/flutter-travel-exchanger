@@ -10,6 +10,7 @@ import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
+import 'package:travel_exchanger/widgets/debug_container.dart';
 
 const exchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
 const expandAnimationCurve = Curves.easeInOut;
@@ -101,12 +102,12 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
             builder: (context, constraints) => ProxyProvider0(
               create: (_) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
               update: (_, __) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: constraints,
-                  child: const PinchDetector(
-                    child: _ExchangeTableContent(),
+              child: PinchDetector(
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: constraints,
+                    child: const _ExchangeTableContent(),
                   ),
                 ),
               ),
@@ -411,14 +412,15 @@ class PinchDetector extends ConsumerStatefulWidget {
   final Widget child;
 
   @override
-  ConsumerState<PinchDetector> createState() => _ScaleDownDetectorState();
+  ConsumerState<PinchDetector> createState() => _PinchDetectorState();
 }
 
-class _ScaleDownDetectorState extends ConsumerState<PinchDetector> {
+class _PinchDetectorState extends ConsumerState<PinchDetector> {
   static const longPinchDuration = Duration(milliseconds: 500);
 
   var _activated = false;
-  var _invalid = false;
+  var _twoPointers = false;
+  var _expanded = false;
 
   Timer? _timer;
 
@@ -427,17 +429,30 @@ class _ScaleDownDetectorState extends ConsumerState<PinchDetector> {
     _timer = Timer(longPinchDuration, _collapseAll);
   }
 
+  void _onScaleStart(ScaleStartDetails details) {
+    // logger.d('ScaleStartDetails: $details');
+    _activated = false;
+    if (!_twoPointers && details.pointerCount == 2) {
+      setState(() {
+        _twoPointers = true;
+      });
+    }
+  }
+
   void _onScaleUpdate(ScaleUpdateDetails details) {
-    if (_invalid) {
-      return;
+    // logger.d('ScaleUpdateDetails: ${details.horizontalScale} - ${details.verticalScale}');
+
+    if (!_twoPointers && details.pointerCount == 2) {
+      setState(() {
+        _twoPointers = true;
+      });
+    } else if (_twoPointers && details.pointerCount != 2) {
+      setState(() {
+        _twoPointers = false;
+      });
     }
 
-    if (details.pointerCount > 2 || (1 - details.horizontalScale > 0.05)) {
-      _invalid = true;
-      return;
-    }
-
-    if (details.verticalScale < 0.9 && !_activated) {
+    if ((details.horizontalScale < 0.9 || details.verticalScale < 0.9) && !_activated) {
       _collapse();
       _activated = true;
     } else if (_activated) {
@@ -445,26 +460,18 @@ class _ScaleDownDetectorState extends ConsumerState<PinchDetector> {
     }
   }
 
-  void _onScaleStart(ScaleStartDetails details) {
-    _activated = false;
-    _invalid = false;
-  }
-
   void _onScaleEnd(ScaleEndDetails details) {
     _timer?.cancel();
-  }
-
-  void _collapse() {
-    ref.read(exchangeTableExpandedRowsProvider.notifier).collapse();
-  }
-
-  void _collapseAll() {
-    ref.read(exchangeTableExpandedRowsProvider.notifier).collapseAll();
+    if (_twoPointers) {
+      setState(() {
+        _twoPointers = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final expanded = ref.watch(exchangeTableExpandedRowsProvider).rows.isNotEmpty;
+    _expanded = ref.watch(exchangeTableExpandedRowsProvider).rows.isNotEmpty;
     final layoutProperties = context.watchLayoutProperties;
 
     return Stack(
@@ -472,21 +479,38 @@ class _ScaleDownDetectorState extends ConsumerState<PinchDetector> {
         widget.child,
         Padding(
           padding: EdgeInsets.only(top: layoutProperties.rowHeight),
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onScaleStart: expanded ? _onScaleStart : null,
-            onScaleUpdate: expanded ? _onScaleUpdate : null,
-            onScaleEnd: expanded ? _onScaleEnd : null,
-            child: IgnorePointer(
-              child: SizedBox(
-                width: double.infinity,
-                height: layoutProperties.expandedRowHeight,
+          child: Listener(
+            // onPointerDown: (e) => e.,
+            child: GestureDetector(
+              behavior: _twoPointers ? HitTestBehavior.opaque : HitTestBehavior.translucent,
+              onScaleStart: _onScaleStart,
+              onScaleUpdate: _onScaleUpdate,
+              onScaleEnd: _onScaleEnd,
+              child: IgnorePointer(
+                child: DebugContainer(
+                  child: SizedBox(
+                    width: double.infinity,
+                    height: layoutProperties.expandedRowHeight,
+                  ),
+                ),
               ),
             ),
           ),
         ),
       ],
     );
+  }
+
+  void _collapse() {
+    if (_expanded) {
+      ref.read(exchangeTableExpandedRowsProvider.notifier).collapse();
+    }
+  }
+
+  void _collapseAll() {
+    if (_expanded) {
+      ref.read(exchangeTableExpandedRowsProvider.notifier).collapseAll();
+    }
   }
 }
 
