@@ -487,11 +487,9 @@ class _PinchDetectorState extends ConsumerState<PinchDetector> {
               onScaleUpdate: _onScaleUpdate,
               onScaleEnd: _onScaleEnd,
               child: IgnorePointer(
-                child: DebugContainer(
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: layoutProperties.expandedRowHeight,
-                  ),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: layoutProperties.expandedRowHeight,
                 ),
               ),
             ),

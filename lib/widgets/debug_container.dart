@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class DebugContainer extends StatelessWidget {
@@ -12,6 +13,10 @@ class DebugContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!kDebugMode) {
+      return child;
+    }
+
     return Container(
       decoration: BoxDecoration(
         border: showBorder ? Border.all(color: Colors.red) : null,
