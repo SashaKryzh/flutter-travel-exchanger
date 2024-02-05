@@ -10,7 +10,6 @@ import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
-import 'package:travel_exchanger/widgets/debug_container.dart';
 
 const exchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
 const expandAnimationCurve = Curves.easeInOut;
@@ -102,13 +101,11 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
             builder: (context, constraints) => ProxyProvider0(
               create: (_) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
               update: (_, __) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
-              child: PinchDetector(
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: ConstrainedBox(
-                    constraints: constraints,
-                    child: const _ExchangeTableContent(),
-                  ),
+              child: SingleChildScrollView(
+                physics: const  AlwaysScrollableScrollPhysics(),
+                child: ConstrainedBox(
+                  constraints: constraints,
+                  child: const _ExchangeTableContent(),
                 ),
               ),
             ),
@@ -400,115 +397,6 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
         ),
       ],
     );
-  }
-}
-
-class PinchDetector extends ConsumerStatefulWidget {
-  const PinchDetector({
-    super.key,
-    required this.child,
-  });
-
-  final Widget child;
-
-  @override
-  ConsumerState<PinchDetector> createState() => _PinchDetectorState();
-}
-
-class _PinchDetectorState extends ConsumerState<PinchDetector> {
-  static const longPinchDuration = Duration(milliseconds: 500);
-
-  var _activated = false;
-  var _twoPointers = false;
-  var _expanded = false;
-
-  Timer? _timer;
-
-  void _restartTimer() {
-    _timer?.cancel();
-    _timer = Timer(longPinchDuration, _collapseAll);
-  }
-
-  void _onScaleStart(ScaleStartDetails details) {
-    // logger.d('ScaleStartDetails: $details');
-    _activated = false;
-    if (!_twoPointers && details.pointerCount == 2) {
-      setState(() {
-        _twoPointers = true;
-      });
-    }
-  }
-
-  void _onScaleUpdate(ScaleUpdateDetails details) {
-    // logger.d('ScaleUpdateDetails: ${details.horizontalScale} - ${details.verticalScale}');
-
-    if (!_twoPointers && details.pointerCount == 2) {
-      setState(() {
-        _twoPointers = true;
-      });
-    } else if (_twoPointers && details.pointerCount != 2) {
-      setState(() {
-        _twoPointers = false;
-      });
-    }
-
-    if ((details.horizontalScale < 0.9 || details.verticalScale < 0.9) && !_activated) {
-      _collapse();
-      _activated = true;
-    } else if (_activated) {
-      _restartTimer();
-    }
-  }
-
-  void _onScaleEnd(ScaleEndDetails details) {
-    _timer?.cancel();
-    if (_twoPointers) {
-      setState(() {
-        _twoPointers = false;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    _expanded = ref.watch(exchangeTableExpandedRowsProvider).rows.isNotEmpty;
-    final layoutProperties = context.watchLayoutProperties;
-
-    return Stack(
-      children: [
-        widget.child,
-        Padding(
-          padding: EdgeInsets.only(top: layoutProperties.rowHeight),
-          child: Listener(
-            // onPointerDown: (e) => e.,
-            child: GestureDetector(
-              behavior: _twoPointers ? HitTestBehavior.opaque : HitTestBehavior.translucent,
-              onScaleStart: _onScaleStart,
-              onScaleUpdate: _onScaleUpdate,
-              onScaleEnd: _onScaleEnd,
-              child: IgnorePointer(
-                child: SizedBox(
-                  width: double.infinity,
-                  height: layoutProperties.expandedRowHeight,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _collapse() {
-    if (_expanded) {
-      ref.read(exchangeTableExpandedRowsProvider.notifier).collapse();
-    }
-  }
-
-  void _collapseAll() {
-    if (_expanded) {
-      ref.read(exchangeTableExpandedRowsProvider.notifier).collapseAll();
-    }
   }
 }
 
