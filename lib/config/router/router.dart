@@ -6,6 +6,7 @@ import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_page.dar
 import 'package:travel_exchanger/pages/home_page.dart/home_page.dart';
 import 'package:travel_exchanger/pages/select_currency_page/search_currency/search_currency_page.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_page.dart';
+import 'package:travel_exchanger/pages/select_currency_page/select_currency_page_v2.dart';
 import 'package:travel_exchanger/pages/settings_page/settings_page.dart';
 
 part 'router.g.dart';
@@ -20,6 +21,7 @@ final _router = GoRouter(routes: $appRoutes);
   routes: [
     TypedGoRoute<SettingsRoute>(path: 'settings'),
     TypedGoRoute<SelectCurrencyRoute>(path: 'select-currency/:currencyCode'),
+    TypedGoRoute<SelectCurrencyRouteV2>(path: 'select-currency-v2/:currencyCode'),
     TypedGoRoute<CustomAmountRoute>(path: 'custom-amount/:currencyCode'),
   ],
 )
@@ -42,6 +44,19 @@ class SelectCurrencyRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return SelectCurrencyPage(currencyCode: currencyCode);
+  }
+}
+
+class SelectCurrencyRouteV2 extends GoRouteData {
+  const SelectCurrencyRouteV2({
+    required this.currencyCode,
+  });
+
+  final String currencyCode;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return SelectCurrencyPageV2(currencyCode: currencyCode);
   }
 }
 

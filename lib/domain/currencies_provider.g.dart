@@ -8,7 +8,9 @@ part of 'currencies_provider.dart';
 
 String _$currenciesHash() => r'9c73b5bdfa7c418200e5c2a814c953000cee26e6';
 
-/// See also [currencies].
+/// Provides a list of all currencies.
+///
+/// Copied from [currencies].
 @ProviderFor(currencies)
 final currenciesProvider = AutoDisposeProvider<List<Currency>>.internal(
   currencies,

@@ -62,7 +62,7 @@ class _CurrencyButtons extends ConsumerWidget {
     }
 
     void onLongTap(Currency currency) {
-      SelectCurrencyRoute(currencyCode: currency.code).go(context);
+      SelectCurrencyRouteV2(currencyCode: currency.code).go(context);
     }
 
     final between = ref.watch(exchangeBetweenProvider);

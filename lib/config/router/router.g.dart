@@ -24,6 +24,10 @@ RouteBase get $homeRoute => GoRouteData.$route(
           factory: $SelectCurrencyRouteExtension._fromState,
         ),
         GoRouteData.$route(
+          path: 'select-currency-v2/:currencyCode',
+          factory: $SelectCurrencyRouteV2Extension._fromState,
+        ),
+        GoRouteData.$route(
           path: 'custom-amount/:currencyCode',
           factory: $CustomAmountRouteExtension._fromState,
         ),
@@ -72,6 +76,26 @@ extension $SelectCurrencyRouteExtension on SelectCurrencyRoute {
 
   String get location => GoRouteData.$location(
         '/select-currency/${Uri.encodeComponent(currencyCode)}',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $SelectCurrencyRouteV2Extension on SelectCurrencyRouteV2 {
+  static SelectCurrencyRouteV2 _fromState(GoRouterState state) =>
+      SelectCurrencyRouteV2(
+        currencyCode: state.pathParameters['currencyCode']!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/select-currency-v2/${Uri.encodeComponent(currencyCode)}',
       );
 
   void go(BuildContext context) => context.go(location);
