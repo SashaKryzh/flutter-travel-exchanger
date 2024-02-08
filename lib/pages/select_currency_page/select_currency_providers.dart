@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/domain/currencies_provider.dart';
 import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 
 part 'select_currency_providers.g.dart';
 part 'select_currency_providers.freezed.dart';
@@ -38,6 +39,12 @@ List<Currency> selectCurrencyAllCurrencies(SelectCurrencyAllCurrenciesRef ref) {
 class SelectCurrencyNotifier extends _$SelectCurrencyNotifier {
   @override
   SelectCurrencyState build(Currency selectingFor) {
+    ref.listen(exchangeBetweenProvider, (prev, next) {
+      if (!next.contains(state.selectingFor)) {
+        state = state.copyWith(selectingFor: next.to1);
+      }
+    });
+
     return SelectCurrencyState(selectingFor: selectingFor);
   }
 

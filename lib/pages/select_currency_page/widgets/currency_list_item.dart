@@ -87,10 +87,26 @@ class SelectedCurrencyListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final activeHighlightColor = active ? context.colorScheme.primary : null;
+
     return _Row(
-      padding: padding,
-      code: Text(currency.code),
-      title: Text(currency.name(context)),
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 8,
+      ),
+      code: Text(
+        currency.code,
+        style: TextStyle(
+          color: activeHighlightColor,
+        ),
+      ),
+      title: Text(
+        currency.name(context),
+        style: TextStyle(
+          color: activeHighlightColor,
+        ),
+      ),
       trailing: Row(
         children: [
           Text(
