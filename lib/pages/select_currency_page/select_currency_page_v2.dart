@@ -11,6 +11,7 @@ import 'package:travel_exchanger/pages/select_currency_page/select_currency_prov
 import 'package:travel_exchanger/pages/select_currency_page/widgets/currency_list_item.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/bottom_safe_area.dart';
+import 'package:travel_exchanger/widgets/empty_widget.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
@@ -202,6 +203,10 @@ class _RecentSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectingFor = ref.watch(_selectCurrencyNotifierProvider).selectingFor;
     final recentlyUsed = ref.watch(filteredRecentlyUsedProvider(limit: 3));
+
+    if (recentlyUsed.isEmpty) {
+      return const EmptyWidget();
+    }
 
     return Column(
       children: [
