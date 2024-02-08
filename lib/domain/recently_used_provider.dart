@@ -11,16 +11,22 @@ Stream<List<Currency>> recentlyUsedStream(RecentlyUsedStreamRef ref) {
 }
 
 @riverpod
-List<Currency> recentlyUsed(RecentlyUsedRef ref, {int limit = 5}) {
-  assert(limit > 0, 'limit should be greater than 0');
-
+List<Currency> recentlyUsed(RecentlyUsedRef ref) {
   // Subscribe to changes
   ref.watch(recentlyUsedStreamProvider);
+  return ref.watch(recentlyUsedCurrencyRepositoryProvider).recentlyUsed;
+}
 
-  final recentlyUsed = ref.watch(recentlyUsedCurrencyRepositoryProvider).recentlyUsed;
+/// Returns recently used currencies that are not in [exchangeBetweenProvider]
+@riverpod
+List<Currency> filteredRecentlyUsed(FilteredRecentlyUsedRef ref, {int? limit}) {
+  assert(limit == null || limit >= 0, 'limit should be greater than 0');
+
+  final recentlyUsed = ref.watch(recentlyUsedProvider);
   final between = ref.watch(exchangeBetweenProvider);
 
-  final filtered = recentlyUsed.where((e) => !between.contains(e)).take(limit).toList();
+  var filtered = recentlyUsed.where((e) => !between.contains(e));
+  if (limit != null) filtered = filtered.take(limit);
 
-  return filtered;
+  return filtered.toList();
 }

@@ -130,35 +130,31 @@ class _Row extends HookWidget {
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: onTap,
-        child: FocusableActionDetector(
-          onFocusChange: (v) => print(v),
-          onShowFocusHighlight: (v) => print(v),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 100),
-            color: tapped.value ? Colors.black.withOpacity(0.1) : Colors.transparent,
-            padding: padding,
-            child: Row(
-              children: [
-                DefaultTextStyle.merge(
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: context.defaultTextStyle.style.color,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  child: MinSizeWidget(
-                    alignment: Alignment.centerLeft,
-                    minSizeWidget: const Text('AAAA'),
-                    child: code,
-                  ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
+          color: tapped.value ? Colors.black.withOpacity(0.1) : Colors.transparent,
+          padding: padding,
+          child: Row(
+            children: [
+              DefaultTextStyle.merge(
+                style: context.textTheme.bodyLarge?.copyWith(
+                  color: context.defaultTextStyle.style.color,
+                  fontWeight: FontWeight.bold,
                 ),
-                DefaultTextStyle.merge(
-                  style: context.textTheme.bodyLarge?.copyWith(
-                    color: context.defaultTextStyle.style.color,
-                  ),
-                  child: title,
-                ).expanded(),
-                if (trailing != null) trailing!,
-              ],
-            ),
+                child: MinSizeWidget(
+                  alignment: Alignment.centerLeft,
+                  minSizeWidget: const Text('AAAA'),
+                  child: code,
+                ),
+              ),
+              DefaultTextStyle.merge(
+                style: context.textTheme.bodyLarge?.copyWith(
+                  color: context.defaultTextStyle.style.color,
+                ),
+                child: title,
+              ).expanded(),
+              if (trailing != null) trailing!,
+            ],
           ),
         ),
       ),

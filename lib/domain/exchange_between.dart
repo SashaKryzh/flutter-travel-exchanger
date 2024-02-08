@@ -1,8 +1,11 @@
+import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/data/exchange_between_repository.dart';
 import 'package:travel_exchanger/data/recently_used_currency_repository.dart';
 import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/domain/popular_provider.dart';
+import 'package:travel_exchanger/domain/recently_used_provider.dart';
 
 part 'exchange_between.freezed.dart';
 part 'exchange_between.g.dart';
@@ -34,8 +37,14 @@ class ExchangeBetween extends _$ExchangeBetween {
   }
 
   void showThird([Currency? currency]) {
-    // TODO: handle if to1 or from is eur.
-    currency ??= state.to2 ?? Currency.eur;
+    currency ??= state.to2;
+
+    if (currency == null || state.contains(currency)) {
+      currency = ref.read(recentlyUsedProvider).firstWhereOrNull((e) => !state.contains(e));
+      currency ??= ref.read(popularCurrenciesProvider).firstWhereOrNull((e) => !state.contains(e));
+      currency ??= Currency.eur;
+    }
+
     state = state.copyWith(to2_: currency, showTo2: true);
   }
 

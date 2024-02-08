@@ -23,7 +23,22 @@ final recentlyUsedStreamProvider =
 );
 
 typedef RecentlyUsedStreamRef = AutoDisposeStreamProviderRef<List<Currency>>;
-String _$recentlyUsedHash() => r'd17b61a12c643ca7ea507da3cd1b2c457504892d';
+String _$recentlyUsedHash() => r'4bc614eaf1c77e645d9d7da59a9095ece9565be7';
+
+/// See also [recentlyUsed].
+@ProviderFor(recentlyUsed)
+final recentlyUsedProvider = AutoDisposeProvider<List<Currency>>.internal(
+  recentlyUsed,
+  name: r'recentlyUsedProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$recentlyUsedHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef RecentlyUsedRef = AutoDisposeProviderRef<List<Currency>>;
+String _$filteredRecentlyUsedHash() =>
+    r'10e618a176fa38fc2dc75969bf711455caa9c3cb';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -46,27 +61,35 @@ class _SystemHash {
   }
 }
 
-/// See also [recentlyUsed].
-@ProviderFor(recentlyUsed)
-const recentlyUsedProvider = RecentlyUsedFamily();
+/// Returns recently used currencies that are not in [exchangeBetweenProvider]
+///
+/// Copied from [filteredRecentlyUsed].
+@ProviderFor(filteredRecentlyUsed)
+const filteredRecentlyUsedProvider = FilteredRecentlyUsedFamily();
 
-/// See also [recentlyUsed].
-class RecentlyUsedFamily extends Family<List<Currency>> {
-  /// See also [recentlyUsed].
-  const RecentlyUsedFamily();
+/// Returns recently used currencies that are not in [exchangeBetweenProvider]
+///
+/// Copied from [filteredRecentlyUsed].
+class FilteredRecentlyUsedFamily extends Family<List<Currency>> {
+  /// Returns recently used currencies that are not in [exchangeBetweenProvider]
+  ///
+  /// Copied from [filteredRecentlyUsed].
+  const FilteredRecentlyUsedFamily();
 
-  /// See also [recentlyUsed].
-  RecentlyUsedProvider call({
-    int limit = 5,
+  /// Returns recently used currencies that are not in [exchangeBetweenProvider]
+  ///
+  /// Copied from [filteredRecentlyUsed].
+  FilteredRecentlyUsedProvider call({
+    int? limit,
   }) {
-    return RecentlyUsedProvider(
+    return FilteredRecentlyUsedProvider(
       limit: limit,
     );
   }
 
   @override
-  RecentlyUsedProvider getProviderOverride(
-    covariant RecentlyUsedProvider provider,
+  FilteredRecentlyUsedProvider getProviderOverride(
+    covariant FilteredRecentlyUsedProvider provider,
   ) {
     return call(
       limit: provider.limit,
@@ -85,32 +108,36 @@ class RecentlyUsedFamily extends Family<List<Currency>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'recentlyUsedProvider';
+  String? get name => r'filteredRecentlyUsedProvider';
 }
 
-/// See also [recentlyUsed].
-class RecentlyUsedProvider extends AutoDisposeProvider<List<Currency>> {
-  /// See also [recentlyUsed].
-  RecentlyUsedProvider({
-    int limit = 5,
+/// Returns recently used currencies that are not in [exchangeBetweenProvider]
+///
+/// Copied from [filteredRecentlyUsed].
+class FilteredRecentlyUsedProvider extends AutoDisposeProvider<List<Currency>> {
+  /// Returns recently used currencies that are not in [exchangeBetweenProvider]
+  ///
+  /// Copied from [filteredRecentlyUsed].
+  FilteredRecentlyUsedProvider({
+    int? limit,
   }) : this._internal(
-          (ref) => recentlyUsed(
-            ref as RecentlyUsedRef,
+          (ref) => filteredRecentlyUsed(
+            ref as FilteredRecentlyUsedRef,
             limit: limit,
           ),
-          from: recentlyUsedProvider,
-          name: r'recentlyUsedProvider',
+          from: filteredRecentlyUsedProvider,
+          name: r'filteredRecentlyUsedProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$recentlyUsedHash,
-          dependencies: RecentlyUsedFamily._dependencies,
+                  : _$filteredRecentlyUsedHash,
+          dependencies: FilteredRecentlyUsedFamily._dependencies,
           allTransitiveDependencies:
-              RecentlyUsedFamily._allTransitiveDependencies,
+              FilteredRecentlyUsedFamily._allTransitiveDependencies,
           limit: limit,
         );
 
-  RecentlyUsedProvider._internal(
+  FilteredRecentlyUsedProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -120,16 +147,16 @@ class RecentlyUsedProvider extends AutoDisposeProvider<List<Currency>> {
     required this.limit,
   }) : super.internal();
 
-  final int limit;
+  final int? limit;
 
   @override
   Override overrideWith(
-    List<Currency> Function(RecentlyUsedRef provider) create,
+    List<Currency> Function(FilteredRecentlyUsedRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: RecentlyUsedProvider._internal(
-        (ref) => create(ref as RecentlyUsedRef),
+      override: FilteredRecentlyUsedProvider._internal(
+        (ref) => create(ref as FilteredRecentlyUsedRef),
         from: from,
         name: null,
         dependencies: null,
@@ -142,12 +169,12 @@ class RecentlyUsedProvider extends AutoDisposeProvider<List<Currency>> {
 
   @override
   AutoDisposeProviderElement<List<Currency>> createElement() {
-    return _RecentlyUsedProviderElement(this);
+    return _FilteredRecentlyUsedProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is RecentlyUsedProvider && other.limit == limit;
+    return other is FilteredRecentlyUsedProvider && other.limit == limit;
   }
 
   @override
@@ -159,17 +186,18 @@ class RecentlyUsedProvider extends AutoDisposeProvider<List<Currency>> {
   }
 }
 
-mixin RecentlyUsedRef on AutoDisposeProviderRef<List<Currency>> {
+mixin FilteredRecentlyUsedRef on AutoDisposeProviderRef<List<Currency>> {
   /// The parameter `limit` of this provider.
-  int get limit;
+  int? get limit;
 }
 
-class _RecentlyUsedProviderElement
-    extends AutoDisposeProviderElement<List<Currency>> with RecentlyUsedRef {
-  _RecentlyUsedProviderElement(super.provider);
+class _FilteredRecentlyUsedProviderElement
+    extends AutoDisposeProviderElement<List<Currency>>
+    with FilteredRecentlyUsedRef {
+  _FilteredRecentlyUsedProviderElement(super.provider);
 
   @override
-  int get limit => (origin as RecentlyUsedProvider).limit;
+  int? get limit => (origin as FilteredRecentlyUsedProvider).limit;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

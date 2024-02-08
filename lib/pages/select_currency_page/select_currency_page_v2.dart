@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/domain/popular_provider.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/domain/recently_used_provider.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
@@ -120,7 +121,7 @@ class _RecentSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final recentlyUsed = ref.watch(recentlyUsedProvider());
+    final recentlyUsed = ref.watch(filteredRecentlyUsedProvider(limit: 5));
 
     return Column(
       children: [
@@ -147,16 +148,9 @@ class _RecentSection extends ConsumerWidget {
 class _PopularSection extends ConsumerWidget {
   const _PopularSection();
 
-  static final _popularCurrencies = [
-    Currency('EUR'),
-    Currency('USD'),
-    Currency('GBP'),
-    Currency('JPY'),
-    Currency('CNY'),
-  ];
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final popularCurrencies = ref.watch(popularCurrenciesProvider);
     final between = ref.watch(exchangeBetweenProvider);
 
     return Column(
@@ -169,7 +163,7 @@ class _PopularSection extends ConsumerWidget {
         const SizedSpacer(16),
         const Text('Your Time'),
         const SizedSpacer(12),
-        for (final currency in _popularCurrencies)
+        for (final currency in popularCurrencies)
           () {
             final isSelected = _selectingFor == currency;
             final swapableWith =

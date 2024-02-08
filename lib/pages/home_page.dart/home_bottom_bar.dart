@@ -132,7 +132,7 @@ class _CurrencyButton extends StatelessWidget {
 }
 
 class _SwapButtons extends ConsumerWidget {
-  const _SwapButtons({super.key});
+  const _SwapButtons();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
