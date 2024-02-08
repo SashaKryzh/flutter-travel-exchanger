@@ -74,7 +74,7 @@ class CustomAmountConverter extends _$CustomAmountConverter {
       }
 
       final rate = ref.read(rateProvider(from1, to));
-      return amount1 * rate;
+      return amount1 * rate.rate;
     }
 
     final third = between.to2;

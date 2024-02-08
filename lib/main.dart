@@ -8,6 +8,7 @@ import 'package:travel_exchanger/app.dart';
 import 'package:travel_exchanger/config/env.dart';
 import 'package:travel_exchanger/data/exchange_between_repository.dart';
 import 'package:travel_exchanger/data/rates_repository.dart';
+import 'package:travel_exchanger/data/recently_used_currency_repository.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
 import 'package:travel_exchanger/data/time_rate_repository.dart';
 import 'package:travel_exchanger/utils/provider_observer.dart';
@@ -33,6 +34,9 @@ Future<void> main() async {
   final exchangeBetweenRepository = ExchangeBetweenRepository(sharedPreferences);
   await exchangeBetweenRepository.init();
 
+  final recentlyUsedCurrencyRepository = RecentlyUsedCurrencyRepository(sharedPreferences);
+  await recentlyUsedCurrencyRepository.init();
+
   runApp(
     ProviderScope(
       observers: const [
@@ -43,6 +47,7 @@ Future<void> main() async {
         ratesRepositoryProvider.overrideWithValue(ratesRepository),
         timeRateRepositoryProvider.overrideWithValue(timeRateRepository),
         exchangeBetweenRepositoryProvider.overrideWithValue(exchangeBetweenRepository),
+        recentlyUsedCurrencyRepositoryProvider.overrideWithValue(recentlyUsedCurrencyRepository),
       ],
       child: const App(),
     ),

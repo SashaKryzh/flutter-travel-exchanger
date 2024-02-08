@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/min_size_widget.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
-class RegularCurrencyListTile extends StatelessWidget {
-  const RegularCurrencyListTile({
+class RegularCurrencyListItem extends StatelessWidget {
+  const RegularCurrencyListItem({
     super.key,
     required this.currency,
     this.swapableWith,
@@ -63,6 +64,42 @@ class RegularCurrencyListTile extends StatelessWidget {
           ),
           onTap: onTap,
         ),
+      ),
+    );
+  }
+}
+
+class SelectedCurrencyListItem extends StatelessWidget {
+  const SelectedCurrencyListItem({
+    super.key,
+    required this.currency,
+    required this.active,
+    required this.rate,
+    required this.padding,
+    required this.onTap,
+  });
+
+  final Currency currency;
+  final bool active;
+  final RateForData rate;
+  final EdgeInsets padding;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Row(
+      padding: padding,
+      code: Text(currency.code),
+      title: Text(currency.name(context)),
+      trailing: Row(
+        children: [
+          Text(
+            rate.rate.toStringAsFixed(2),
+            style: context.textTheme.bodyLarge?.copyWith(
+              color: rate.source.isApi ? context.theme.disabledColor : Colors.orange[200],
+            ),
+          ),
+        ],
       ),
     );
   }

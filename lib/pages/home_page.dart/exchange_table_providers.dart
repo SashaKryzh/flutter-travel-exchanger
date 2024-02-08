@@ -180,8 +180,8 @@ class ExchangeTableExpandedRows extends _$ExchangeTableExpandedRows {
   final rate1 = ref.watch(rateProvider(from, to1));
   final rate2 = to2 != null ? ref.watch(rateProvider(from, to2)) : null;
 
-  final converted1 = value * rate1;
-  final converted2 = rate2 != null ? value * rate2 : null;
+  final converted1 = value * rate1.rate;
+  final converted2 = rate2 != null ? value * rate2.rate : null;
 
   return (
     Value(converted1, to1),

@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:equatable/equatable.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/data/rates_repository.dart';
 import 'package:travel_exchanger/data/time_rate_repository.dart';
@@ -37,20 +38,20 @@ Stream<TimeRateData?> timeRateDataStream(TimeRateDataStreamRef ref) {
 }
 
 @riverpod
-double rate(RateRef ref, Currency fromm, Currency to) {
+RateForData rate(RateRef ref, Currency fromm, Currency to) {
   final ratesData = ref.watch(ratesProvider);
   final rates = ratesData.rates.sortedCustomFirst();
 
   // from -> to
   final fromTo = rates.fromTo(fromm, to);
   if (fromTo != null) {
-    return fromTo.rate;
+    return RateForData(fromTo.rate, fromTo.source);
   }
 
   // to -> from
   final toFrom = rates.fromTo(to, fromm);
   if (toFrom != null) {
-    return 1 / toFrom.rate;
+    return RateForData(1 / toFrom.rate, toFrom.source);
   }
 
   // We should't use custom rates for indirect conversions
@@ -63,20 +64,26 @@ double rate(RateRef ref, Currency fromm, Currency to) {
 
       if (fromm == Currency.time) {
         final baseTo = rates.fromTo(ratesData.base, to);
-        return timeRate.rate * 1 / baseTimeTo!.rate * baseTo!.rate;
+        return RateForData(
+          timeRate.rate * 1 / baseTimeTo!.rate * baseTo!.rate,
+          RateSource.custom,
+        );
       } else {
         final baseFrom = rates.fromTo(ratesData.base, fromm);
-        return 1 / baseFrom!.rate * baseTimeTo!.rate / timeRate.rate;
+        return RateForData(
+          1 / baseFrom!.rate * baseTimeTo!.rate / timeRate.rate,
+          RateSource.custom,
+        );
       }
     } else {
       final baseFrom = rates.fromTo(ratesData.base, fromm);
       final baseTo = rates.fromTo(ratesData.base, to);
 
-      return 1 / baseFrom!.rate * baseTo!.rate;
+      return RateForData(1 / baseFrom!.rate * baseTo!.rate, RateSource.api);
     }
   } catch (e, stackTrace) {
     logger.e('Rate not found for $fromm -> $to', error: e, stackTrace: stackTrace);
-    return 0;
+    return const RateForData(0, RateSource.api);
   }
 }
 
@@ -92,4 +99,14 @@ extension on List<Rate> {
           _ => 0,
         });
   }
+}
+
+class RateForData extends Equatable {
+  const RateForData(this.rate, this.source);
+
+  final double rate;
+  final RateSource source;
+
+  @override
+  List<Object?> get props => [rate, source];
 }

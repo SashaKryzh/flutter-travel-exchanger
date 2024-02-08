@@ -51,7 +51,7 @@ final timeRateDataStreamProvider =
 );
 
 typedef TimeRateDataStreamRef = AutoDisposeStreamProviderRef<TimeRateData?>;
-String _$rateHash() => r'62fdc93e0ce35d6e762659259482447951c04172';
+String _$rateHash() => r'9e2507a0abb481adfe8c0a45a8906f5957d7ab9d';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -79,7 +79,7 @@ class _SystemHash {
 const rateProvider = RateFamily();
 
 /// See also [rate].
-class RateFamily extends Family<double> {
+class RateFamily extends Family<RateForData> {
   /// See also [rate].
   const RateFamily();
 
@@ -120,7 +120,7 @@ class RateFamily extends Family<double> {
 }
 
 /// See also [rate].
-class RateProvider extends AutoDisposeProvider<double> {
+class RateProvider extends AutoDisposeProvider<RateForData> {
   /// See also [rate].
   RateProvider(
     Currency fromm,
@@ -157,7 +157,7 @@ class RateProvider extends AutoDisposeProvider<double> {
 
   @override
   Override overrideWith(
-    double Function(RateRef provider) create,
+    RateForData Function(RateRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -175,7 +175,7 @@ class RateProvider extends AutoDisposeProvider<double> {
   }
 
   @override
-  AutoDisposeProviderElement<double> createElement() {
+  AutoDisposeProviderElement<RateForData> createElement() {
     return _RateProviderElement(this);
   }
 
@@ -194,7 +194,7 @@ class RateProvider extends AutoDisposeProvider<double> {
   }
 }
 
-mixin RateRef on AutoDisposeProviderRef<double> {
+mixin RateRef on AutoDisposeProviderRef<RateForData> {
   /// The parameter `fromm` of this provider.
   Currency get fromm;
 
@@ -202,7 +202,7 @@ mixin RateRef on AutoDisposeProviderRef<double> {
   Currency get to;
 }
 
-class _RateProviderElement extends AutoDisposeProviderElement<double>
+class _RateProviderElement extends AutoDisposeProviderElement<RateForData>
     with RateRef {
   _RateProviderElement(super.provider);
 

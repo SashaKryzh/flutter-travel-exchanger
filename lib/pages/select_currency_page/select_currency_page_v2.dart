@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/domain/rates_providers.dart';
+import 'package:travel_exchanger/domain/recently_used_provider.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/currency_list_item.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
@@ -70,11 +72,15 @@ class _AppBar extends ConsumerWidget {
   }
 }
 
-class _SelectedSection extends StatelessWidget {
+class _SelectedSection extends ConsumerWidget {
   const _SelectedSection();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final between = ref.watch(exchangeBetweenProvider);
+
+    final to2 = between.to2;
+
     return Column(
       children: [
         const _SectionHeading(
@@ -82,17 +88,40 @@ class _SelectedSection extends StatelessWidget {
           title: Text('Selected'),
           trailing: Text('Rate'),
         ),
-        Container(),
+        SelectedCurrencyListItem(
+          currency: between.from,
+          active: between.from == _selectingFor,
+          rate: ref.watch(rateProvider(between.from, between.from)),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          onTap: () {},
+        ),
+        SelectedCurrencyListItem(
+          currency: between.to1,
+          active: between.to1 == _selectingFor,
+          rate: ref.watch(rateProvider(between.from, between.to1)),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          onTap: () {},
+        ),
+        if (to2 != null)
+          SelectedCurrencyListItem(
+            currency: to2,
+            active: to2 == _selectingFor,
+            rate: ref.watch(rateProvider(between.from, to2)),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            onTap: () {},
+          ),
       ],
     );
   }
 }
 
-class _RecentSection extends StatelessWidget {
+class _RecentSection extends ConsumerWidget {
   const _RecentSection();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final recentlyUsed = ref.watch(recentlyUsedProvider());
+
     return Column(
       children: [
         const SizedSpacer(16),
@@ -100,7 +129,16 @@ class _RecentSection extends StatelessWidget {
           icon: Icon(Icons.replay),
           title: Text('Recent'),
         ),
-        Container(),
+        const SizedSpacer(16),
+        for (final currency in recentlyUsed)
+          RegularCurrencyListItem(
+            currency: currency,
+            selected: currency == _selectingFor,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            onTap: () {
+              logger.d('Tap: $currency');
+            },
+          ),
       ],
     );
   }
@@ -137,7 +175,7 @@ class _PopularSection extends ConsumerWidget {
             final swapableWith =
                 between.contains(currency) && currency != _selectingFor ? _selectingFor : null;
 
-            return RegularCurrencyListTile(
+            return RegularCurrencyListItem(
               currency: currency,
               selected: isSelected,
               swapableWith: swapableWith,
@@ -199,7 +237,7 @@ class _AllList extends ConsumerWidget {
         final swapableWith =
             between.contains(currency) && currency != _selectingFor ? _selectingFor : null;
 
-        return RegularCurrencyListTile(
+        return RegularCurrencyListItem(
           currency: currency,
           selected: isSelected,
           swapableWith: swapableWith,

@@ -175,7 +175,7 @@ class _SearchCurrenciesProviderElement
 }
 
 String _$selectCurrencyAllCurrenciesHash() =>
-    r'05c81cd06d184e21c44ecf648d2eb22293ce1ea4';
+    r'1f2fcfe1602b258a132b71334297eacf8637af43';
 
 /// See also [selectCurrencyAllCurrencies].
 @ProviderFor(selectCurrencyAllCurrencies)

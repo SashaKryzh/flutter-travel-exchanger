@@ -7,7 +7,7 @@ part of 'custom_amount_providers.dart';
 // **************************************************************************
 
 String _$customAmountConverterHash() =>
-    r'3a4db53030efd04caa020c65e137a8e626fde63f';
+    r'8220ae527c239dcb12e0afbb1f80d35480b69cea';
 
 /// Copied from Dart SDK
 class _SystemHash {

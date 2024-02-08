@@ -32,7 +32,10 @@ class Rate with _$Rate {
 
 enum RateSource {
   api,
-  custom,
+  custom;
+
+  bool get isApi => this == RateSource.api;
+  bool get isCustom => this == RateSource.custom;
 }
 
 // TODO: add updated at

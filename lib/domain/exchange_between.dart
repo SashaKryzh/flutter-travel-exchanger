@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/data/exchange_between_repository.dart';
+import 'package:travel_exchanger/data/recently_used_currency_repository.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 
 part 'exchange_between.freezed.dart';
@@ -13,6 +14,9 @@ class ExchangeBetween extends _$ExchangeBetween {
     ref.listenSelf((previous, next) {
       if (previous != next) {
         _storeBetween(next);
+        if (previous != null) {
+          _storeRecentlyUsed(previous, next);
+        }
       }
     });
 
@@ -62,6 +66,14 @@ class ExchangeBetween extends _$ExchangeBetween {
 
   Future<void> _storeBetween(Between between) async {
     await ref.read(exchangeBetweenRepositoryProvider).setExchangeBetween(between);
+  }
+
+  Future<void> _storeRecentlyUsed(Between prev, Between next) async {
+    final prevCurrencies = [...prev.currencies];
+    prevCurrencies.removeWhere((e) => next.contains(e));
+    if (prevCurrencies.length == 1) {
+      ref.read(recentlyUsedCurrencyRepositoryProvider).add(prevCurrencies.first);
+    }
   }
 }
 
