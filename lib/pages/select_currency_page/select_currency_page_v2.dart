@@ -260,7 +260,7 @@ class _PopularSection extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               onTap: () => swapToCurrency(ref, currency),
             );
-          }()
+          }(),
       ],
     );
   }

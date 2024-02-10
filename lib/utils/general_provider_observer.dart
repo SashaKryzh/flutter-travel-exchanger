@@ -1,8 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/utils/logger.dart';
 
-class MyProviderObserver extends ProviderObserver {
-  const MyProviderObserver();
+class GeneralProviderObserver extends ProviderObserver {
+  const GeneralProviderObserver();
 
   @override
   void didUpdateProvider(
@@ -17,7 +17,7 @@ class MyProviderObserver extends ProviderObserver {
     };
   }
 
-  void logError(ProviderBase<Object?> provider, AsyncError<dynamic> error) => logger.d('''
+  void logError(ProviderBase<Object?> provider, AsyncError<Object?> error) => logger.d('''
 {
   Provider: "${provider.name ?? provider.runtimeType}",
   Error: "${error.error}",

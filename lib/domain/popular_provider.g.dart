@@ -6,7 +6,7 @@ part of 'popular_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$popularCurrenciesHash() => r'6b0f0980bfb316cce3b086f6725302ae6326f93b';
+String _$popularCurrenciesHash() => r'cb6d2064a43c1429a383ff4b49143e17c1093860';
 
 /// See also [popularCurrencies].
 @ProviderFor(popularCurrencies)

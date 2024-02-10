@@ -4,7 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'app_theme.g.dart';
 
 @riverpod
-Raw<AppTheme> appTheme(AppThemeRef ref) => AppTheme();
+Raw<AppTheme> appTheme(AppThemeRef _) => AppTheme();
 
 class AppTheme extends ChangeNotifier {
   ThemeMode get themeMode => ThemeMode.system;

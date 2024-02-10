@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
-import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/currency.dart';
-import 'package:travel_exchanger/pages/home_page.dart/exchange_table.dart';
-import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table.dart';
+import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_background.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
 class HomeAppBar extends ConsumerWidget {
@@ -29,7 +29,7 @@ class HomeAppBar extends ConsumerWidget {
           ),
         ),
       ),
-      child: TableColumnsBackgroundWrapper(
+      child: ExchangeTableBackgroundWrapper(
         columnsCount: ref.watch(exchangeBetweenProvider).length,
         child: SafeArea(
           bottom: false,

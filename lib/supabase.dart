@@ -4,6 +4,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 part 'supabase.g.dart';
 
 @riverpod
-SupabaseClient supabase(SupabaseRef ref) {
+SupabaseClient supabase(SupabaseRef _) {
   return Supabase.instance.client;
 }

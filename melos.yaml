@@ -6,10 +6,13 @@ packages:
   - .
 
 scripts:
-  format: find . -not -path './.git/*' -not -path '*/.dart_tool/*' -not -path '*/bricks/*' -name "*.dart" ! -name "*.g.dart" ! -name "*_test.dart" ! -name '*.swagger.*' ! -name '*.config.dart' ! -name '*.chopper.dart' ! -name '*.freezed.dart' ! -name '*.module.dart' ! -name '*.gr.dart' | tr '\n' ' ' | xargs fvm dart format --line-length=100
+  format: find . -not -path './.git/*' -not -path '*/.dart_tool/*' -not -path '*/bricks/*' -name "*.dart" ! -name "*.g.dart" ! -name "*_test.dart" ! -name "*.swagger.*" ! -name "*.config.dart" ! -name "*.chopper.dart" ! -name "*.freezed.dart" ! -name "*.module.dart" ! -name "*.gr.dart" | tr '\n' ' ' | xargs fvm dart format --line-length=100
 
   analyze:
     exec: fvm flutter analyze
+
+  dcm:
+    run: dcm analyze lib
 
   get:
     description: Get all dependencies. Identical to `melos bootstrap` or `melos bs`

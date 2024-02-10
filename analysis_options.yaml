@@ -11,3 +11,28 @@ analyzer:
 linter:
   rules:
     prefer_single_quotes: true
+
+# TODO: Remove later
+dart_code_metrics:
+  extends:
+    - recommended
+    - package:dart_code_metrics_presets/flutter_hooks.yaml
+    - package:dart_code_metrics_presets/equatable.yaml
+  metrics:
+    - cyclomatic-complexity: 20
+  rules:
+    - unnecessary-trailing-comma: false
+    - prefer-single-widget-per-file:
+        ignore-private-widgets: true
+    - avoid-shadowing:
+        ignore-fields: true
+        ignored-names:
+          - context
+    - avoid-redundant-else: false
+    - match-getter-setter-field-names: false
+    - avoid-unsafe-collection-methods: false
+    - prefer-match-file-name:
+        exclude:
+          - lib/**/*_providers.dart
+          - lib/**/use_*.dart
+          - lib/**/*extensions.dart

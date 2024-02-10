@@ -9,6 +9,7 @@ class _ListenHook extends Hook<void> {
   const _ListenHook(this.listenable, this.listener);
 
   final Listenable? listenable;
+  // ignore: prefer-correct-callback-field-name
   final VoidCallback listener;
 
   @override
@@ -41,11 +42,11 @@ class _ListenStateHook extends HookState<void, _ListenHook> {
   }
 
   @override
-  void build(BuildContext context) {}
+  void build(BuildContext context) => {};
 
   @override
   String get debugLabel => 'useListen';
 
   @override
-  Object? get debugValue => [hook.listenable, hook.listener];
+  Object get debugValue => [hook.listenable, hook.listener];
 }

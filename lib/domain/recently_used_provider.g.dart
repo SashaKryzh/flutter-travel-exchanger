@@ -38,7 +38,7 @@ final recentlyUsedProvider = AutoDisposeProvider<List<Currency>>.internal(
 
 typedef RecentlyUsedRef = AutoDisposeProviderRef<List<Currency>>;
 String _$filteredRecentlyUsedHash() =>
-    r'10e618a176fa38fc2dc75969bf711455caa9c3cb';
+    r'cdf88aae702e4259fb0bb9ae31a740cb0e834e94';
 
 /// Copied from Dart SDK
 class _SystemHash {

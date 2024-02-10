@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-extension BuildContextExtensions on BuildContext {
+extension BuildContextX on BuildContext {
   ThemeData get theme => Theme.of(this);
 
   TextTheme get textTheme => theme.textTheme;
@@ -9,7 +9,7 @@ extension BuildContextExtensions on BuildContext {
 
   DefaultTextStyle get defaultTextStyle => DefaultTextStyle.of(this);
 
-  ModalRoute<dynamic>? get modalRoute => ModalRoute.of(this);
+  ModalRoute<Object>? get modalRoute => ModalRoute.of(this);
 
   FocusScopeNode get focusScope => FocusScope.of(this);
 
@@ -18,7 +18,7 @@ extension BuildContextExtensions on BuildContext {
   ScaffoldMessengerState get scaffoldMessenger => ScaffoldMessenger.of(this);
 }
 
-extension IterableExtensions<T> on Iterable<T> {
+extension IterableX<T> on Iterable<T> {
   bool containsAny(Iterable<Object?> other) => other.any(contains);
 
   int get lastIndex => length - 1;
@@ -40,7 +40,7 @@ extension IterableExtensions<T> on Iterable<T> {
   }
 }
 
-extension MaterialStateExtensions on Iterable<MaterialState> {
+extension MaterialStateX on Iterable<MaterialState> {
   bool get isHovered => contains(MaterialState.hovered);
   bool get isFocused => contains(MaterialState.focused);
   bool get isPressed => contains(MaterialState.pressed);
@@ -51,7 +51,7 @@ extension MaterialStateExtensions on Iterable<MaterialState> {
   bool get isError => contains(MaterialState.error);
 }
 
-extension AnimationControllerExtensions on AnimationController {
+extension AnimationControllerX on AnimationController {
   void reforward() {
     reset();
     forward();

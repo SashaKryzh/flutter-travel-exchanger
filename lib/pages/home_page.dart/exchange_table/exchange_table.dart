@@ -7,12 +7,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart' hide Provider;
 import 'package:provider/provider.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/value.dart';
-import 'package:travel_exchanger/pages/home_page.dart/exchange_table_background.dart';
-import 'package:travel_exchanger/pages/home_page.dart/exchange_table_providers.dart';
+import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_background.dart';
+import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_providers.dart';
+import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_values_from.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 
-const exchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
-const expandAnimationCurve = Curves.easeInOut;
+const kExchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
+const kExpandAnimationCurve = Curves.easeInOut;
 
 var valuePadding = 30.0;
 double get activationDelta => valuePadding * 0.8;
@@ -95,14 +96,14 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
       child: ProxyProvider0(
         create: (_) => _SlideAnimationProvider(animation),
         update: (_, __) => _SlideAnimationProvider(animation),
-        child: TableColumnsBackgroundWrapper(
+        child: ExchangeTableBackgroundWrapper(
           columnsCount: ref.watch(exchangeBetweenProvider).length,
           child: LayoutBuilder(
             builder: (context, constraints) => ProxyProvider0(
               create: (_) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
               update: (_, __) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
               child: SingleChildScrollView(
-                physics: const  AlwaysScrollableScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: ConstrainedBox(
                   constraints: constraints,
                   child: const _ExchangeTableContent(),
@@ -191,8 +192,8 @@ class _ExchangeTableContentState extends ConsumerState<_ExchangeTableContent> {
   void _scrollTo(double offset) {
     _scrollController.animateTo(
       offset,
-      duration: exchangeRowExpandAnimationDuration,
-      curve: expandAnimationCurve,
+      duration: kExchangeRowExpandAnimationDuration,
+      curve: kExpandAnimationCurve,
     );
   }
 
@@ -251,9 +252,9 @@ class _ExpandableRow extends ConsumerStatefulWidget {
 class _ExpandableRowState extends ConsumerState<_ExpandableRow>
     with SingleTickerProviderStateMixin {
   late final _animationController =
-      AnimationController(duration: exchangeRowExpandAnimationDuration, vsync: this);
+      AnimationController(duration: kExchangeRowExpandAnimationDuration, vsync: this);
   late var _animation = Tween(begin: 0.0, end: 0.0)
-      .animate(CurvedAnimation(parent: _animationController, curve: expandAnimationCurve));
+      .animate(CurvedAnimation(parent: _animationController, curve: kExpandAnimationCurve));
 
   bool get _canExpand => ref.read(exchangeValuesFromNotifierProvider).step(widget.level) != null;
 
@@ -283,7 +284,7 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
         end: _layoutProperties.expandedRowHeight,
       ).animate(CurvedAnimation(
         parent: _animationController,
-        curve: expandAnimationCurve,
+        curve: kExpandAnimationCurve,
       ));
     });
     _animationController.reforward();
@@ -301,12 +302,12 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
         end: 0.0,
       ).animate(CurvedAnimation(
         parent: _animationController,
-        curve: expandAnimationCurve,
+        curve: kExpandAnimationCurve,
       ));
     });
     _animationController.reforward();
 
-    Future.delayed(exchangeRowExpandAnimationDuration, () {
+    Future.delayed(kExchangeRowExpandAnimationDuration, () {
       setState(() {
         _renderChildren = false;
       });
@@ -317,8 +318,11 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
   Widget build(BuildContext context) {
     _layoutProperties = context.watchLayoutProperties;
 
-    final levelState = ref.watch(exchangeTableExpandedRowsProvider
-        .select((e) => e.rows.firstWhereOrNull((e) => e.level == widget.level)));
+    final levelState = ref.watch(
+      exchangeTableExpandedRowsProvider.select(
+        (rowsState) => rowsState.rows.firstWhereOrNull((row) => row.level == widget.level),
+      ),
+    );
 
     final index = widget.index;
     final expandedIndex = levelState?.index;
@@ -326,6 +330,7 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
     final isAfterExpanded = index - 1 == expandedIndex;
 
     if (_isExpanded != isExpandedState) {
+      // ignore: avoid-unnecessary-setstate
       isExpandedState ? _expand(updateNotifier: false) : _collapse(updateNotifier: false);
     }
 
@@ -367,7 +372,7 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
           onTap: onTap,
           onLongPress: onLongPress,
           child: AnimatedContainer(
-            duration: exchangeRowExpandAnimationDuration,
+            duration: kExchangeRowExpandAnimationDuration,
             height: rowHeight,
             child: _ValuesRow(
               value: widget.value,
@@ -380,11 +385,15 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
           sizeFactor: adjustedAnimation,
           child: Column(
             children: _renderChildren
-                ? (betweenValues(ref.read(exchangeValuesFromNotifierProvider), widget.value,
-                            widget.level) ??
+                ? (betweenValues(
+                          ref.read(exchangeValuesFromNotifierProvider),
+                          widget.value,
+                          widget.level,
+                        ) ??
                         [])
                     .mapIndexed(
                     (i, e) {
+                      // ignore: avoid-recursive-widget-calls
                       return _ExpandableRow(
                         value: e,
                         index: i,
@@ -511,6 +520,5 @@ class _ValueItem extends StatelessWidget {
 //
 
 extension on BuildContext {
-  _ExchangeTableLayoutProperties get watchLayoutProperties =>
-      watch<_ExchangeTableLayoutProperties>();
+  _ExchangeTableLayoutProperties get watchLayoutProperties => watch();
 }

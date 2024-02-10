@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:travel_exchanger/data/rate_dto.dart';
+import 'package:travel_exchanger/data/dto/get_rates_response_dto.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rate.dart';
 import 'package:travel_exchanger/utils/logger.dart';
@@ -14,7 +14,7 @@ import 'package:travel_exchanger/utils/logger.dart';
 part 'rates_repository.g.dart';
 
 @riverpod
-RatesRepository ratesRepository(RatesRepositoryRef ref) {
+RatesRepository ratesRepository(RatesRepositoryRef _) {
   throw Exception('Rates repository provider should be overridden');
 }
 
@@ -116,7 +116,7 @@ class RatesRepository {
       );
     } on FunctionException catch (e, stackTrace) {
       logger.e(
-        'FunctionException: ${e.status} ${e.reasonPhrase} ${e.details}',
+        'FunctionException: ${e.status} ${e.reasonPhrase ?? ''} ${e.details}',
         error: e,
         stackTrace: stackTrace,
       );
@@ -153,10 +153,13 @@ class RatesRepository {
         return null;
       }
 
-      final ratesData = await compute((e) {
-        final json = jsonDecode(e) as Map<String, dynamic>;
-        return RatesData.fromJson(json);
-      }, jsonString);
+      final ratesData = await compute(
+        (e) {
+          final json = jsonDecode(e) as Map<String, dynamic>;
+          return RatesData.fromJson(json);
+        },
+        jsonString,
+      );
 
       return ratesData;
     } catch (e, stackTrace) {

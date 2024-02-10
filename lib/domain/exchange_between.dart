@@ -80,8 +80,9 @@ class ExchangeBetween extends _$ExchangeBetween {
   Future<void> _storeRecentlyUsed(Between prev, Between next) async {
     final prevCurrencies = [...prev.currencies];
     prevCurrencies.removeWhere((e) => next.contains(e));
-    if (prevCurrencies.length == 1) {
-      ref.read(recentlyUsedCurrencyRepositoryProvider).add(prevCurrencies.first);
+    final currency = prevCurrencies.firstOrNull;
+    if (currency != null) {
+      await ref.read(recentlyUsedCurrencyRepositoryProvider).add(currency);
     }
   }
 }

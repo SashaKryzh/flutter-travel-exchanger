@@ -171,23 +171,6 @@ class _ConvertedValuesProviderElement
   double get value => (origin as ConvertedValuesProvider).value;
 }
 
-String _$exchangeValuesFromNotifierHash() =>
-    r'9ab9a16f7c6f9ba31493500cc513add04bd5d409';
-
-/// See also [ExchangeValuesFromNotifier].
-@ProviderFor(ExchangeValuesFromNotifier)
-final exchangeValuesFromNotifierProvider = AutoDisposeNotifierProvider<
-    ExchangeValuesFromNotifier, ExchangeValuesFrom>.internal(
-  ExchangeValuesFromNotifier.new,
-  name: r'exchangeValuesFromNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$exchangeValuesFromNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$ExchangeValuesFromNotifier = AutoDisposeNotifier<ExchangeValuesFrom>;
 String _$exchangeTableExpandedRowsHash() =>
     r'43484dfb4d5a4d61e7c35db397a96f886320c74b';
 

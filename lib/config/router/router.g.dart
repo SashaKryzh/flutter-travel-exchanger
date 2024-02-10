@@ -158,7 +158,7 @@ extension $SearchCurrencyRouteExtension on SearchCurrencyRoute {
 // RiverpodGenerator
 // **************************************************************************
 
-String _$routerHash() => r'790f604a6a5a936214258d37ad3f8513b34c7622';
+String _$routerHash() => r'accb1de1724a292ac279804227f828c81feb1daa';
 
 /// See also [router].
 @ProviderFor(router)

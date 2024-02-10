@@ -9,7 +9,7 @@ import 'package:travel_exchanger/utils/logger.dart';
 part 'exchange_between_repository.g.dart';
 
 @riverpod
-ExchangeBetweenRepository exchangeBetweenRepository(ExchangeBetweenRepositoryRef ref) {
+ExchangeBetweenRepository exchangeBetweenRepository(ExchangeBetweenRepositoryRef _) {
   throw Exception('Exchange between repository provider should be overridden');
 }
 

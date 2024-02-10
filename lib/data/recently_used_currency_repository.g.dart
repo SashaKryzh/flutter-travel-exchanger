@@ -7,7 +7,7 @@ part of 'recently_used_currency_repository.dart';
 // **************************************************************************
 
 String _$recentlyUsedCurrencyRepositoryHash() =>
-    r'96125d59606753efb37574d2c65f0b0e335537eb';
+    r'3735e828a192671eb1ffeab7c72696b925b6ed8b';
 
 /// See also [recentlyUsedCurrencyRepository].
 @ProviderFor(recentlyUsedCurrencyRepository)

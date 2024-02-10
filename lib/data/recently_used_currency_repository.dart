@@ -10,9 +10,7 @@ import 'package:travel_exchanger/utils/logger.dart';
 part 'recently_used_currency_repository.g.dart';
 
 @riverpod
-RecentlyUsedCurrencyRepository recentlyUsedCurrencyRepository(
-  RecentlyUsedCurrencyRepositoryRef ref,
-) {
+RecentlyUsedCurrencyRepository recentlyUsedCurrencyRepository(RecentlyUsedCurrencyRepositoryRef _) {
   throw Exception('RecentlyUsedCurrencyRepository provider should be overridden');
 }
 
@@ -27,7 +25,7 @@ class RecentlyUsedCurrencyRepository {
   Stream<List<Currency>> get recentlyUsedStream => _recentlyUsedController.stream;
 
   List<Currency> _recentlyUsed = [];
-  List<Currency> get recentlyUsed => List.from(_recentlyUsed);
+  List<Currency> get recentlyUsed => List.of(_recentlyUsed);
 
   Future<void> init() async {
     _recentlyUsed = await _fetchStored();
@@ -50,7 +48,7 @@ class RecentlyUsedCurrencyRepository {
     }
     try {
       return await compute(
-        (e) => (jsonDecode(e) as List)
+        (message) => (jsonDecode(message) as List)
             .map((e) => Currency.fromJson(e as Map<String, dynamic>))
             .toList(),
         jsonString,

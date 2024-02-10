@@ -12,7 +12,7 @@ part 'time_rate_repository.g.dart';
 part 'time_rate_repository.freezed.dart';
 
 @riverpod
-TimeRateRepository timeRateRepository(TimeRateRepositoryRef ref) {
+TimeRateRepository timeRateRepository(TimeRateRepositoryRef _) {
   throw Exception('Time repository provider should be overridden');
 }
 

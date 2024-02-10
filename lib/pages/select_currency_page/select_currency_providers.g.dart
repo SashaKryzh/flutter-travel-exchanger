@@ -192,7 +192,7 @@ final selectCurrencyAllCurrenciesProvider =
 
 typedef SelectCurrencyAllCurrenciesRef = AutoDisposeProviderRef<List<Currency>>;
 String _$selectCurrencyNotifierHash() =>
-    r'ed984832faa157f8402f261a7292d4f02923507a';
+    r'4db191a9e514ad1c27847939565237342eb2a078';
 
 abstract class _$SelectCurrencyNotifier
     extends BuildlessAutoDisposeNotifier<SelectCurrencyState> {

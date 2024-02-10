@@ -28,7 +28,7 @@ Map<String, dynamic> _$$BetweenImplToJson(_$BetweenImpl instance) =>
 // RiverpodGenerator
 // **************************************************************************
 
-String _$exchangeBetweenHash() => r'cc1e0e6aa8459898fe9502db09ab3df3ad00379d';
+String _$exchangeBetweenHash() => r'259f0e425fd37aaf230c37194802d19909df6969';
 
 /// See also [ExchangeBetween].
 @ProviderFor(ExchangeBetween)

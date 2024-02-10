@@ -23,7 +23,7 @@ Map<String, dynamic> _$$TimeRateDataImplToJson(_$TimeRateDataImpl instance) =>
 // **************************************************************************
 
 String _$timeRateRepositoryHash() =>
-    r'6da2517ae5970833726f0e151f0cda2152576b14';
+    r'01b9d99aa427dec874b4a4420d91c1fe0882db08';
 
 /// See also [timeRateRepository].
 @ProviderFor(timeRateRepository)

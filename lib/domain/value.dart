@@ -18,7 +18,7 @@ sealed class Value {
 }
 
 class MoneyValue extends Value {
-  MoneyValue(super.value, super.currency) : super._();
+  const MoneyValue(super.value, super.currency) : super._();
 
   @override
   String format() {
@@ -27,7 +27,7 @@ class MoneyValue extends Value {
 }
 
 class TimeValue extends Value {
-  TimeValue(double value) : super._(value, Currency.time);
+  const TimeValue(double value) : super._(value, Currency.time);
 
   @override
   String format() {

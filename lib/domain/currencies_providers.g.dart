@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'currencies_provider.dart';
+part of 'currencies_providers.dart';
 
 // **************************************************************************
 // RiverpodGenerator

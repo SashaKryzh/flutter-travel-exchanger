@@ -1,10 +1,12 @@
+// ignore_for_file: prefer-single-widget-per-file
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/data/time_rate_repository.dart';
-import 'package:travel_exchanger/domain/currencies_provider.dart';
+import 'package:travel_exchanger/domain/currencies_providers.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
@@ -50,7 +52,7 @@ class SelectCurrencyPage extends HookConsumerWidget {
               context.pop();
             },
             child: Text(exchangeBetween.isTwo ? 'Show third currency' : 'Hide third currency'),
-          )
+          ),
         ],
       ),
       body: Column(
@@ -85,7 +87,7 @@ class SelectCurrencyPage extends HookConsumerWidget {
                         )
                         .insertBetween(const Divider(
                           height: 0,
-                        ))
+                        )),
                   ],
                 ],
               ),
@@ -200,13 +202,13 @@ class TimeListTile extends ConsumerWidget {
     final currentRate = ref.watch(ratesProvider).rates.where((e) => e.from == time).firstOrNull;
 
     void onSettingsTap() async {
-      var _text = '';
-      var _currency = currentRate?.to ?? Currency.pln;
+      var text = '';
+      var currency = currentRate?.to ?? Currency.pln;
 
-      Future<void> setTimeRate() async {
-        final hourRate = double.tryParse(_text) ?? 0;
+      void setTimeRate() async {
+        final hourRate = double.tryParse(text) ?? 0;
         final secondlyRate = convertHourlyRateToSecondlyRate(hourRate);
-        await ref.read(timeRateRepositoryProvider).setTimeRate(_currency, secondlyRate);
+        await ref.read(timeRateRepositoryProvider).setTimeRate(currency, secondlyRate);
         context.pop();
       }
 
@@ -223,7 +225,7 @@ class TimeListTile extends ConsumerWidget {
                   Expanded(
                     child: TextField(
                       keyboardType: TextInputType.number,
-                      onChanged: (text) => _text = text,
+                      onChanged: (newText) => text = newText,
                     ),
                   ),
                   Flexible(
@@ -231,10 +233,10 @@ class TimeListTile extends ConsumerWidget {
                       onTap: () => SearchCurrencyRoute(
                         SearchCurrencyRouteExtra(
                           selectedCurrency: currentRate?.to,
-                          onSelectCurrency: (e) => setState(() => _currency = e),
+                          onSelectCurrency: (e) => setState(() => currency = e),
                         ),
                       ).push<void>(context),
-                      child: Text(_currency.name(context)),
+                      child: Text(currency.name(context)),
                     ),
                   ),
                 ],
@@ -264,7 +266,7 @@ class TimeListTile extends ConsumerWidget {
           children: [
             Expanded(
               child: Text(
-                '${time.code} (${convertSecondlyRateToHourly(currentRate?.rate ?? 0)} ${currentRate?.to.name(context)})',
+                '${time.code} (${convertSecondlyRateToHourly(currentRate?.rate ?? 0)} ${currentRate?.to.name(context) ?? ''})',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -283,12 +285,12 @@ class TimeListTile extends ConsumerWidget {
   }
 }
 
-const secondsInHour = 3600;
+const kSecondsInHour = 3600;
 
 double convertHourlyRateToSecondlyRate(double hourlyRate) {
-  return hourlyRate / secondsInHour;
+  return hourlyRate / kSecondsInHour;
 }
 
 double convertSecondlyRateToHourly(double secondlyRate) {
-  return secondlyRate * secondsInHour;
+  return secondlyRate * kSecondsInHour;
 }

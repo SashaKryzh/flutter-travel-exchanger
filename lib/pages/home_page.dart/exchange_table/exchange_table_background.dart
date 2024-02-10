@@ -1,7 +1,9 @@
+// ignore_for_file: prefer-single-widget-per-file
+
 import 'package:flutter/material.dart';
 
-class TableColumnsBackground extends StatelessWidget {
-  const TableColumnsBackground({
+class ExchangeTableBackground extends StatelessWidget {
+  const ExchangeTableBackground({
     super.key,
     required this.columnsCount,
   });
@@ -33,8 +35,8 @@ class TableColumnsBackground extends StatelessWidget {
   }
 }
 
-class TableColumnsBackgroundWrapper extends StatelessWidget {
-  const TableColumnsBackgroundWrapper({
+class ExchangeTableBackgroundWrapper extends StatelessWidget {
+  const ExchangeTableBackgroundWrapper({
     super.key,
     required this.child,
     required this.columnsCount,
@@ -48,7 +50,7 @@ class TableColumnsBackgroundWrapper extends StatelessWidget {
     return Stack(
       children: [
         Positioned.fill(
-          child: TableColumnsBackground(
+          child: ExchangeTableBackground(
             columnsCount: columnsCount,
           ),
         ),

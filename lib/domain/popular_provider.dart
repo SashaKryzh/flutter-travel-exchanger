@@ -4,7 +4,7 @@ import 'package:travel_exchanger/domain/currency.dart';
 part 'popular_provider.g.dart';
 
 @riverpod
-List<Currency> popularCurrencies(PopularCurrenciesRef ref) {
+List<Currency> popularCurrencies(PopularCurrenciesRef _) {
   return const [
     MoneyCurrency('EUR'),
     MoneyCurrency('USD'),

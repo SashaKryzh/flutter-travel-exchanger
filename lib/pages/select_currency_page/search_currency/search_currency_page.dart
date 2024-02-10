@@ -51,7 +51,7 @@ class SearchCurrencyPage extends HookConsumerWidget {
           ).expanded(),
           SearchField(
             onChanged: (text) => query.value = text,
-          )
+          ),
         ],
       ),
     );

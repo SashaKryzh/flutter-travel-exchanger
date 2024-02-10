@@ -6,18 +6,6 @@ part 'rate_dto.freezed.dart';
 part 'rate_dto.g.dart';
 
 @freezed
-class GetRatesResponseDto with _$GetRatesResponseDto {
-  factory GetRatesResponseDto({
-    required bool success,
-    required String base,
-    required List<RateDto> rates,
-  }) = _GetRatesResponseDto;
-
-  factory GetRatesResponseDto.fromJson(Map<String, dynamic> json) =>
-      _$GetRatesResponseDtoFromJson(json);
-}
-
-@freezed
 class RateDto with _$RateDto {
   const RateDto._();
 

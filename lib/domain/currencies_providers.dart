@@ -2,7 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 
-part 'currencies_provider.g.dart';
+part 'currencies_providers.g.dart';
 
 /// Provides a list of all currencies.
 @riverpod

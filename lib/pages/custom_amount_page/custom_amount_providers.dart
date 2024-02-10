@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
-import 'package:travel_exchanger/domain/currencies_provider.dart';
+import 'package:travel_exchanger/domain/currencies_providers.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 

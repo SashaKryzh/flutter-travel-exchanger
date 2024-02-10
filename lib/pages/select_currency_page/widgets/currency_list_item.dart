@@ -1,3 +1,5 @@
+// ignore_for_file: prefer-match-file-name, prefer-single-widget-per-file
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:travel_exchanger/domain/currency.dart';
@@ -6,6 +8,8 @@ import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/min_size_widget.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
+
+// TODO: Handle time as a currency in both selected and regular items.
 
 class RegularCurrencyListItem extends StatelessWidget {
   const RegularCurrencyListItem({

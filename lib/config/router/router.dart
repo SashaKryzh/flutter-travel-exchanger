@@ -1,3 +1,5 @@
+// ignore_for_file: prefer-match-file-name
+
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -12,7 +14,7 @@ import 'package:travel_exchanger/pages/settings_page/settings_page.dart';
 part 'router.g.dart';
 
 @riverpod
-GoRouter router(RouterRef ref) => _router;
+GoRouter router(RouterRef _) => _router;
 
 final _router = GoRouter(routes: $appRoutes);
 

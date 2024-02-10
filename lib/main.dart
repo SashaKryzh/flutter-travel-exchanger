@@ -11,7 +11,7 @@ import 'package:travel_exchanger/data/rates_repository.dart';
 import 'package:travel_exchanger/data/recently_used_currency_repository.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
 import 'package:travel_exchanger/data/time_rate_repository.dart';
-import 'package:travel_exchanger/utils/provider_observer.dart';
+import 'package:travel_exchanger/utils/general_provider_observer.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,7 +40,7 @@ Future<void> main() async {
   runApp(
     ProviderScope(
       observers: const [
-        MyProviderObserver(),
+        GeneralProviderObserver(),
       ],
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPreferences),

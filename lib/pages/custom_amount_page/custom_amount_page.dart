@@ -52,9 +52,9 @@ class CustomAmountPage extends ConsumerWidget {
   }
 }
 
-const containerPadding = 12.0;
-const containerBorderRadius = 12.0;
-const containerBlur = 7.0;
+const kContainerPadding = 12.0;
+const kContainerBorderRadius = 12.0;
+const kContainerBlur = 7.0;
 
 class _InputContainer extends HookConsumerWidget {
   const _InputContainer({
@@ -73,7 +73,9 @@ class _InputContainer extends HookConsumerWidget {
     final isSelected = _state.from == currency;
     final value = _state.valueFor(currency);
 
+    // ignore: move-variable-closer-to-its-usage
     final prevValue = usePrevious(value);
+    // ignore: move-variable-closer-to-its-usage
     final prevIsSelected = usePrevious(isSelected) ?? false;
     final justReceivedFocus = useState(isSelected);
 
@@ -109,12 +111,12 @@ class _InputContainer extends HookConsumerWidget {
     return GestureDetector(
       onTap: setFrom,
       child: GlassContainer(
-        blur: containerBlur,
-        borderRadius: BorderRadius.circular(containerBorderRadius),
+        blur: kContainerBlur,
+        borderRadius: BorderRadius.circular(kContainerBorderRadius),
         child: Container(
-          padding: const EdgeInsets.all(containerPadding),
+          padding: const EdgeInsets.all(kContainerPadding),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(containerBorderRadius),
+            borderRadius: BorderRadius.circular(kContainerBorderRadius),
             border: Border.all(
               color: Colors.white.withOpacity(isSelected ? 1 : 0),
               width: 1,
@@ -146,13 +148,13 @@ class _InputContainer extends HookConsumerWidget {
                   onChanged: (_) => setAmount(),
                   onTap: setFrom,
                   // Remove default behavior on enter.
-                  onEditingComplete: () {},
+                  onEditingComplete: () => {},
                   inputFormatters: [
                     ReplaceFormatter(
                       replaceWithNextCharacter: justReceivedFocus.value,
                       onReplaced: () => justReceivedFocus.value = false,
                     ),
-                    CurrencyInputFormatter(),
+                    const CurrencyInputFormatter(),
                   ],
                 ),
               ),
@@ -179,6 +181,8 @@ String formatValue(double value, {int decimalDigits = 2}) {
 }
 
 class CurrencyInputFormatter extends TextInputFormatter {
+  const CurrencyInputFormatter();
+
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     // Intl.defaultLocale = 'uk_UA';
@@ -216,10 +220,10 @@ class CurrencyInputFormatter extends TextInputFormatter {
         decimalSeparatorInText ? newText.length - newText.indexOf(decimalSeparator) - 1 : 0;
 
     if (newText.length == 1 && decimalSeparatorInText) {
-      final newText = '0$decimalSeparator';
-      _logNewText(newText);
+      final zeroWithSeparatorText = '0$decimalSeparator';
+      _logNewText(zeroWithSeparatorText);
       return newValue.copyWith(
-        text: '0$decimalSeparator',
+        text: zeroWithSeparatorText,
         selection: const TextSelection.collapsed(offset: 2),
       );
     }
@@ -280,7 +284,7 @@ class ReplaceFormatter extends TextInputFormatter {
     }
 
     logger.d('ReplaceFormatter: newText = "$newText"');
-    onReplaced.call();
+    onReplaced();
     return newValue.copyWith(
       text: newText,
       selection: TextSelection.collapsed(offset: newText.length),
