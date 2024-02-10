@@ -18,8 +18,7 @@ dart_code_metrics:
     - recommended
     - package:dart_code_metrics_presets/flutter_hooks.yaml
     - package:dart_code_metrics_presets/equatable.yaml
-  metrics:
-    - cyclomatic-complexity: 20
+    - package:dart_code_metrics_presets/metrics_recommended.yaml
   rules:
     - unnecessary-trailing-comma: false
     - prefer-single-widget-per-file:

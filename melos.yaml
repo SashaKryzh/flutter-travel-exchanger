@@ -11,8 +11,14 @@ scripts:
   analyze:
     exec: fvm flutter analyze
 
-  dcm:
+  dcm-analyze:
     run: dcm analyze lib
+  
+  dcm-analyze-widgets:
+    run: dcm analyze-widgets lib --report-all --reporter=html --open
+  
+  dcm-metrics:
+    run: dcm calculate-metrics lib --reporter=html --open
 
   get:
     description: Get all dependencies. Identical to `melos bootstrap` or `melos bs`

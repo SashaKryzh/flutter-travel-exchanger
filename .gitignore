@@ -1,5 +1,10 @@
 *.env
 
+# TODO: Remove later
+# DCM
+metrics/
+widgets_report/
+
 # Melos
 pubspec_overrides.yaml
 
