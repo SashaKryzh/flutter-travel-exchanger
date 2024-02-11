@@ -33,17 +33,14 @@ List<Currency> searchCurrencies(
 
 @riverpod
 List<Currency> selectCurrencyAllCurrencies(SelectCurrencyAllCurrenciesRef ref) {
-  final currencies = ref.watch(currenciesProvider);
-  currencies.remove(Currency.time);
+  final currencies = ref.watch(currenciesProvider).where((e) => e != Currency.time).toList();
   currencies.sortBy((e) => e.code);
   return currencies;
 }
 
 typedef CurrencyMetadata = ({bool isSelected, Currency? swapableWith});
 
-@Riverpod(
-  dependencies: [SelectCurrencyNotifier],
-)
+@Riverpod(dependencies: [SelectCurrencyNotifier])
 CurrencyMetadata currencyMetadata(CurrencyMetadataRef ref, Currency currency) {
   final selectingFor = ref.watch(selectCurrencyNotifierProvider).selectingFor;
   final between = ref.watch(exchangeBetweenProvider);
