@@ -1,0 +1,3 @@
+output_directory: lib/config/i18n
+maps:
+  - currencyNames

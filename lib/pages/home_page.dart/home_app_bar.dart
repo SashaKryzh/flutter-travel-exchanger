@@ -104,7 +104,7 @@ class _ColumnHeader extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: valuePadding),
-        child: Text(currency.name(context)).textAlignX(textAlign),
+        child: Text(currency.displayCode(context)).textAlignX(textAlign),
       ),
     );
   }

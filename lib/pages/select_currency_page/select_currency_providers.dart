@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:travel_exchanger/config/i18n/strings_providers.dart';
 import 'package:travel_exchanger/domain/currencies_providers.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
@@ -28,7 +29,15 @@ List<Currency> searchCurrencies(
     return currencies;
   }
 
-  return currencies.where((e) => e.code.toLowerCase().contains(query.toLowerCase())).toList();
+  final t = ref.watch(tProvider);
+
+  return currencies
+      .where(
+        (e) =>
+            e.code.toLowerCase().contains(query.toLowerCase()) ||
+            e.nameFromTranslations(t).toLowerCase().contains(query.toLowerCase()),
+      )
+      .toList();
 }
 
 @riverpod

@@ -124,7 +124,7 @@ class _CurrencyButton extends StatelessWidget {
           color: Colors.grey[300],
         ),
         child: Center(
-          child: Text(currency.name(context)),
+          child: Text(currency.displayCode(context)),
         ),
       ),
     );

@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:travel_exchanger/config/i18n/strings.g.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 
 sealed class Currency extends Equatable {
   const Currency._(this.code);
@@ -15,6 +17,10 @@ sealed class Currency extends Equatable {
   final String code;
 
   String name(BuildContext context);
+
+  String nameFromTranslations(Translations t);
+
+  String displayCode([BuildContext? context]);
 
   bool get isMoney => this is MoneyCurrency;
   bool get isTime => this is TimeCurrency;
@@ -34,9 +40,11 @@ sealed class Currency extends Equatable {
 
   static const time = TimeCurrency();
 
-  // For testing
+  @visibleForTesting
   static final uah = Currency('UAH');
+  @visibleForTesting
   static final pln = Currency('PLN');
+  @visibleForTesting
   static final eur = Currency('EUR');
 }
 
@@ -45,18 +53,42 @@ class MoneyCurrency extends Currency {
 
   @override
   String name(BuildContext context) {
-    return code;
+    return nameFromTranslations(context.t);
   }
 
   @override
-  List<Object?> get props => [code];
+  String nameFromTranslations(Translations t) {
+    final name = t.currencyNames[code];
+    if (name == null) {
+      logger.e('Missing currency name for $code');
+    }
+    return name ?? displayCode();
+  }
+
+  @override
+  String displayCode([BuildContext? context]) {
+    return code.toUpperCase();
+  }
 }
 
 class TimeCurrency extends Currency {
-  const TimeCurrency() : super._('time');
+  const TimeCurrency() : super._(_timeKey);
+
+  static const _timeKey = 'TIME';
+  static const _yourTime = 'Your Time';
 
   @override
   String name(BuildContext context) {
-    return 'Time';
+    return _yourTime;
+  }
+
+  @override
+  String displayCode([BuildContext? context]) {
+    return _yourTime;
+  }
+
+  @override
+  String nameFromTranslations(Translations t) {
+    return _yourTime;
   }
 }

@@ -13,10 +13,10 @@ scripts:
 
   dcm-analyze:
     run: dcm analyze lib
-  
+
   dcm-analyze-widgets:
     run: dcm analyze-widgets lib --report-all --reporter=html --open
-  
+
   dcm-metrics:
     run: dcm calculate-metrics lib --reporter=html --open
 
@@ -29,6 +29,9 @@ scripts:
     exec: fvm flutter pub run build_runner build --delete-conflicting-outputs
     packageFilters:
       dependsOn: build_runner
+
+  gen-locale:
+    run: fvm dart run slang
 
   test:
     exec: fvm flutter test

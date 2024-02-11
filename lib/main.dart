@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:travel_exchanger/app.dart';
 import 'package:travel_exchanger/config/env.dart';
+import 'package:travel_exchanger/config/i18n/strings.g.dart';
 import 'package:travel_exchanger/data/exchange_between_repository.dart';
 import 'package:travel_exchanger/data/rates_repository.dart';
 import 'package:travel_exchanger/data/recently_used_currency_repository.dart';
@@ -15,6 +16,8 @@ import 'package:travel_exchanger/utils/general_provider_observer.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  LocaleSettings.useDeviceLocale();
+
   await Env.init();
 
   await Supabase.initialize(
@@ -49,7 +52,9 @@ Future<void> main() async {
         exchangeBetweenRepositoryProvider.overrideWithValue(exchangeBetweenRepository),
         recentlyUsedCurrencyRepositoryProvider.overrideWithValue(recentlyUsedCurrencyRepository),
       ],
-      child: const App(),
+      child: TranslationProvider(
+        child: const App(),
+      ),
     ),
   );
 }

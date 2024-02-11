@@ -3,9 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_providers.dart';
+import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/utils/logger.dart';
 import 'package:travel_exchanger/widgets/glass_container.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
@@ -126,7 +127,7 @@ class _InputContainer extends HookConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(currency.name(context)),
+              Text(currency.displayCode(context)),
               const SizedSpacer(10),
               IgnorePointer(
                 child: TextField(

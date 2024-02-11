@@ -148,7 +148,7 @@ class _CurrencyItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(6),
         child: Text(
-          currency.code,
+          currency.displayCode(context),
           style: TextStyle(
             color: active ? context.theme.primaryColor : null,
           ),

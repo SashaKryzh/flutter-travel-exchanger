@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 extension BuildContextX on BuildContext {
   ThemeData get theme => Theme.of(this);
@@ -55,5 +56,15 @@ extension AnimationControllerX on AnimationController {
   void reforward() {
     reset();
     forward();
+  }
+}
+
+extension NumberFormatX on NumberFormat {
+  num? tryParse(String text) {
+    try {
+      return parse(text);
+    } on FormatException {
+      return null;
+    }
   }
 }
