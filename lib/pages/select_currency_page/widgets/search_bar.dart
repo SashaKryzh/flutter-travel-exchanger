@@ -40,7 +40,12 @@ class SearchBar extends HookConsumerWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       decoration: BoxDecoration(
-        color: Colors.grey,
+        color: Colors.white,
+        border: Border.all(
+          color: isOpen ? Colors.transparent : Colors.black,
+          width: 1,
+          strokeAlign: BorderSide.strokeAlignOutside,
+        ),
         borderRadius: isOpen
             ? const BorderRadius.only(
                 topLeft: Radius.circular(32),

@@ -53,7 +53,7 @@ class SelectCurrencyPageV2 extends HookWidget {
                       title: Text('All'),
                     ).sliver(),
                     const _AllList(),
-                    const BottomSafeArea().sliver(),
+                    const BottomSafeArea(additionalHeight: 100).sliver(),
                   ],
                 ),
               ),
