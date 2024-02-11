@@ -8,6 +8,10 @@ import 'package:travel_exchanger/domain/exchange_between.dart';
 part 'select_currency_providers.freezed.dart';
 part 'select_currency_providers.g.dart';
 
+@Riverpod(dependencies: [])
+Currency selectCurrencyPageInitialCurrency(SelectCurrencyPageInitialCurrencyRef _) =>
+    throw UnimplementedError();
+
 @riverpod
 List<Currency> searchCurrencies(
   SearchCurrenciesRef ref,
@@ -35,17 +39,34 @@ List<Currency> selectCurrencyAllCurrencies(SelectCurrencyAllCurrenciesRef ref) {
   return currencies;
 }
 
-@riverpod
+typedef CurrencyMetadata = ({bool isSelected, Currency? swapableWith});
+
+@Riverpod(
+  dependencies: [SelectCurrencyNotifier],
+)
+CurrencyMetadata currencyMetadata(CurrencyMetadataRef ref, Currency currency) {
+  final selectingFor = ref.watch(selectCurrencyNotifierProvider).selectingFor;
+  final between = ref.watch(exchangeBetweenProvider);
+
+  final isSelected = selectingFor == currency;
+  final swapableWith = between.contains(currency) && !isSelected ? selectingFor : null;
+
+  return (isSelected: isSelected, swapableWith: swapableWith);
+}
+
+@Riverpod(dependencies: [selectCurrencyPageInitialCurrency])
 class SelectCurrencyNotifier extends _$SelectCurrencyNotifier {
   @override
-  SelectCurrencyState build(Currency selectingFor) {
+  SelectCurrencyState build() {
     ref.listen(exchangeBetweenProvider, (prev, next) {
       if (!next.contains(state.selectingFor)) {
         state = state.copyWith(selectingFor: next.to1);
       }
     });
 
-    return SelectCurrencyState(selectingFor: selectingFor);
+    final initialCurrency = ref.watch(selectCurrencyPageInitialCurrencyProvider);
+
+    return SelectCurrencyState(selectingFor: initialCurrency);
   }
 
   void selectFor(Currency currency) {

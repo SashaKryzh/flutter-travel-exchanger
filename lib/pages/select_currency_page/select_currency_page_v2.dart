@@ -9,15 +9,14 @@ import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/domain/recently_used_provider.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/currency_list_item.dart';
+import 'package:travel_exchanger/pages/select_currency_page/widgets/search_bar.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/bottom_safe_area.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
-late SelectCurrencyNotifierProvider _selectCurrencyNotifierProvider;
-
-class SelectCurrencyPageV2 extends HookConsumerWidget {
+class SelectCurrencyPageV2 extends HookWidget {
   const SelectCurrencyPageV2({
     super.key,
     required this.currencyCode,
@@ -26,31 +25,41 @@ class SelectCurrencyPageV2 extends HookConsumerWidget {
   final String currencyCode;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final scrollController = useScrollController();
 
-    _selectCurrencyNotifierProvider = selectCurrencyNotifierProvider(Currency(currencyCode));
-    ref.watch(_selectCurrencyNotifierProvider);
+    return ProviderScope(
+      overrides: [
+        selectCurrencyPageInitialCurrencyProvider.overrideWithValue(Currency(currencyCode)),
+      ],
+      child: Consumer(
+        builder: (context, ref, child) {
+          ref.watch(selectCurrencyNotifierProvider);
 
-    return p.ListenableProvider.value(
-      value: scrollController,
-      child: Scaffold(
-        body: CustomScrollView(
-          controller: scrollController,
-          slivers: [
-            const _AppBar(),
-            const _SelectedSection().sliver(),
-            const _RecentSection().sliver(),
-            const _PopularSection().sliver(),
-            const SizedSpacer(16).sliver(),
-            const _SectionHeading(
-              icon: Icon(Icons.list),
-              title: Text('All'),
-            ).sliver(),
-            const _AllList(),
-            const BottomSafeArea().sliver(),
-          ],
-        ),
+          return p.ListenableProvider.value(
+            value: scrollController,
+            child: Scaffold(
+              body: SearchBarWrapper(
+                child: CustomScrollView(
+                  controller: scrollController,
+                  slivers: [
+                    const _AppBar(),
+                    const _SelectedSection().sliver(),
+                    const _RecentSection().sliver(),
+                    const _PopularSection().sliver(),
+                    const SizedSpacer(16).sliver(),
+                    const _SectionHeading(
+                      icon: Icon(Icons.list),
+                      title: Text('All'),
+                    ).sliver(),
+                    const _AllList(),
+                    const BottomSafeArea().sliver(),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -61,7 +70,7 @@ class _AppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectingFor = ref.watch(_selectCurrencyNotifierProvider).selectingFor;
+    final selectingFor = ref.watch(selectCurrencyNotifierProvider).selectingFor;
     final between = ref.watch(exchangeBetweenProvider);
 
     void onTap(Currency currency) {
@@ -70,7 +79,7 @@ class _AppBar extends ConsumerWidget {
             .read<ScrollController>()
             .animateTo(0, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
       } else {
-        ref.read(_selectCurrencyNotifierProvider.notifier).selectFor(currency);
+        ref.read(selectCurrencyNotifierProvider.notifier).selectFor(currency);
       }
     }
 
@@ -154,12 +163,12 @@ class _SelectedSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectingFor = ref.watch(_selectCurrencyNotifierProvider).selectingFor;
+    final selectingFor = ref.watch(selectCurrencyNotifierProvider).selectingFor;
     final between = ref.watch(exchangeBetweenProvider);
     final to2 = between.to2;
 
     void onTap(Currency currency) {
-      ref.read(_selectCurrencyNotifierProvider.notifier).selectFor(currency);
+      ref.read(selectCurrencyNotifierProvider.notifier).selectFor(currency);
     }
 
     return Column(
@@ -201,7 +210,7 @@ class _RecentSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectingFor = ref.watch(_selectCurrencyNotifierProvider).selectingFor;
+    final selectingFor = ref.watch(selectCurrencyNotifierProvider).selectingFor;
     final recentlyUsed = ref.watch(filteredRecentlyUsedProvider(limit: 3));
 
     if (recentlyUsed.isEmpty) {
@@ -219,6 +228,7 @@ class _RecentSection extends ConsumerWidget {
         for (final currency in recentlyUsed)
           RegularCurrencyListItem(
             currency: currency,
+            swapableWith: null,
             selected: currency == selectingFor,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             onTap: () => swapToCurrency(ref, currency),
@@ -233,9 +243,7 @@ class _PopularSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectingFor = ref.watch(_selectCurrencyNotifierProvider).selectingFor;
     final popularCurrencies = ref.watch(popularCurrenciesProvider);
-    final between = ref.watch(exchangeBetweenProvider);
 
     return Column(
       children: [
@@ -249,14 +257,12 @@ class _PopularSection extends ConsumerWidget {
         const SizedSpacer(12),
         for (final currency in popularCurrencies)
           () {
-            final isSelected = selectingFor == currency;
-            final swapableWith =
-                between.contains(currency) && currency != selectingFor ? selectingFor : null;
+            final metadata = ref.watch(currencyMetadataProvider(currency));
 
             return RegularCurrencyListItem(
               currency: currency,
-              selected: isSelected,
-              swapableWith: swapableWith,
+              selected: metadata.isSelected,
+              swapableWith: metadata.swapableWith,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               onTap: () => swapToCurrency(ref, currency),
             );
@@ -301,23 +307,18 @@ class _AllList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectingFor = ref.watch(_selectCurrencyNotifierProvider).selectingFor;
     final currencies = ref.watch(selectCurrencyAllCurrenciesProvider);
-    final between = ref.watch(exchangeBetweenProvider);
 
     return SliverList.builder(
       itemCount: currencies.length,
       itemBuilder: (context, index) {
         final currency = currencies[index];
-
-        final isSelected = selectingFor == currency;
-        final swapableWith =
-            between.contains(currency) && currency != selectingFor ? selectingFor : null;
+        final metadata = ref.watch(currencyMetadataProvider(currency));
 
         return RegularCurrencyListItem(
           currency: currency,
-          selected: isSelected,
-          swapableWith: swapableWith,
+          selected: metadata.isSelected,
+          swapableWith: metadata.swapableWith,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           onTap: () => swapToCurrency(ref, currency),
         );
@@ -328,7 +329,7 @@ class _AllList extends ConsumerWidget {
 
 /// Swaps to currency in the ExchangeBetween and also updates selectingFor in the SelectCurrencyNotifier.
 void swapToCurrency(WidgetRef ref, Currency currency) {
-  final from = ref.read(_selectCurrencyNotifierProvider).selectingFor;
-  ref.read(_selectCurrencyNotifierProvider.notifier).selectFor(currency);
+  final from = ref.read(selectCurrencyNotifierProvider).selectingFor;
+  ref.read(selectCurrencyNotifierProvider.notifier).selectFor(currency);
   ref.read(exchangeBetweenProvider.notifier).swap(from, currency);
 }

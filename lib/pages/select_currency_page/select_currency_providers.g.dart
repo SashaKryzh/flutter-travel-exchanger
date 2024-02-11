@@ -6,6 +6,23 @@ part of 'select_currency_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$selectCurrencyPageInitialCurrencyHash() =>
+    r'b3f1031924fcad884dcfe9014bc0698068a6bbc3';
+
+/// See also [selectCurrencyPageInitialCurrency].
+@ProviderFor(selectCurrencyPageInitialCurrency)
+final selectCurrencyPageInitialCurrencyProvider =
+    AutoDisposeProvider<Currency>.internal(
+  selectCurrencyPageInitialCurrency,
+  name: r'selectCurrencyPageInitialCurrencyProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$selectCurrencyPageInitialCurrencyHash,
+  dependencies: const <ProviderOrFamily>[],
+  allTransitiveDependencies: const <ProviderOrFamily>{},
+);
+
+typedef SelectCurrencyPageInitialCurrencyRef = AutoDisposeProviderRef<Currency>;
 String _$searchCurrenciesHash() => r'f550e325b7a154879dbefbaa2c0e7fa39e15873f';
 
 /// Copied from Dart SDK
@@ -191,152 +208,160 @@ final selectCurrencyAllCurrenciesProvider =
 );
 
 typedef SelectCurrencyAllCurrenciesRef = AutoDisposeProviderRef<List<Currency>>;
-String _$selectCurrencyNotifierHash() =>
-    r'4db191a9e514ad1c27847939565237342eb2a078';
+String _$currencyMetadataHash() => r'99e031da7e2c1315ebeb92e93e2609a4bfee89e2';
 
-abstract class _$SelectCurrencyNotifier
-    extends BuildlessAutoDisposeNotifier<SelectCurrencyState> {
-  late final Currency selectingFor;
+/// See also [currencyMetadata].
+@ProviderFor(currencyMetadata)
+const currencyMetadataProvider = CurrencyMetadataFamily();
 
-  SelectCurrencyState build(
-    Currency selectingFor,
-  );
-}
+/// See also [currencyMetadata].
+class CurrencyMetadataFamily extends Family<CurrencyMetadata> {
+  /// See also [currencyMetadata].
+  const CurrencyMetadataFamily();
 
-/// See also [SelectCurrencyNotifier].
-@ProviderFor(SelectCurrencyNotifier)
-const selectCurrencyNotifierProvider = SelectCurrencyNotifierFamily();
-
-/// See also [SelectCurrencyNotifier].
-class SelectCurrencyNotifierFamily extends Family<SelectCurrencyState> {
-  /// See also [SelectCurrencyNotifier].
-  const SelectCurrencyNotifierFamily();
-
-  /// See also [SelectCurrencyNotifier].
-  SelectCurrencyNotifierProvider call(
-    Currency selectingFor,
+  /// See also [currencyMetadata].
+  CurrencyMetadataProvider call(
+    Currency currency,
   ) {
-    return SelectCurrencyNotifierProvider(
-      selectingFor,
+    return CurrencyMetadataProvider(
+      currency,
     );
   }
 
   @override
-  SelectCurrencyNotifierProvider getProviderOverride(
-    covariant SelectCurrencyNotifierProvider provider,
+  CurrencyMetadataProvider getProviderOverride(
+    covariant CurrencyMetadataProvider provider,
   ) {
     return call(
-      provider.selectingFor,
+      provider.currency,
     );
   }
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    selectCurrencyNotifierProvider
+  ];
 
   @override
   Iterable<ProviderOrFamily>? get dependencies => _dependencies;
 
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    selectCurrencyNotifierProvider,
+    ...?selectCurrencyNotifierProvider.allTransitiveDependencies
+  };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'selectCurrencyNotifierProvider';
+  String? get name => r'currencyMetadataProvider';
 }
 
-/// See also [SelectCurrencyNotifier].
-class SelectCurrencyNotifierProvider extends AutoDisposeNotifierProviderImpl<
-    SelectCurrencyNotifier, SelectCurrencyState> {
-  /// See also [SelectCurrencyNotifier].
-  SelectCurrencyNotifierProvider(
-    Currency selectingFor,
+/// See also [currencyMetadata].
+class CurrencyMetadataProvider extends AutoDisposeProvider<CurrencyMetadata> {
+  /// See also [currencyMetadata].
+  CurrencyMetadataProvider(
+    Currency currency,
   ) : this._internal(
-          () => SelectCurrencyNotifier()..selectingFor = selectingFor,
-          from: selectCurrencyNotifierProvider,
-          name: r'selectCurrencyNotifierProvider',
+          (ref) => currencyMetadata(
+            ref as CurrencyMetadataRef,
+            currency,
+          ),
+          from: currencyMetadataProvider,
+          name: r'currencyMetadataProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$selectCurrencyNotifierHash,
-          dependencies: SelectCurrencyNotifierFamily._dependencies,
+                  : _$currencyMetadataHash,
+          dependencies: CurrencyMetadataFamily._dependencies,
           allTransitiveDependencies:
-              SelectCurrencyNotifierFamily._allTransitiveDependencies,
-          selectingFor: selectingFor,
+              CurrencyMetadataFamily._allTransitiveDependencies,
+          currency: currency,
         );
 
-  SelectCurrencyNotifierProvider._internal(
+  CurrencyMetadataProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.selectingFor,
+    required this.currency,
   }) : super.internal();
 
-  final Currency selectingFor;
+  final Currency currency;
 
   @override
-  SelectCurrencyState runNotifierBuild(
-    covariant SelectCurrencyNotifier notifier,
+  Override overrideWith(
+    CurrencyMetadata Function(CurrencyMetadataRef provider) create,
   ) {
-    return notifier.build(
-      selectingFor,
-    );
-  }
-
-  @override
-  Override overrideWith(SelectCurrencyNotifier Function() create) {
     return ProviderOverride(
       origin: this,
-      override: SelectCurrencyNotifierProvider._internal(
-        () => create()..selectingFor = selectingFor,
+      override: CurrencyMetadataProvider._internal(
+        (ref) => create(ref as CurrencyMetadataRef),
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        selectingFor: selectingFor,
+        currency: currency,
       ),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<SelectCurrencyNotifier,
-      SelectCurrencyState> createElement() {
-    return _SelectCurrencyNotifierProviderElement(this);
+  AutoDisposeProviderElement<CurrencyMetadata> createElement() {
+    return _CurrencyMetadataProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is SelectCurrencyNotifierProvider &&
-        other.selectingFor == selectingFor;
+    return other is CurrencyMetadataProvider && other.currency == currency;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, selectingFor.hashCode);
+    hash = _SystemHash.combine(hash, currency.hashCode);
 
     return _SystemHash.finish(hash);
   }
 }
 
-mixin SelectCurrencyNotifierRef
-    on AutoDisposeNotifierProviderRef<SelectCurrencyState> {
-  /// The parameter `selectingFor` of this provider.
-  Currency get selectingFor;
+mixin CurrencyMetadataRef on AutoDisposeProviderRef<CurrencyMetadata> {
+  /// The parameter `currency` of this provider.
+  Currency get currency;
 }
 
-class _SelectCurrencyNotifierProviderElement
-    extends AutoDisposeNotifierProviderElement<SelectCurrencyNotifier,
-        SelectCurrencyState> with SelectCurrencyNotifierRef {
-  _SelectCurrencyNotifierProviderElement(super.provider);
+class _CurrencyMetadataProviderElement
+    extends AutoDisposeProviderElement<CurrencyMetadata>
+    with CurrencyMetadataRef {
+  _CurrencyMetadataProviderElement(super.provider);
 
   @override
-  Currency get selectingFor =>
-      (origin as SelectCurrencyNotifierProvider).selectingFor;
+  Currency get currency => (origin as CurrencyMetadataProvider).currency;
 }
+
+String _$selectCurrencyNotifierHash() =>
+    r'de23fab06c6d8e2507572da171a2bc88223a15b7';
+
+/// See also [SelectCurrencyNotifier].
+@ProviderFor(SelectCurrencyNotifier)
+final selectCurrencyNotifierProvider = AutoDisposeNotifierProvider<
+    SelectCurrencyNotifier, SelectCurrencyState>.internal(
+  SelectCurrencyNotifier.new,
+  name: r'selectCurrencyNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$selectCurrencyNotifierHash,
+  dependencies: <ProviderOrFamily>[selectCurrencyPageInitialCurrencyProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    selectCurrencyPageInitialCurrencyProvider,
+    ...?selectCurrencyPageInitialCurrencyProvider.allTransitiveDependencies
+  },
+);
+
+typedef _$SelectCurrencyNotifier = AutoDisposeNotifier<SelectCurrencyState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

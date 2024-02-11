@@ -15,7 +15,7 @@ class RegularCurrencyListItem extends StatelessWidget {
   const RegularCurrencyListItem({
     super.key,
     required this.currency,
-    this.swapableWith,
+    required this.swapableWith,
     required this.selected,
     required this.padding,
     required this.onTap,
@@ -25,7 +25,7 @@ class RegularCurrencyListItem extends StatelessWidget {
   final Currency? swapableWith;
   final bool selected;
   final EdgeInsets padding;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -144,9 +144,16 @@ class _Row extends HookWidget {
   Widget build(BuildContext context) {
     final tapped = useState(false);
 
+    void onPointerChanged(bool down) {
+      if (onTap == null) {
+        return;
+      }
+      tapped.value = down;
+    }
+
     return Listener(
-      onPointerDown: (_) => tapped.value = true,
-      onPointerUp: (_) => tapped.value = false,
+      onPointerDown: (_) => onPointerChanged(true),
+      onPointerUp: (_) => onPointerChanged(false),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: onTap,
