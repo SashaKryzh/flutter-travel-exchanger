@@ -27,8 +27,8 @@ class ExchangeBetween extends _$ExchangeBetween {
 
     final initialBetween = storedBetween ??
         Between(
-          Currency.pln,
-          Currency.uah,
+          Currency.usd,
+          Currency.eur,
           null,
           showTo2: false,
         );

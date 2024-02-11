@@ -38,14 +38,9 @@ sealed class Currency extends Equatable {
         'code': code,
       };
 
-  static const time = TimeCurrency();
-
-  @visibleForTesting
-  static final uah = Currency('UAH');
-  @visibleForTesting
-  static final pln = Currency('PLN');
-  @visibleForTesting
+  static final usd = Currency('USD');
   static final eur = Currency('EUR');
+  static const time = TimeCurrency();
 }
 
 class MoneyCurrency extends Currency {

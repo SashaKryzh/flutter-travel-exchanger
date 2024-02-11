@@ -203,7 +203,7 @@ class TimeListTile extends ConsumerWidget {
 
     void onSettingsTap() async {
       var text = '';
-      var currency = currentRate?.to ?? Currency.pln;
+      var currency = currentRate?.to ?? Currency.usd;
 
       void setTimeRate() async {
         final hourRate = double.tryParse(text) ?? 0;
