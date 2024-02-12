@@ -73,6 +73,10 @@ class ExchangeBetween extends _$ExchangeBetween {
     );
   }
 
+  void setNewOrder(Currency from, Currency to1, Currency? to2) {
+    state = Between(from, to1, to2, showTo2: to2 != null);
+  }
+
   Future<void> _storeBetween(Between between) async {
     await ref.read(exchangeBetweenRepositoryProvider).setExchangeBetween(between);
   }

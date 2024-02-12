@@ -10,9 +10,11 @@ import 'package:travel_exchanger/domain/recently_used_provider.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/currency_list_item.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/search_bar.dart';
+import 'package:travel_exchanger/pages/select_currency_page/widgets/select_currency_app_bar.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/bottom_safe_area.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
+import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
@@ -43,7 +45,7 @@ class SelectCurrencyPageV2 extends HookWidget {
                 child: CustomScrollView(
                   controller: scrollController,
                   slivers: [
-                    const _AppBar(),
+                    const SelectCurrencyAppBar(),
                     const _SelectedSection().sliver(),
                     const _RecentSection().sliver(),
                     const _PopularSection().sliver(),
@@ -65,99 +67,6 @@ class SelectCurrencyPageV2 extends HookWidget {
   }
 }
 
-class _AppBar extends ConsumerWidget {
-  const _AppBar();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selectingFor = ref.watch(selectCurrencyNotifierProvider).selectingFor;
-    final between = ref.watch(exchangeBetweenProvider);
-
-    void onTap(Currency currency) {
-      if (currency == selectingFor) {
-        context
-            .read<ScrollController>()
-            .animateTo(0, duration: const Duration(milliseconds: 200), curve: Curves.easeInOut);
-      } else {
-        ref.read(selectCurrencyNotifierProvider.notifier).selectFor(currency);
-      }
-    }
-
-    Widget divider() => const SizedBox(
-          height: 24,
-          child: VerticalDivider(
-            color: Colors.black,
-            width: 6,
-            thickness: 1.5,
-          ),
-        );
-
-    return SliverAppBar(
-      pinned: true,
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _CurrencyItem(
-            currency: between.from,
-            active: between.from == selectingFor,
-            onTap: () => onTap(between.from),
-          ),
-          divider(),
-          _CurrencyItem(
-            currency: between.to1,
-            active: between.to1 == selectingFor,
-            onTap: () => onTap(between.to1),
-          ),
-          if (between.isThree) ...[
-            divider(),
-            _CurrencyItem(
-              currency: between.to2!,
-              active: between.to2! == selectingFor,
-              onTap: () => onTap(between.to2!),
-            ),
-          ],
-        ],
-      ),
-      actions: [
-        IconButton(
-          onPressed: between.isTwo
-              ? ref.read(exchangeBetweenProvider.notifier).showThird
-              : ref.read(exchangeBetweenProvider.notifier).hideThird,
-          icon: Icon(between.isTwo ? Icons.add : Icons.remove),
-        ),
-      ],
-    );
-  }
-}
-
-class _CurrencyItem extends StatelessWidget {
-  const _CurrencyItem({
-    required this.currency,
-    required this.active,
-    required this.onTap,
-  });
-
-  final Currency currency;
-  final bool active;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(6),
-        child: Text(
-          currency.displayCode(context),
-          style: TextStyle(
-            color: active ? context.theme.primaryColor : null,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _SelectedSection extends ConsumerWidget {
   const _SelectedSection();
 
@@ -171,35 +80,72 @@ class _SelectedSection extends ConsumerWidget {
       ref.read(selectCurrencyNotifierProvider.notifier).selectFor(currency);
     }
 
+    void onReorder(int oldIndex, int newIndex) {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      final betweenList = List.of(between.currencies);
+      final item = betweenList.removeAt(oldIndex);
+      betweenList.insert(newIndex, item);
+      ref.read(exchangeBetweenProvider.notifier).setNewOrder(
+            betweenList.elementAt(0),
+            betweenList.elementAt(1),
+            betweenList.elementAtOrNull(2),
+          );
+    }
+
+    const padding = EdgeInsets.symmetric(horizontal: 12);
+
     return Column(
       children: [
-        const _SectionHeading(
-          icon: Icon(Icons.check),
-          title: Text('Selected'),
-          trailing: Text('Rate'),
-        ),
-        SelectedCurrencyListItem(
-          currency: between.from,
-          active: between.from == selectingFor,
-          rate: ref.watch(rateProvider(between.from, between.from)),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          onTap: () => onTap(between.from),
-        ),
-        SelectedCurrencyListItem(
-          currency: between.to1,
-          active: between.to1 == selectingFor,
-          rate: ref.watch(rateProvider(between.from, between.to1)),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          onTap: () => onTap(between.to1),
-        ),
-        if (to2 != null)
-          SelectedCurrencyListItem(
-            currency: to2,
-            active: to2 == selectingFor,
-            rate: ref.watch(rateProvider(between.from, to2)),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            onTap: () => onTap(to2),
+        _SectionHeading(
+          icon: const Icon(Icons.check),
+          title: const Text('Selected'),
+          trailing: HStack(
+            [
+              const Text(
+                'Rate',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              Opacity(
+                opacity: 0,
+                child: SelectedCurrencyListItem.reorderIndicator(context),
+              ),
+            ],
           ),
+        ),
+        ReorderableListView(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          onReorder: onReorder,
+          children: [
+            SelectedCurrencyListItem(
+              key: ValueKey(between.from),
+              currency: between.from,
+              active: between.from == selectingFor,
+              rate: ref.watch(rateProvider(between.from, between.from)),
+              padding: padding,
+              onTap: () => onTap(between.from),
+            ),
+            SelectedCurrencyListItem(
+              key: ValueKey(between.to1),
+              currency: between.to1,
+              active: between.to1 == selectingFor,
+              rate: ref.watch(rateProvider(between.from, between.to1)),
+              padding: padding,
+              onTap: () => onTap(between.to1),
+            ),
+            if (to2 != null)
+              SelectedCurrencyListItem(
+                key: ValueKey(to2),
+                currency: to2,
+                active: to2 == selectingFor,
+                rate: ref.watch(rateProvider(between.from, to2)),
+                padding: padding,
+                onTap: () => onTap(to2),
+              ),
+          ],
+        ),
       ],
     );
   }

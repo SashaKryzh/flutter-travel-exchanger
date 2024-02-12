@@ -6,6 +6,7 @@ import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/min_size_widget.dart';
+import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
@@ -89,16 +90,26 @@ class SelectedCurrencyListItem extends StatelessWidget {
   final EdgeInsets padding;
   final VoidCallback onTap;
 
+  static Widget reorderIndicator(BuildContext context) {
+    return HStack(
+      [
+        const SizedSpacer(6),
+        Icon(
+          Icons.reorder,
+          color: context.theme.disabledColor,
+          size: 16,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final activeHighlightColor = active ? context.colorScheme.primary : null;
 
     return _Row(
       onTap: onTap,
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       code: Text(
         currency.code,
         style: TextStyle(
@@ -119,6 +130,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
               color: rate.source.isApi ? context.theme.disabledColor : Colors.orange[200],
             ),
           ),
+          reorderIndicator(context),
         ],
       ),
     );
@@ -127,6 +139,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
 
 class _Row extends HookWidget {
   const _Row({
+    this.leading,
     required this.code,
     required this.title,
     this.trailing,
@@ -134,6 +147,7 @@ class _Row extends HookWidget {
     this.onTap,
   });
 
+  final Widget? leading;
   final Widget code;
   final Widget title;
   final Widget? trailing;
@@ -163,6 +177,10 @@ class _Row extends HookWidget {
           padding: padding,
           child: Row(
             children: [
+              if (leading != null) ...[
+                leading!,
+                const SizedSpacer(6),
+              ],
               DefaultTextStyle.merge(
                 style: context.textTheme.bodyLarge?.copyWith(
                   color: context.defaultTextStyle.style.color,
