@@ -5,13 +5,13 @@ import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
 class HStack extends StatelessWidget {
-  const HStack(
-    this.children, {
+  const HStack({
     super.key,
     this.gap = 0,
     this.mainAxisSize = MainAxisSize.min,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.center,
+    required this.children,
   });
 
   final List<Widget> children;
@@ -32,13 +32,13 @@ class HStack extends StatelessWidget {
 }
 
 class VStack extends StatelessWidget {
-  const VStack(
-    this.children, {
+  const VStack({
     super.key,
     this.gap = 0,
     this.mainAxisSize = MainAxisSize.min,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.center,
+    required this.children,
   });
 
   final List<Widget> children;

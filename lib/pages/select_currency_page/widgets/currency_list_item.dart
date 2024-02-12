@@ -92,7 +92,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
 
   static Widget reorderIndicator(BuildContext context) {
     return HStack(
-      [
+      children: [
         const SizedSpacer(6),
         Icon(
           Icons.reorder,

@@ -18,6 +18,8 @@ import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
+const kSectionHeadingBeforePadding = 20.0;
+
 class SelectCurrencyPageV2 extends HookWidget {
   const SelectCurrencyPageV2({
     super.key,
@@ -49,7 +51,7 @@ class SelectCurrencyPageV2 extends HookWidget {
                     const _SelectedSection().sliver(),
                     const _RecentSection().sliver(),
                     const _PopularSection().sliver(),
-                    const SizedSpacer(16).sliver(),
+                    const SizedSpacer(kSectionHeadingBeforePadding).sliver(),
                     const _SectionHeading(
                       icon: Icon(Icons.list),
                       title: Text('All'),
@@ -102,7 +104,7 @@ class _SelectedSection extends ConsumerWidget {
           icon: const Icon(Icons.check),
           title: const Text('Selected'),
           trailing: HStack(
-            [
+            children: [
               const Text(
                 'Rate',
                 style: TextStyle(fontWeight: FontWeight.w600),
@@ -165,12 +167,11 @@ class _RecentSection extends ConsumerWidget {
 
     return Column(
       children: [
-        const SizedSpacer(16),
+        const SizedSpacer(kSectionHeadingBeforePadding),
         const _SectionHeading(
           icon: Icon(Icons.replay),
           title: Text('Recent'),
         ),
-        const SizedSpacer(16),
         for (final currency in recentlyUsed)
           RegularCurrencyListItem(
             currency: currency,
@@ -193,7 +194,7 @@ class _PopularSection extends ConsumerWidget {
 
     return Column(
       children: [
-        const SizedSpacer(16),
+        const SizedSpacer(kSectionHeadingBeforePadding),
         const _SectionHeading(
           icon: Icon(Icons.star),
           title: Text('Popular'),
@@ -233,15 +234,20 @@ class _SectionHeading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
-      child: Row(
+      child: VStack(
         children: [
-          icon,
-          const SizedSpacer(8),
-          DefaultTextStyle.merge(
-            style: context.textTheme.headlineSmall,
-            child: title,
-          ).expanded(),
-          if (trailing != null) trailing!,
+          HStack(
+            children: [
+              icon,
+              const SizedSpacer(8),
+              DefaultTextStyle.merge(
+                style: context.textTheme.headlineSmall,
+                child: title,
+              ).expanded(),
+              if (trailing != null) trailing!,
+            ],
+          ),
+          const Divider(height: 12),
         ],
       ),
     );
