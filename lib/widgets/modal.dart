@@ -128,9 +128,16 @@ class ModalBarrier extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: AnimatedContainer(
+      child: TweenAnimationBuilder<Color?>(
         duration: kThemeAnimationDuration,
-        color: visible ? const Color(0x80000000) : Colors.transparent,
+        tween: ColorTween(
+          begin: Colors.transparent,
+          end: visible ? const Color(0x80000000) : Colors.transparent,
+        ),
+        builder: (context, value, child) => ColoredBox(
+          color: value!,
+          child: child,
+        ),
         child: Center(
           child: GestureDetector(
             onTap: () {},
