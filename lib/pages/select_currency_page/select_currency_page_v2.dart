@@ -9,11 +9,13 @@ import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/domain/recently_used_provider.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/currency_list_item.dart';
+import 'package:travel_exchanger/pages/select_currency_page/widgets/custom_rate_modal.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/search_bar.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/select_currency_app_bar.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/bottom_safe_area.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
+import 'package:travel_exchanger/widgets/modal.dart';
 import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
@@ -31,46 +33,75 @@ class SelectCurrencyPageV2 extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final scrollController = useScrollController();
+    final showCustomRate = useState(false);
+    final showCustomRateDebounced =
+        useDebounced(showCustomRate.value, const Duration(milliseconds: 500));
 
-    return ProviderScope(
-      overrides: [
-        selectCurrencyPageInitialCurrencyProvider.overrideWithValue(Currency(currencyCode)),
-      ],
-      child: Consumer(
-        builder: (context, ref, child) {
-          ref.watch(selectCurrencyNotifierProvider);
+    final resizeToAvoidBottomInset = showCustomRate.value
+        ? false
+        // ignore: avoid-unnecessary-conditionals
+        : showCustomRateDebounced == true
+            ? false
+            : true;
 
-          return p.ListenableProvider.value(
-            value: scrollController,
-            child: Scaffold(
-              body: SearchBarWrapper(
-                child: CustomScrollView(
-                  controller: scrollController,
-                  slivers: [
-                    const SelectCurrencyAppBar(),
-                    const _SelectedSection().sliver(),
-                    const _RecentSection().sliver(),
-                    const _PopularSection().sliver(),
-                    const SizedSpacer(kSectionHeadingBeforePadding).sliver(),
-                    const _SectionHeading(
-                      icon: Icon(Icons.list),
-                      title: Text('All'),
-                    ).sliver(),
-                    const _AllList(),
-                    const BottomSafeArea(additionalHeight: 100).sliver(),
-                  ],
+    void onEditRate(Currency currency) {
+      showCustomRate.value = true;
+    }
+
+    return Modal(
+      visible: showCustomRate.value,
+      onDismiss: () => showCustomRate.value = false,
+      modal: CustomRateModal(
+        to: Currency.eur,
+        onSubmit: () => showCustomRate.value = false,
+      ),
+      child: ProviderScope(
+        overrides: [
+          selectCurrencyPageInitialCurrencyProvider.overrideWithValue(Currency(currencyCode)),
+        ],
+        child: Consumer(
+          builder: (context, ref, child) {
+            ref.watch(selectCurrencyNotifierProvider);
+
+            return p.ListenableProvider.value(
+              value: scrollController,
+              child: Scaffold(
+                resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+                body: SearchBarWrapper(
+                  child: CustomScrollView(
+                    controller: scrollController,
+                    slivers: [
+                      SelectCurrencyAppBar(
+                        scrollController: scrollController,
+                      ),
+                      _SelectedSection(
+                        onEditRate: onEditRate,
+                      ).sliver(),
+                      const _RecentSection().sliver(),
+                      const _PopularSection().sliver(),
+                      const SizedSpacer(kSectionHeadingBeforePadding).sliver(),
+                      const _SectionHeading(
+                        icon: Icon(Icons.list),
+                        title: Text('All'),
+                      ).sliver(),
+                      const _AllList(),
+                      const BottomSafeArea(additionalHeight: 100).sliver(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 }
 
-class _SelectedSection extends ConsumerWidget {
-  const _SelectedSection();
+class _SelectedSection extends HookConsumerWidget {
+  const _SelectedSection({required this.onEditRate});
+
+  final void Function(Currency) onEditRate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -128,6 +159,7 @@ class _SelectedSection extends ConsumerWidget {
               rate: ref.watch(rateProvider(between.from, between.from)),
               padding: padding,
               onTap: () => onTap(between.from),
+              onEditRate: null,
             ),
             SelectedCurrencyListItem(
               key: ValueKey(between.to1),
@@ -136,6 +168,7 @@ class _SelectedSection extends ConsumerWidget {
               rate: ref.watch(rateProvider(between.from, between.to1)),
               padding: padding,
               onTap: () => onTap(between.to1),
+              onEditRate: () => onEditRate(between.to1),
             ),
             if (to2 != null)
               SelectedCurrencyListItem(
@@ -145,6 +178,7 @@ class _SelectedSection extends ConsumerWidget {
                 rate: ref.watch(rateProvider(between.from, to2)),
                 padding: padding,
                 onTap: () => onTap(to2),
+                onEditRate: () => onEditRate(to2),
               ),
           ],
         ),

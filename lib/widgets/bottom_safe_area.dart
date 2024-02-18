@@ -4,15 +4,20 @@ import 'package:flutter/material.dart';
 class BottomSafeArea extends StatelessWidget {
   const BottomSafeArea({
     super.key,
+    this.resize = true,
     this.additionalHeight = 0,
   });
 
+  final bool resize;
   final double additionalHeight;
 
   @override
   Widget build(BuildContext context) {
+    final padding =
+        resize ? MediaQuery.paddingOf(context).bottom : MediaQuery.viewPaddingOf(context).bottom;
+
     return SizedBox(
-      height: MediaQuery.paddingOf(context).bottom + additionalHeight,
+      height: padding + additionalHeight,
     );
   }
 }

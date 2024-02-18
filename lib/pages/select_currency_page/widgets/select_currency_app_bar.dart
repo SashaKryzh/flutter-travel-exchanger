@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
+import 'package:travel_exchanger/utils/hooks/use_listen.dart';
 
-class SelectCurrencyAppBar extends ConsumerWidget {
-  const SelectCurrencyAppBar({super.key});
+class SelectCurrencyAppBar extends HookConsumerWidget {
+  const SelectCurrencyAppBar({
+    super.key,
+    required this.scrollController,
+  });
+
+  final ScrollController scrollController;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectingFor = ref.watch(selectCurrencyNotifierProvider).selectingFor;
     final between = ref.watch(exchangeBetweenProvider);
+
+    final showCurrencies = useState(false);
+    useListen(scrollController, () {
+      showCurrencies.value = scrollController.offset > 150;
+    });
 
     void onTap(Currency currency) {
       if (currency == selectingFor) {
@@ -35,29 +48,35 @@ class SelectCurrencyAppBar extends ConsumerWidget {
 
     return SliverAppBar(
       pinned: true,
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _CurrencyItem(
-            currency: between.from,
-            active: between.from == selectingFor,
-            onTap: () => onTap(between.from),
-          ),
-          divider(),
-          _CurrencyItem(
-            currency: between.to1,
-            active: between.to1 == selectingFor,
-            onTap: () => onTap(between.to1),
-          ),
-          if (between.isThree) ...[
+      title: IgnorePointer(
+        ignoring: !showCurrencies.value,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _CurrencyItem(
+              currency: between.from,
+              active: between.from == selectingFor,
+              onTap: () => onTap(between.from),
+            ),
             divider(),
             _CurrencyItem(
-              currency: between.to2!,
-              active: between.to2! == selectingFor,
-              onTap: () => onTap(between.to2!),
+              currency: between.to1,
+              active: between.to1 == selectingFor,
+              onTap: () => onTap(between.to1),
             ),
+            if (between.isThree) ...[
+              divider(),
+              _CurrencyItem(
+                currency: between.to2!,
+                active: between.to2! == selectingFor,
+                onTap: () => onTap(between.to2!),
+              ),
+            ],
           ],
-        ],
+        )
+            .animate(target: showCurrencies.value ? 1 : 0)
+            .moveY(duration: const Duration(milliseconds: 100), begin: 15)
+            .fadeIn(),
       ),
       actions: [
         IconButton(

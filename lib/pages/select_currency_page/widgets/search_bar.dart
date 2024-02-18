@@ -54,6 +54,7 @@ class SearchBar extends HookConsumerWidget {
             : null,
       ),
       child: SafeArea(
+        maintainBottomViewPadding: true,
         top: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -61,6 +62,8 @@ class SearchBar extends HookConsumerWidget {
             TextField(
               controller: textController,
               focusNode: focusNode,
+              autocorrect: false,
+              enableSuggestions: false,
               decoration: const InputDecoration(
                 hintText: 'Search',
               ),

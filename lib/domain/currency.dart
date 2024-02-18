@@ -38,8 +38,8 @@ sealed class Currency extends Equatable {
         'code': code,
       };
 
-  static final usd = Currency('USD');
-  static final eur = Currency('EUR');
+  static const usd = MoneyCurrency('USD');
+  static const eur = MoneyCurrency('EUR');
   static const time = TimeCurrency();
 }
 

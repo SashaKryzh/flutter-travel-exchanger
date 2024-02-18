@@ -82,6 +82,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
     required this.rate,
     required this.padding,
     required this.onTap,
+    required this.onEditRate,
   });
 
   final Currency currency;
@@ -89,11 +90,12 @@ class SelectedCurrencyListItem extends StatelessWidget {
   final RateForData rate;
   final EdgeInsets padding;
   final VoidCallback onTap;
+  final VoidCallback? onEditRate;
 
   static Widget reorderIndicator(BuildContext context) {
     return HStack(
       children: [
-        const SizedSpacer(6),
+        const SizedSpacer(8),
         Icon(
           Icons.reorder,
           color: context.theme.disabledColor,
@@ -106,6 +108,8 @@ class SelectedCurrencyListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final activeHighlightColor = active ? context.colorScheme.primary : null;
+
+    final rateColor = rate.source.isApi ? context.theme.disabledColor : Colors.orange[200];
 
     return _Row(
       onTap: onTap,
@@ -122,12 +126,24 @@ class SelectedCurrencyListItem extends StatelessWidget {
           color: activeHighlightColor,
         ),
       ),
-      trailing: Row(
+      trailing: HStack(
         children: [
-          Text(
-            rate.rate.toStringAsFixed(2),
-            style: context.textTheme.bodyLarge?.copyWith(
-              color: rate.source.isApi ? context.theme.disabledColor : Colors.orange[200],
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: onEditRate,
+            child: HStack(
+              children: [
+                Icon(
+                  Icons.edit,
+                  color: onEditRate != null ? rateColor : Colors.transparent,
+                  size: 12,
+                ),
+                const SizedSpacer(4),
+                Text(
+                  rate.rate.toStringAsFixed(2),
+                  style: context.textTheme.bodyLarge?.copyWith(color: rateColor),
+                ),
+              ],
             ),
           ),
           reorderIndicator(context),

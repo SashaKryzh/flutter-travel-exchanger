@@ -128,6 +128,8 @@ class SearchField extends StatelessWidget {
           child: TextField(
             autofocus: true,
             onChanged: onChanged,
+            autocorrect: false,
+            enableSuggestions: false,
             decoration: const InputDecoration(
               hintText: 'Search',
               prefixIcon: Icon(Icons.search),
