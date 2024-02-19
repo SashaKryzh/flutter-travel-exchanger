@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
@@ -6,7 +7,10 @@ import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_background.dart';
+import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
+
+final _kAutoSizeGroup = AutoSizeGroup();
 
 class HomeAppBar extends ConsumerWidget {
   static const verticalPadding = 6.0;
@@ -104,8 +108,15 @@ class _ColumnHeader extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: valuePadding),
-        child: Text(currency.displayCode(context)).textAlignX(textAlign),
+        padding: const EdgeInsets.symmetric(horizontal: kValuePadding),
+        child: AutoSizeText(
+          currency.displayCode(context),
+          group: _kAutoSizeGroup,
+          maxLines: 1,
+        ).textStyle(
+          context.textTheme.titleLarge?.copyWith(),
+          align: textAlign,
+        ),
       ),
     );
   }

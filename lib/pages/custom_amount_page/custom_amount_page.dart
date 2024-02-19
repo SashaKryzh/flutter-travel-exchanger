@@ -114,20 +114,25 @@ class _InputContainer extends HookConsumerWidget {
       child: GlassContainer(
         blur: kContainerBlur,
         borderRadius: BorderRadius.circular(kContainerBorderRadius),
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 100),
           padding: const EdgeInsets.all(kContainerPadding),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(kContainerBorderRadius),
             border: Border.all(
-              color: Colors.white.withOpacity(isSelected ? 1 : 0),
-              width: 1,
+              color: context.colorScheme.primary.withOpacity(isSelected ? 1 : 0),
+              width: 2,
             ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(currency.displayCode(context)),
+              Text(
+                currency.displayCode(context),
+              ).textStyle(
+                context.textTheme.titleLarge?.copyWith(color: Colors.white, fontSize: 20),
+              ),
               const SizedSpacer(10),
               IgnorePointer(
                 child: TextField(
@@ -136,7 +141,8 @@ class _InputContainer extends HookConsumerWidget {
                   autofocus: isSelected,
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: context.textTheme.titleLarge?.copyWith(
+                    fontSize: 24,
                     color: Colors.white.withOpacity(justReceivedFocus.value ? 0.6 : 1),
                   ),
                   decoration: const InputDecoration(

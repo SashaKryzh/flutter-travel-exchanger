@@ -34,6 +34,8 @@ dependencies:
   flutter_portal: ^1.1.4
   flutter_animate: ^4.5.0
   flutter_lucide: ^1.1.2
+  google_fonts: ^6.1.0
+  auto_size_text: ^3.0.0
 
   cupertino_icons: ^1.0.2
 

@@ -15,8 +15,8 @@ import 'package:travel_exchanger/utils/extensions.dart';
 const kExchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
 const kExpandAnimationCurve = Curves.easeInOut;
 
-var valuePadding = 30.0;
-double get activationDelta => valuePadding * 0.8;
+const kValuePadding = 25.0;
+double get activationDelta => kValuePadding * 0.8;
 
 /// Handles side drag activation
 class ExchangeTable extends ConsumerStatefulWidget {
@@ -83,7 +83,7 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
   }
 
   Offset _offset(double dx) {
-    dx = dx.clamp(-valuePadding, valuePadding);
+    dx = dx.clamp(-kValuePadding, kValuePadding);
     return Offset(dx, 0);
   }
 
@@ -504,9 +504,12 @@ class _ValueItem extends StatelessWidget {
             ColumnAlignment.right => Alignment.centerRight,
           },
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: valuePadding),
+            padding: const EdgeInsets.symmetric(horizontal: kValuePadding),
             child: Text(
               value.format(),
+              style: context.textTheme.bodyLarge?.copyWith(fontSize: 17),
+              maxLines: 1,
+              overflow: TextOverflow.visible,
             ),
           ),
         ),
