@@ -275,10 +275,18 @@ class _SectionHeading extends StatelessWidget {
         children: [
           HStack(
             children: [
-              icon,
+              IconTheme(
+                data: const IconThemeData(
+                  size: 20,
+                ),
+                child: icon,
+              ),
               const SizedSpacer(8),
               DefaultTextStyle.merge(
-                style: context.textTheme.headlineSmall,
+                style: context.textTheme.titleLarge?.copyWith(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
                 child: title,
               ).expanded(),
               if (trailing != null) trailing!,
