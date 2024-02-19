@@ -33,6 +33,7 @@ class SelectCurrencyPageV2 extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final scrollController = useScrollController();
+    final showCustomRateToCurrency = useRef<Currency>(Currency.eur);
     final showCustomRate = useState(false);
     final showCustomRateDebounced =
         useDebounced(showCustomRate.value, const Duration(milliseconds: 500));
@@ -45,6 +46,7 @@ class SelectCurrencyPageV2 extends HookWidget {
             : true;
 
     void onEditRate(Currency currency) {
+      showCustomRateToCurrency.value = currency;
       showCustomRate.value = true;
     }
 
@@ -52,8 +54,8 @@ class SelectCurrencyPageV2 extends HookWidget {
       visible: showCustomRate.value,
       onDismiss: () => showCustomRate.value = false,
       modal: CustomRateModal(
-        to: Currency.eur,
-        onSubmit: () => showCustomRate.value = false,
+        to: showCustomRateToCurrency.value,
+        onClose: () => showCustomRate.value = false,
       ),
       child: ProviderScope(
         overrides: [
