@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
+import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/data/time_rate_repository.dart';
 import 'package:travel_exchanger/domain/currencies_providers.dart';
 import 'package:travel_exchanger/domain/currency.dart';
@@ -132,7 +133,7 @@ class SearchField extends StatelessWidget {
             enableSuggestions: false,
             decoration: const InputDecoration(
               hintText: 'Search',
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: Icon(AppIcons.search),
             ),
           ),
         ),

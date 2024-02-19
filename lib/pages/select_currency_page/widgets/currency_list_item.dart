@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
@@ -33,7 +34,7 @@ class RegularCurrencyListItem extends StatelessWidget {
     Widget? trailing;
 
     if (selected) {
-      trailing = const Icon(Icons.check);
+      trailing = const Icon(AppIcons.selected);
     } else if (swapableWith != null) {
       trailing = Row(
         children: [
@@ -42,7 +43,11 @@ class RegularCurrencyListItem extends StatelessWidget {
             style: context.textTheme.bodyLarge?.copyWith(color: context.theme.disabledColor),
           ),
           const SizedSpacer(1),
-          Icon(Icons.swap_horiz, color: context.theme.disabledColor),
+          Icon(
+            AppIcons.swap,
+            size: 16,
+            color: context.theme.disabledColor,
+          ),
           const SizedSpacer(1),
           Text(
             swapableWith!.code,
@@ -95,9 +100,9 @@ class SelectedCurrencyListItem extends StatelessWidget {
   static Widget reorderIndicator(BuildContext context) {
     return HStack(
       children: [
-        const SizedSpacer(8),
+        const SizedSpacer(6),
         Icon(
-          Icons.reorder,
+          AppIcons.rearrangeIndicator,
           color: context.theme.disabledColor,
           size: 16,
         ),
@@ -134,7 +139,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
             child: HStack(
               children: [
                 Icon(
-                  Icons.edit,
+                  AppIcons.editMoneyRate,
                   color: onEditRate != null ? rateColor : Colors.transparent,
                   size: 12,
                 ),

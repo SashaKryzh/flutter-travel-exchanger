@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
+import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table.dart';
@@ -71,7 +72,7 @@ class HomeAppBar extends ConsumerWidget {
                 onPressed: () => const SettingsRoute().go(context),
                 padding: const EdgeInsets.all(verticalPadding),
                 visualDensity: VisualDensity.compact,
-                icon: const Icon(Icons.settings),
+                icon: const Icon(AppIcons.settings),
               ),
             ],
           ),

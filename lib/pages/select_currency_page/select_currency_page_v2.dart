@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:provider/provider.dart' as p;
+import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/popular_provider.dart';
@@ -83,7 +84,7 @@ class SelectCurrencyPageV2 extends HookWidget {
                       const _PopularSection().sliver(),
                       const SizedSpacer(kSectionHeadingBeforePadding).sliver(),
                       const _SectionHeading(
-                        icon: Icon(Icons.list),
+                        icon: Icon(AppIcons.all),
                         title: Text('All'),
                       ).sliver(),
                       const _AllList(),
@@ -134,7 +135,7 @@ class _SelectedSection extends HookConsumerWidget {
     return Column(
       children: [
         _SectionHeading(
-          icon: const Icon(Icons.check),
+          icon: const Icon(AppIcons.selected),
           title: const Text('Selected'),
           trailing: HStack(
             children: [
@@ -205,7 +206,7 @@ class _RecentSection extends ConsumerWidget {
       children: [
         const SizedSpacer(kSectionHeadingBeforePadding),
         const _SectionHeading(
-          icon: Icon(Icons.replay),
+          icon: Icon(AppIcons.recent),
           title: Text('Recent'),
         ),
         for (final currency in recentlyUsed)
@@ -232,7 +233,7 @@ class _PopularSection extends ConsumerWidget {
       children: [
         const SizedSpacer(kSectionHeadingBeforePadding),
         const _SectionHeading(
-          icon: Icon(Icons.star),
+          icon: Icon(AppIcons.popular),
           title: Text('Popular'),
         ),
         const SizedSpacer(16),

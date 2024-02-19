@@ -363,6 +363,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_lucide:
+    dependency: "direct main"
+    description:
+      name: flutter_lucide
+      sha256: "50d42f2e775a6f447126b94935afc780498b597bd2de93aecaf01af4b7dfddab"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.2"
   flutter_portal:
     dependency: "direct main"
     description:

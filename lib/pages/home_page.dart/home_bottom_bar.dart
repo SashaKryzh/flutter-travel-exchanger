@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
+import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
@@ -170,7 +171,7 @@ class _SwapButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(6),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.white,
@@ -179,7 +180,10 @@ class _SwapButton extends StatelessWidget {
             width: 1,
           ),
         ),
-        child: const Icon(Icons.swap_horiz),
+        child: const Icon(
+          AppIcons.swap,
+          size: 20,
+        ),
       ),
     );
   }
