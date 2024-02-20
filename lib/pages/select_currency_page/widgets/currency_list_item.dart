@@ -11,8 +11,6 @@ import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
-// TODO: Handle time as a currency in both selected and regular items.
-
 class RegularCurrencyListItem extends StatelessWidget {
   const RegularCurrencyListItem({
     super.key,
@@ -64,9 +62,8 @@ class RegularCurrencyListItem extends StatelessWidget {
           color: selected ? context.theme.disabledColor : null,
         ),
         child: _Row(
-          code: Text(currency.code),
-          // TODO: Provide real currency names.
-          title: Text(currency.name(context)),
+          code: Text(currency.displayCode(context)),
+          title: Text(currency.isTime ? '' : currency.name(context)),
           trailing: trailing,
           padding: const EdgeInsets.symmetric(
             horizontal: 12,
@@ -110,6 +107,8 @@ class SelectedCurrencyListItem extends StatelessWidget {
     );
   }
 
+  bool get isTime => currency.isTime;
+
   @override
   Widget build(BuildContext context) {
     final activeHighlightColor = active ? context.colorScheme.primary : null;
@@ -120,16 +119,12 @@ class SelectedCurrencyListItem extends StatelessWidget {
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       code: Text(
-        currency.code,
-        style: TextStyle(
-          color: activeHighlightColor,
-        ),
+        currency.displayCode(context),
+        style: TextStyle(color: activeHighlightColor),
       ),
       title: Text(
-        currency.name(context),
-        style: TextStyle(
-          color: activeHighlightColor,
-        ),
+        isTime ? '' : currency.name(context),
+        style: TextStyle(color: activeHighlightColor),
       ),
       trailing: HStack(
         children: [
@@ -139,7 +134,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
             child: HStack(
               children: [
                 Icon(
-                  AppIcons.editMoneyRate,
+                  isTime ? AppIcons.editTimeRate : AppIcons.editMoneyRate,
                   color: onEditRate != null ? rateColor : Colors.transparent,
                   size: 12,
                 ),

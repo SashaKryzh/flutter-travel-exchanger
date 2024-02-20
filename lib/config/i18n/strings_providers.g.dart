@@ -23,7 +23,9 @@ final appLocaleStreamProvider = AutoDisposeStreamProvider<AppLocale>.internal(
 typedef AppLocaleStreamRef = AutoDisposeStreamProviderRef<AppLocale>;
 String _$tHash() => r'26289ce7c8dd8f27764ca5bbea5d3aa1f513fec9';
 
-/// See also [t].
+/// Translation provider
+///
+/// Copied from [t].
 @ProviderFor(t)
 final tProvider = AutoDisposeProvider<Translations>.internal(
   t,

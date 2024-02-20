@@ -8,6 +8,7 @@ Stream<AppLocale> appLocaleStream(AppLocaleStreamRef _) {
   return LocaleSettings.getLocaleStream();
 }
 
+/// Translation provider
 @riverpod
 Translations t(TRef ref) {
   ref.watch(appLocaleStreamProvider);

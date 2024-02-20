@@ -19,7 +19,7 @@ List<Currency> searchCurrencies(
   String query, {
   bool Function(Currency currency)? filter,
 }) {
-  var currencies = ref.watch(currenciesProvider);
+  var currencies = ref.watch(currenciesProvider).sortedBy((e) => e.displayCode());
   if (filter != null) {
     currencies = currencies.where(filter).toList();
   }

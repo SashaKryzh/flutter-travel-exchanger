@@ -23,7 +23,7 @@ final selectCurrencyPageInitialCurrencyProvider =
 );
 
 typedef SelectCurrencyPageInitialCurrencyRef = AutoDisposeProviderRef<Currency>;
-String _$searchCurrenciesHash() => r'6901856e9f48f743cea788b421504855c286cacc';
+String _$searchCurrenciesHash() => r'75cd3c4790bf0f594930e257776a3fcbd73db469';
 
 /// Copied from Dart SDK
 class _SystemHash {
