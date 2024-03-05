@@ -68,3 +68,8 @@ extension NumberFormatX on NumberFormat {
     }
   }
 }
+
+// ignore: avoid-dynamic
+extension DynamicX on dynamic {
+  T? asOrNull<T>() => this is T ? this as T : null;
+}
