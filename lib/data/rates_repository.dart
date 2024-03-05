@@ -71,7 +71,7 @@ class RatesRepository {
     await _storeRemoteTimestamp();
   }
 
-  Future<void> setCustomRate(Currency from, Currency to, double rate) async {
+  Future<void> setCustomRate(MoneyCurrency from, MoneyCurrency to, double rate) async {
     final newRate = Rate(
       from: from,
       to: to,
@@ -87,7 +87,7 @@ class RatesRepository {
     await _storeRates(_ratesData);
   }
 
-  Future<void> removeCustomRateBetween(Currency a, Currency b, {bool notify = true}) async {
+  Future<void> removeCustomRateBetween(MoneyCurrency a, MoneyCurrency b, {bool notify = true}) async {
     final rates = [..._ratesData.rates];
     rates.removeWhere(
       (e) =>
@@ -111,7 +111,7 @@ class RatesRepository {
       final response = await _supabase.functions.invoke('rates', method: HttpMethod.get);
       final data = GetRatesResponseDto.fromJson(response.data as Map<String, dynamic>);
       ratesData = RatesData(
-        Currency(data.base),
+        MoneyCurrency(data.base),
         data.rates.map((e) => e.toDomain()).toList(),
       );
     } on FunctionException catch (e, stackTrace) {

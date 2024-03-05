@@ -206,7 +206,7 @@ class TimeListTile extends ConsumerWidget {
 
     void onSettingsTap() async {
       var text = '';
-      var currency = currentRate?.to ?? Currency.usd;
+      var currency = currentRate?.to.asOrNull<MoneyCurrency>() ?? Currency.usd;
 
       void setTimeRate() async {
         final hourRate = double.tryParse(text) ?? 0;
@@ -236,7 +236,15 @@ class TimeListTile extends ConsumerWidget {
                       onTap: () => SearchCurrencyRoute(
                         SearchCurrencyRouteExtra(
                           selectedCurrency: currentRate?.to,
-                          onSelectCurrency: (e) => setState(() => currency = e),
+                          onSelectCurrency: (e) {
+                            assert(e.isMoney);
+                            final c = e.asOrNull<MoneyCurrency>();
+                            if (c != null) {
+                              setState(() {
+                                currency = c;
+                              });
+                            }
+                          },
                         ),
                       ).push<void>(context),
                       child: Text(currency.name(context)),

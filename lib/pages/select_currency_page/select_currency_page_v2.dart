@@ -11,8 +11,10 @@ import 'package:travel_exchanger/domain/recently_used_provider.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/currency_list_item.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/custom_rate_modal.dart';
+import 'package:travel_exchanger/pages/select_currency_page/widgets/custom_time_rate_modal.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/search_bar.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/select_currency_app_bar.dart';
+import 'package:travel_exchanger/pages/select_currency_page/widgets/swapable_with.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/bottom_safe_area.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
@@ -54,10 +56,18 @@ class SelectCurrencyPageV2 extends HookWidget {
     return Modal(
       visible: showCustomRate.value,
       onDismiss: () => showCustomRate.value = false,
-      modal: CustomRateModal(
-        to: showCustomRateToCurrency.value,
-        onClose: () => showCustomRate.value = false,
-      ),
+      modal: () {
+        final to = showCustomRateToCurrency.value;
+        return switch (to) {
+          MoneyCurrency() => CustomRateModal(
+              to: to,
+              onClose: () => showCustomRate.value = false,
+            ),
+          TimeCurrency() => CustomTimeRateModal(
+              onClose: () => showCustomRate.value = false,
+            ),
+        };
+      }(),
       child: ProviderScope(
         overrides: [
           selectCurrencyPageInitialCurrencyProvider.overrideWithValue(Currency(currencyCode)),
@@ -71,6 +81,7 @@ class SelectCurrencyPageV2 extends HookWidget {
               child: Scaffold(
                 resizeToAvoidBottomInset: resizeToAvoidBottomInset,
                 body: SearchBarWrapper(
+                  onSelected: (value) => swapToCurrency(ref, value),
                   child: CustomScrollView(
                     controller: scrollController,
                     slivers: [
@@ -237,7 +248,7 @@ class _PopularSection extends ConsumerWidget {
           title: Text('Popular'),
         ),
         const SizedSpacer(16),
-        const Text('Your Time'),
+        const _YourTimePopularItem(),
         const SizedSpacer(12),
         for (final currency in popularCurrencies)
           () {
@@ -253,6 +264,65 @@ class _PopularSection extends ConsumerWidget {
           }(),
       ],
     );
+  }
+}
+
+class _YourTimePopularItem extends HookConsumerWidget {
+  const _YourTimePopularItem();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final metadata = ref.watch(currencyMetadataProvider(Currency.time));
+    final timeRateExists = ref.watch(timeRateDataProvider) != null;
+    final betweenContainsTime =
+        ref.watch(exchangeBetweenProvider).currencies.contains(Currency.time);
+
+    void onTap() {
+      swapToCurrency(ref, Currency.time);
+      if (timeRateExists) {
+        swapToCurrency(ref, Currency.time);
+      } else {
+        // TODO: Set time rate first.
+      }
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      decoration: BoxDecoration(
+        color: betweenContainsTime ? Colors.grey[100] : Colors.yellow[300],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          VStack(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                Currency.time.displayCode(context),
+                style: context.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const Text('Use your time as currency'),
+            ],
+          ),
+          const Spacer(),
+          if (metadata.isSelected)
+            Icon(
+              AppIcons.selected,
+              color: context.theme.disabledColor,
+            ),
+          if (!timeRateExists)
+            Icon(
+              AppIcons.editTimeRate,
+              color: context.theme.disabledColor,
+            ),
+          if (metadata.swapableWith != null)
+            SwapableWith(from: Currency.time, to: metadata.swapableWith!),
+        ],
+      ),
+    ).onTap(onTap);
   }
 }
 

@@ -37,7 +37,7 @@ class TimeRateRepository {
     _setData = await _load();
   }
 
-  Future<void> setTimeRate(Currency to, double rate) async {
+  Future<void> setTimeRate(MoneyCurrency to, double rate) async {
     final data = _data;
     if (data == null) {
       final newData = TimeRateData(
@@ -77,6 +77,7 @@ class TimeRateRepository {
 @freezed
 class TimeRateData with _$TimeRateData {
   factory TimeRateData({
+    // TODO: Change to MoneyCurrency, this is temporary fix for freezed generation.
     required Currency to,
     required double rate,
   }) = _TimeRateData;

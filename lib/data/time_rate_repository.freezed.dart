@@ -20,6 +20,7 @@ TimeRateData _$TimeRateDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$TimeRateData {
+// TODO: Change to MoneyCurrency, this is temporary fix for freezed generation.
   Currency get to => throw _privateConstructorUsedError;
   double get rate => throw _privateConstructorUsedError;
 
@@ -113,6 +114,7 @@ class _$TimeRateDataImpl with DiagnosticableTreeMixin implements _TimeRateData {
   factory _$TimeRateDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$TimeRateDataImplFromJson(json);
 
+// TODO: Change to MoneyCurrency, this is temporary fix for freezed generation.
   @override
   final Currency to;
   @override
@@ -167,7 +169,7 @@ abstract class _TimeRateData implements TimeRateData {
   factory _TimeRateData.fromJson(Map<String, dynamic> json) =
       _$TimeRateDataImpl.fromJson;
 
-  @override
+  @override // TODO: Change to MoneyCurrency, this is temporary fix for freezed generation.
   Currency get to;
   @override
   double get rate;

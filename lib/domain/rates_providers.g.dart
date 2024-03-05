@@ -51,6 +51,20 @@ final timeRateDataStreamProvider =
 );
 
 typedef TimeRateDataStreamRef = AutoDisposeStreamProviderRef<TimeRateData?>;
+String _$timeRateDataHash() => r'cd1d38f9b42df7059efd98eed7d5faafd824987e';
+
+/// See also [timeRateData].
+@ProviderFor(timeRateData)
+final timeRateDataProvider = AutoDisposeProvider<TimeRateData?>.internal(
+  timeRateData,
+  name: r'timeRateDataProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$timeRateDataHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef TimeRateDataRef = AutoDisposeProviderRef<TimeRateData?>;
 String _$rateHash() => r'9e2507a0abb481adfe8c0a45a8906f5957d7ab9d';
 
 /// Copied from Dart SDK

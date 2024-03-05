@@ -7,6 +7,7 @@ import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
+import 'package:travel_exchanger/widgets/empty_widget.dart';
 import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
@@ -18,12 +19,17 @@ class CustomRateModal extends HookConsumerWidget {
     required this.onClose,
   });
 
-  final Currency to;
+  final MoneyCurrency to;
   final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final from = ref.watch(exchangeBetweenProvider).from;
+    final from = ref.watch(exchangeBetweenProvider).from.asOrNull<MoneyCurrency>();
+    if (from == null) {
+      onClose();
+      return const EmptyWidget();
+    }
+
     final rate = ref.watch(rateProvider(from, to));
     final initialRight = rate.source.isCustom ? rate.rate.toStringAsFixed(2) : null;
 

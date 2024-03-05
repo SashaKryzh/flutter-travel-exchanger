@@ -7,6 +7,7 @@ import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_page.dart';
 import 'package:travel_exchanger/pages/home_page.dart/home_page.dart';
 import 'package:travel_exchanger/pages/select_currency_page/search_currency/search_currency_page.dart';
+import 'package:travel_exchanger/pages/select_currency_page/search_currency/search_currency_page_v2.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_page.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_page_v2.dart';
 import 'package:travel_exchanger/pages/settings_page/settings_page.dart';
@@ -75,6 +76,25 @@ class SearchCurrencyRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return SearchCurrencyPage(
+      selectedCurrency: $extra.selectedCurrency,
+      onSelectCurrency: $extra.onSelectCurrency,
+    );
+  }
+}
+
+@TypedGoRoute<SearchCurrencyV2Route>(
+  path: '/search-currency-v2',
+)
+class SearchCurrencyV2Route extends GoRouteData {
+  const SearchCurrencyV2Route(
+    this.$extra,
+  );
+
+  final SearchCurrencyRouteExtra $extra;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return SearchCurrencyPageV2(
       selectedCurrency: $extra.selectedCurrency,
       onSelectCurrency: $extra.onSelectCurrency,
     );

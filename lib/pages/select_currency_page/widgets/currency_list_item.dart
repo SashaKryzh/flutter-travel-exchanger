@@ -5,6 +5,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
+import 'package:travel_exchanger/domain/value.dart';
+import 'package:travel_exchanger/pages/select_currency_page/widgets/swapable_with.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/min_size_widget.dart';
 import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
@@ -34,25 +36,7 @@ class RegularCurrencyListItem extends StatelessWidget {
     if (selected) {
       trailing = const Icon(AppIcons.selected);
     } else if (swapableWith != null) {
-      trailing = Row(
-        children: [
-          Text(
-            currency.code,
-            style: context.textTheme.bodyLarge?.copyWith(color: context.theme.disabledColor),
-          ),
-          const SizedSpacer(1),
-          Icon(
-            AppIcons.swap,
-            size: 16,
-            color: context.theme.disabledColor,
-          ),
-          const SizedSpacer(1),
-          Text(
-            swapableWith!.code,
-            style: context.textTheme.bodyLarge?.copyWith(color: context.theme.disabledColor),
-          ),
-        ],
-      );
+      trailing = SwapableWith(from: currency, to: swapableWith!);
     }
 
     return DefaultTextStyle.merge(
@@ -113,7 +97,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final activeHighlightColor = active ? context.colorScheme.primary : null;
 
-    final rateColor = rate.source.isApi ? context.theme.disabledColor : Colors.orange[200];
+    final rateColor = rate.source.isApi ? context.theme.disabledColor : Colors.orange[300];
 
     return _Row(
       onTap: onTap,
@@ -140,7 +124,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
                 ),
                 const SizedSpacer(4),
                 Text(
-                  rate.rate.toStringAsFixed(2),
+                  Value(rate.rate, currency).format(),
                   style: context.textTheme.bodyLarge?.copyWith(color: rateColor),
                 ),
               ],

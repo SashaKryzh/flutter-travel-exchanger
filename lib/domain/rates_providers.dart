@@ -38,6 +38,12 @@ Stream<TimeRateData?> timeRateDataStream(TimeRateDataStreamRef ref) {
 }
 
 @riverpod
+TimeRateData? timeRateData(TimeRateDataRef ref) {
+  ref.watch(timeRateDataStreamProvider);
+  return ref.watch(timeRateRepositoryProvider).data;
+}
+
+@riverpod
 RateForData rate(RateRef ref, Currency fromm, Currency to) {
   final ratesData = ref.watch(ratesProvider);
   final rates = ratesData.rates.sortedCustomFirst();
