@@ -81,6 +81,9 @@ class SelectCurrencyPageV2 extends HookWidget {
               child: Scaffold(
                 resizeToAvoidBottomInset: resizeToAvoidBottomInset,
                 body: SearchBarWrapper(
+                  settings: SearchSettings(
+                    metadata: (currency) => ref.watch(currencyMetadataProvider(currency)),
+                  ),
                   onSelected: (value) => swapToCurrency(ref, value),
                   child: CustomScrollView(
                     controller: scrollController,

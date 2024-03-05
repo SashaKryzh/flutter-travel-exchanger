@@ -10,6 +10,7 @@ import 'package:travel_exchanger/widgets/widget_extensions.dart';
 class SearchBar extends HookConsumerWidget {
   const SearchBar({
     super.key,
+    required this.settings,
     this.focusNode,
     this.onFocus,
     this.initialOpen = false,
@@ -17,6 +18,7 @@ class SearchBar extends HookConsumerWidget {
     this.unfocusOnSelected = true,
   });
 
+  final SearchSettings settings;
   final FocusNode? focusNode;
   final ValueChanged<bool>? onFocus;
   final bool initialOpen;
@@ -34,7 +36,8 @@ class SearchBar extends HookConsumerWidget {
 
     final textController = useTextEditingController();
     useListenable(textController);
-    final currencies = ref.watch(searchCurrenciesProvider(textController.text));
+    final currencies =
+        ref.watch(searchCurrenciesProvider(textController.text, filter: settings.filter));
 
     useValueChanged(isOpen.value, (_, __) => !isOpen.value ? textController.text = '' : null);
 
@@ -85,16 +88,14 @@ class SearchBar extends HookConsumerWidget {
                 itemCount: currencies.length,
                 itemBuilder: (context, index) {
                   final currency = currencies[index];
-                  // TODO: FIX THIS
-                  // final metadata = ref.read(currencyMetadataProvider(currency));
+                  final metadata = settings.metadata?.call(currency);
 
                   return RegularCurrencyListItem(
                     currency: currency,
-                    selected: false, //metadata.isSelected,
-                    swapableWith: null, // metadata.swapableWith,
+                    selected: metadata?.isSelected ?? false,
+                    swapableWith: metadata?.swapableWith,
                     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                    onTap: () => onSelected(currency),
-                    // onTap: !metadata.isSelected ? () => onSelected(currency) : null,
+                    onTap: metadata?.isSelected != true ? () => onSelected(currency) : null,
                   );
                 },
               ),
@@ -106,16 +107,28 @@ class SearchBar extends HookConsumerWidget {
   }
 }
 
+class SearchSettings {
+  const SearchSettings({
+    this.metadata,
+    this.filter,
+  });
+
+  final CurrencyMetadata? Function(Currency currency)? metadata;
+  final bool Function(Currency currency)? filter;
+}
+
 // ignore: prefer-single-widget-per-file
 class SearchBarWrapper extends HookWidget {
   const SearchBarWrapper({
     super.key,
+    required this.settings,
     this.initialOpened = false,
     required this.onSelected,
     this.unfocusOnSelected = true,
     required this.child,
   });
 
+  final SearchSettings settings;
   final bool initialOpened;
   final ValueChanged<Currency> onSelected;
   final bool unfocusOnSelected;
@@ -144,6 +157,7 @@ class SearchBarWrapper extends HookWidget {
         Align(
           alignment: Alignment.bottomCenter,
           child: SearchBar(
+            settings: settings,
             focusNode: focusNode,
             onFocus: (hasFocus) => isOpen.value = hasFocus,
             initialOpen: initialOpened,

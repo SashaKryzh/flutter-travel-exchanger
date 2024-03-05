@@ -35,6 +35,10 @@ class SearchCurrencyPageV2 extends HookConsumerWidget {
 
     return Scaffold(
       body: SearchBarWrapper(
+        settings: SearchSettings(
+          filter: filter,
+          metadata: (currency) => (isSelected: currency == selectedCurrency, swapableWith: null),
+        ),
         initialOpened: true,
         onSelected: onSelectCurrency,
         unfocusOnSelected: false,
