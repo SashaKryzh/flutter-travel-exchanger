@@ -45,6 +45,10 @@ TimeRateData? timeRateData(TimeRateDataRef ref) {
 
 @riverpod
 RateForData rate(RateRef ref, Currency fromm, Currency to) {
+  if (fromm == to) {
+    return const RateForData(1, RateSource.api);
+  }
+
   final ratesData = ref.watch(ratesProvider);
   final rates = ratesData.rates.sortedCustomFirst();
 
