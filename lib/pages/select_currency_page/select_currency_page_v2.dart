@@ -95,7 +95,9 @@ class SelectCurrencyPageV2 extends HookWidget {
                         onEditRate: onEditRate,
                       ).sliver(),
                       const _RecentSection().sliver(),
-                      const _PopularSection().sliver(),
+                      _PopularSection(
+                        onEditRate: onEditRate,
+                      ).sliver(),
                       const SizedSpacer(kSectionHeadingBeforePadding).sliver(),
                       const _SectionHeading(
                         icon: Icon(AppIcons.all),
@@ -237,7 +239,11 @@ class _RecentSection extends ConsumerWidget {
 }
 
 class _PopularSection extends ConsumerWidget {
-  const _PopularSection();
+  const _PopularSection({
+    required this.onEditRate,
+  });
+
+  final ValueChanged<Currency> onEditRate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -251,7 +257,9 @@ class _PopularSection extends ConsumerWidget {
           title: Text('Popular'),
         ),
         const SizedSpacer(16),
-        const _YourTimePopularItem(),
+        _YourTimePopularItem(
+          onEditRate: onEditRate,
+        ),
         const SizedSpacer(12),
         for (final currency in popularCurrencies)
           () {
@@ -271,7 +279,9 @@ class _PopularSection extends ConsumerWidget {
 }
 
 class _YourTimePopularItem extends HookConsumerWidget {
-  const _YourTimePopularItem();
+  const _YourTimePopularItem({required this.onEditRate});
+
+  final ValueChanged<Currency> onEditRate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -281,11 +291,10 @@ class _YourTimePopularItem extends HookConsumerWidget {
         ref.watch(exchangeBetweenProvider).currencies.contains(Currency.time);
 
     void onTap() {
-      swapToCurrency(ref, Currency.time);
       if (timeRateExists) {
         swapToCurrency(ref, Currency.time);
       } else {
-        // TODO: Set time rate first.
+        onEditRate(Currency.time);
       }
     }
 
