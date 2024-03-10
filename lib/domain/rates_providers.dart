@@ -12,10 +12,9 @@ part 'rates_providers.g.dart';
 @riverpod
 RatesData rates(RatesRef ref) {
   ref.watch(ratesStreamProvider);
-  ref.watch(timeRateDataStreamProvider);
 
   final rates = ref.watch(ratesRepositoryProvider).ratesData;
-  final timeRate = ref.watch(timeRateRepositoryProvider).data?.toRate();
+  final timeRate = ref.watch(timeRateDataProvider)?.toRate();
 
   final newData = rates.copyWith(
     rates: [

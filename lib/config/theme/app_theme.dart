@@ -12,8 +12,8 @@ class AppTheme extends ChangeNotifier {
 
   ThemeData theme() {
     final baseTheme = ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       useMaterial3: true,
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
     );
 
     return baseTheme.copyWith(
