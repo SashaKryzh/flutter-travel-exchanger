@@ -50,6 +50,7 @@ class SelectCurrencyAppBar extends HookConsumerWidget {
     return SliverAppBar(
       pinned: true,
       surfaceTintColor: Colors.white,
+      centerTitle: true,
       title: IgnorePointer(
         ignoring: !showCurrencies.value,
         child: Row(
