@@ -37,23 +37,28 @@ class TimeRateRepository {
     _setData = await _load();
   }
 
-  Future<void> setTimeRate(MoneyCurrency to, double rate) async {
+  Future<void> setTimeRate(MoneyCurrency to, double rateInSeconds) async {
     final data = _data;
     if (data == null) {
       final newData = TimeRateData(
         to: to,
-        rate: rate,
+        rate: rateInSeconds,
       );
       _setData = newData;
       await _store(newData);
     } else {
       final newData = data.copyWith(
         to: to,
-        rate: rate,
+        rate: rateInSeconds,
       );
       _setData = newData;
       await _store(newData);
     }
+  }
+
+  Future<void> removeTimeRate() async {
+    _setData = null;
+    await _clear();
   }
 
   Future<TimeRateData?> _load() async {
@@ -71,6 +76,10 @@ class TimeRateRepository {
   Future<void> _store(TimeRateData data) async {
     final json = jsonEncode(data.toJson());
     await _sharedPreferences.setString(_timeRateDataKey, json);
+  }
+
+  Future<void> _clear() async {
+    await _sharedPreferences.remove(_timeRateDataKey);
   }
 }
 

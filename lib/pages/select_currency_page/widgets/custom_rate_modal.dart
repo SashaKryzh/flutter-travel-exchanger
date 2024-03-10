@@ -66,8 +66,6 @@ class CustomRateModal extends HookConsumerWidget {
         child: VStack(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // const Text('Custom Rate')
-            //     .textStyle(context.textTheme.headlineSmall, align: TextAlign.center),
             const SizedSpacer(14),
             Stack(
               children: [
@@ -112,7 +110,7 @@ class CustomRateModal extends HookConsumerWidget {
             HStack(
               children: [
                 ElevatedButton(
-                  onPressed: onDelete,
+                  onPressed: initialRight != null ? onDelete : null,
                   child: const Text('Delete'),
                 ).expanded(),
                 const SizedSpacer(8),
