@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 
 sealed class Value {
@@ -22,7 +23,8 @@ class MoneyValue extends Value {
 
   @override
   String format() {
-    return value.toStringAsFixed(2);
+    final formatter = NumberFormat.compact();
+    return formatter.format(value);
   }
 }
 
