@@ -3,8 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/domain/currency.dart';
-import 'package:travel_exchanger/pages/select_currency_page/select_currency_page.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
+import 'package:travel_exchanger/pages/select_currency_page/widgets/currency_list_item.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/search_bar.dart';
 
 class SearchCurrencyPageV2 extends HookConsumerWidget {
@@ -47,11 +47,12 @@ class SearchCurrencyPageV2 extends HookConsumerWidget {
           body: ListView(
             children: [
               ...filteredCurrencies.map(
-                (e) => CurrencyListTile(
+                (e) => RegularCurrencyListItem(
                   currency: e,
                   selected: false,
-                  swapable: false,
+                  swapableWith: null,
                   onTap: () => onSelectCurrency(e),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                 ),
               ),
             ],

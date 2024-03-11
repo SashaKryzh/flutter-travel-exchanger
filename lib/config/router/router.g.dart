@@ -8,7 +8,6 @@ part of 'router.dart';
 
 List<RouteBase> get $appRoutes => [
       $homeRoute,
-      $searchCurrencyRoute,
       $searchCurrencyV2Route,
     ];
 
@@ -19,10 +18,6 @@ RouteBase get $homeRoute => GoRouteData.$route(
         GoRouteData.$route(
           path: 'settings',
           factory: $SettingsRouteExtension._fromState,
-        ),
-        GoRouteData.$route(
-          path: 'select-currency/:currencyCode',
-          factory: $SelectCurrencyRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'select-currency-v2/:currencyCode',
@@ -57,26 +52,6 @@ extension $SettingsRouteExtension on SettingsRoute {
 
   String get location => GoRouteData.$location(
         '/settings',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-extension $SelectCurrencyRouteExtension on SelectCurrencyRoute {
-  static SelectCurrencyRoute _fromState(GoRouterState state) =>
-      SelectCurrencyRoute(
-        currencyCode: state.pathParameters['currencyCode']!,
-      );
-
-  String get location => GoRouteData.$location(
-        '/select-currency/${Uri.encodeComponent(currencyCode)}',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -126,33 +101,6 @@ extension $CustomAmountRouteExtension on CustomAmountRoute {
       context.pushReplacement(location);
 
   void replace(BuildContext context) => context.replace(location);
-}
-
-RouteBase get $searchCurrencyRoute => GoRouteData.$route(
-      path: '/search-currency',
-      factory: $SearchCurrencyRouteExtension._fromState,
-    );
-
-extension $SearchCurrencyRouteExtension on SearchCurrencyRoute {
-  static SearchCurrencyRoute _fromState(GoRouterState state) =>
-      SearchCurrencyRoute(
-        state.extra as SearchCurrencyRouteExtra,
-      );
-
-  String get location => GoRouteData.$location(
-        '/search-currency',
-      );
-
-  void go(BuildContext context) => context.go(location, extra: $extra);
-
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
-
-  void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
 }
 
 RouteBase get $searchCurrencyV2Route => GoRouteData.$route(

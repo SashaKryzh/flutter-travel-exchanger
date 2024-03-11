@@ -1,14 +1,10 @@
-// ignore_for_file: prefer-match-file-name
-
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_page.dart';
 import 'package:travel_exchanger/pages/home_page.dart/home_page.dart';
-import 'package:travel_exchanger/pages/select_currency_page/search_currency/search_currency_page.dart';
 import 'package:travel_exchanger/pages/select_currency_page/search_currency/search_currency_page_v2.dart';
-import 'package:travel_exchanger/pages/select_currency_page/select_currency_page.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_page_v2.dart';
 import 'package:travel_exchanger/pages/settings_page/settings_page.dart';
 
@@ -23,7 +19,6 @@ final _router = GoRouter(routes: $appRoutes);
   path: '/',
   routes: [
     TypedGoRoute<SettingsRoute>(path: 'settings'),
-    TypedGoRoute<SelectCurrencyRoute>(path: 'select-currency/:currencyCode'),
     TypedGoRoute<SelectCurrencyRouteV2>(path: 'select-currency-v2/:currencyCode'),
     TypedGoRoute<CustomAmountRoute>(path: 'custom-amount/:currencyCode'),
   ],
@@ -37,19 +32,6 @@ class HomeRoute extends GoRouteData {
   }
 }
 
-class SelectCurrencyRoute extends GoRouteData {
-  const SelectCurrencyRoute({
-    required this.currencyCode,
-  });
-
-  final String currencyCode;
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return SelectCurrencyPage(currencyCode: currencyCode);
-  }
-}
-
 class SelectCurrencyRouteV2 extends GoRouteData {
   const SelectCurrencyRouteV2({
     required this.currencyCode,
@@ -60,25 +42,6 @@ class SelectCurrencyRouteV2 extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return SelectCurrencyPageV2(currencyCode: currencyCode);
-  }
-}
-
-@TypedGoRoute<SearchCurrencyRoute>(
-  path: '/search-currency',
-)
-class SearchCurrencyRoute extends GoRouteData {
-  const SearchCurrencyRoute(
-    this.$extra,
-  );
-
-  final SearchCurrencyRouteExtra $extra;
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return SearchCurrencyPage(
-      selectedCurrency: $extra.selectedCurrency,
-      onSelectCurrency: $extra.onSelectCurrency,
-    );
   }
 }
 

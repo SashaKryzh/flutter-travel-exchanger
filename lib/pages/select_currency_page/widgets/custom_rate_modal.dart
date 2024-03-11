@@ -135,12 +135,13 @@ class _CurrencyIndicator extends StatelessWidget {
   });
 
   final Currency currency;
+  @Deprecated('Maybe remove it')
   final bool changeable;
 
   @override
   Widget build(BuildContext context) {
     void onTap() {
-      SearchCurrencyRoute(
+      SearchCurrencyV2Route(
         SearchCurrencyRouteExtra(
           onSelectCurrency: (value) {},
           selectedCurrency: Currency.eur,
