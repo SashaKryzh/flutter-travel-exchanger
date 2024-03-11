@@ -95,7 +95,7 @@ class CustomRateModal extends HookConsumerWidget {
                         autofocus: true,
                         textAlign: TextAlign.center,
                         onSubmitted: (_) => onSave(),
-                        keyboardType: TextInputType.number,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       ),
                     ]).expanded(),
                   ],
