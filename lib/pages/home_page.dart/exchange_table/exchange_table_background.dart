@@ -1,6 +1,7 @@
 // ignore_for_file: prefer-single-widget-per-file
 
 import 'package:flutter/material.dart';
+import 'package:travel_exchanger/config/theme/app_theme.dart';
 
 class ExchangeTableBackground extends StatelessWidget {
   const ExchangeTableBackground({
@@ -16,17 +17,17 @@ class ExchangeTableBackground extends StatelessWidget {
       children: [
         Expanded(
           child: Container(
-            color: Colors.grey,
+            color: context.tableTheme?.fromColor,
           ),
         ),
         for (var i = 1; i < columnsCount; i++) ...[
-          const VerticalDivider(
+          VerticalDivider(
             width: 1,
-            color: Colors.black,
+            color: context.tableTheme.borderColor,
           ),
           Expanded(
             child: Container(
-              color: Colors.grey[300],
+              color: context.tableTheme?.toColor,
             ),
           ),
         ],

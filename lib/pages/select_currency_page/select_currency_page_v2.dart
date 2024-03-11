@@ -302,7 +302,9 @@ class _YourTimePopularItem extends HookConsumerWidget {
       margin: const EdgeInsets.symmetric(horizontal: 4),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
       decoration: BoxDecoration(
-        color: betweenContainsTime ? Colors.grey[100] : Colors.yellow[300],
+        color: betweenContainsTime
+            ? Colors.grey.withOpacity(0.1)
+            : context.colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -358,8 +360,9 @@ class _SectionHeading extends StatelessWidget {
           HStack(
             children: [
               IconTheme(
-                data: const IconThemeData(
+                data: IconThemeData(
                   size: 20,
+                  color: context.textTheme.titleLarge?.color,
                 ),
                 child: icon,
               ),

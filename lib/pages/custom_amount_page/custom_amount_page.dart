@@ -114,13 +114,17 @@ class _InputContainer extends HookConsumerWidget {
       child: GlassContainer(
         blur: kContainerBlur,
         borderRadius: BorderRadius.circular(kContainerBorderRadius),
+        color: context.colorScheme.onBackground.withOpacity(0.15),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 100),
           padding: const EdgeInsets.all(kContainerPadding),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(kContainerBorderRadius),
             border: Border.all(
-              color: context.colorScheme.primary.withOpacity(isSelected ? 1 : 0),
+              color: (context.isDark
+                      ? context.colorScheme.tertiary
+                      : context.colorScheme.tertiaryContainer)
+                  .withOpacity(isSelected ? 1 : 0),
               width: 2,
             ),
           ),

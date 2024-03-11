@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/pages/home_page.dart/home_bottom_bar.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/currency_list_item.dart';
+import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/utils/hooks/use_listen.dart';
+import 'package:travel_exchanger/widgets/glass_container.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
 class SearchBar extends HookConsumerWidget {
@@ -47,60 +50,68 @@ class SearchBar extends HookConsumerWidget {
       this.onSelected(currency);
     }
 
+    final borderRadius = isOpen.value
+        ? const BorderRadius.only(
+            topLeft: Radius.circular(32),
+            topRight: Radius.circular(32),
+          )
+        : BorderRadius.zero;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 150),
       decoration: BoxDecoration(
-        color: Colors.white,
         border: Border.all(
-          color: isOpen.value ? Colors.transparent : Colors.black,
+          color: context.colorScheme.outlineVariant,
           width: 1,
           strokeAlign: BorderSide.strokeAlignOutside,
         ),
-        borderRadius: isOpen.value
-            ? const BorderRadius.only(
-                topLeft: Radius.circular(32),
-                topRight: Radius.circular(32),
-              )
-            : null,
+        borderRadius: borderRadius,
       ),
-      child: SafeArea(
-        maintainBottomViewPadding: true,
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: textController,
-              focusNode: focusNode,
-              autofocus: initialOpen,
-              autocorrect: false,
-              enableSuggestions: false,
-              decoration: const InputDecoration(
-                hintText: 'Search',
+      child: GlassContainer(
+        borderRadius: borderRadius,
+        color: context.colorScheme.surface.withOpacity(0.7),
+        child: SafeArea(
+          maintainBottomViewPadding: true,
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: HomeBottomBar.height,
+                child: TextField(
+                  controller: textController,
+                  focusNode: focusNode,
+                  autofocus: initialOpen,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  decoration: const InputDecoration(
+                    hintText: 'Search',
+                  ),
+                ).padding(x: 12),
               ),
-            ).padding(x: 18, y: 8),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              height: isOpen.value ? 250 : 0,
-              padding: isOpen.value ? const EdgeInsets.only(top: 8) : null,
-              child: ListView.builder(
-                padding: const EdgeInsets.only(top: 0),
-                itemCount: currencies.length,
-                itemBuilder: (context, index) {
-                  final currency = currencies[index];
-                  final metadata = settings.metadata?.call(currency);
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                height: isOpen.value ? 250 : 0,
+                padding: isOpen.value ? const EdgeInsets.only(top: 8) : null,
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(top: 0),
+                  itemCount: currencies.length,
+                  itemBuilder: (context, index) {
+                    final currency = currencies[index];
+                    final metadata = settings.metadata?.call(currency);
 
-                  return RegularCurrencyListItem(
-                    currency: currency,
-                    selected: metadata?.isSelected ?? false,
-                    swapableWith: metadata?.swapableWith,
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                    onTap: metadata?.isSelected != true ? () => onSelected(currency) : null,
-                  );
-                },
+                    return RegularCurrencyListItem(
+                      currency: currency,
+                      selected: metadata?.isSelected ?? false,
+                      swapableWith: metadata?.swapableWith,
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                      onTap: metadata?.isSelected != true ? () => onSelected(currency) : null,
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

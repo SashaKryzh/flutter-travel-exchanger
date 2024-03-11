@@ -10,15 +10,15 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appTheme = ref.watch(appThemeProvider);
+    final themeMode = ref.watch(themeModeNotifierProvider);
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       title: 'Travel Exchanger',
-      themeMode: appTheme.themeMode,
-      theme: appTheme.theme(),
-      darkTheme: appTheme.darkTheme(),
+      themeMode: themeMode,
+      theme: AppTheme().theme(),
+      darkTheme: AppTheme().darkTheme(),
       routerConfig: router,
       locale: TranslationProvider.of(context).flutterLocale,
       supportedLocales: AppLocaleUtils.supportedLocales,

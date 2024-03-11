@@ -41,7 +41,6 @@ class SelectCurrencyAppBar extends HookConsumerWidget {
     Widget divider() => const SizedBox(
           height: 24,
           child: VerticalDivider(
-            color: Colors.black,
             width: 6,
             thickness: 1.5,
           ),
@@ -49,7 +48,6 @@ class SelectCurrencyAppBar extends HookConsumerWidget {
 
     return SliverAppBar(
       pinned: true,
-      surfaceTintColor: Colors.white,
       centerTitle: true,
       title: IgnorePointer(
         ignoring: !showCurrencies.value,
@@ -113,7 +111,7 @@ class _CurrencyItem extends StatelessWidget {
         child: Text(
           currency.displayCode(context),
           style: TextStyle(
-            color: active ? context.theme.primaryColor : null,
+            color: active ? context.colorScheme.primary : null,
           ),
         ),
       ),

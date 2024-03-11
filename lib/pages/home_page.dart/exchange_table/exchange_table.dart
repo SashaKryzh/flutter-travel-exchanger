@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart' hide Provider;
 import 'package:provider/provider.dart';
+import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_background.dart';
@@ -434,13 +435,14 @@ class _ValuesRow extends ConsumerWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: bottomBorder
-              ? const BorderSide(
-                  color: Colors.black,
+              ? BorderSide(
+                  color: context.tableTheme.borderColor,
                   width: 1,
                 )
               : BorderSide.none,
         ),
         color: Colors.black.withOpacity((0.2 * level).clamp(0, 1)),
+        // color: context.tableTheme?.fromColor,
       ),
       child: Row(
         children: [

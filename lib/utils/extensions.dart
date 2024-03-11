@@ -8,6 +8,9 @@ extension BuildContextX on BuildContext {
 
   ColorScheme get colorScheme => theme.colorScheme;
 
+  bool get isLight => theme.brightness == Brightness.light;
+  bool get isDark => !isLight;
+
   DefaultTextStyle get defaultTextStyle => DefaultTextStyle.of(this);
 
   ModalRoute<Object>? get modalRoute => ModalRoute.of(this);

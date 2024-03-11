@@ -36,6 +36,7 @@ dependencies:
   flutter_lucide: ^1.1.2
   google_fonts: ^6.1.0
   auto_size_text: ^3.0.0
+  theme_tailor_annotation: ^3.0.1
 
   cupertino_icons: ^1.0.2
 
@@ -55,6 +56,7 @@ dev_dependencies:
   freezed: ^2.4.5
   json_serializable: ^6.7.1
   go_router_builder: ^2.4.0
+  theme_tailor: ^3.0.1
 
   melos: ^4.0.0
 

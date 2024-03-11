@@ -56,13 +56,14 @@ class CustomRateModal extends HookConsumerWidget {
         bottom: bottomInset,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(
+      decoration: BoxDecoration(
+        color: context.colorScheme.surface,
+        borderRadius: const BorderRadius.all(
           Radius.circular(15),
         ),
       ),
       child: Material(
+        color: Colors.transparent,
         child: VStack(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
