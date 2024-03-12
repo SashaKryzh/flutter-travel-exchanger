@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_page.dart';
+import 'package:travel_exchanger/pages/debug_page/debug_page.dart';
 import 'package:travel_exchanger/pages/home_page.dart/home_page.dart';
 import 'package:travel_exchanger/pages/select_currency_page/search_currency/search_currency_page.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_page.dart';
@@ -105,4 +106,14 @@ class SettingsRoute extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const SettingsPage();
+}
+
+@TypedGoRoute<DebugRoute>(path: '/debug')
+class DebugRoute extends GoRouteData {
+  const DebugRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const DebugPage();
+  }
 }

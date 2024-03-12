@@ -9,6 +9,7 @@ part of 'router.dart';
 List<RouteBase> get $appRoutes => [
       $homeRoute,
       $searchCurrencyRoute,
+      $debugRoute,
     ];
 
 RouteBase get $homeRoute => GoRouteData.$route(
@@ -128,6 +129,28 @@ extension $SearchCurrencyRouteExtension on SearchCurrencyRoute {
 
   void replace(BuildContext context) =>
       context.replace(location, extra: $extra);
+}
+
+RouteBase get $debugRoute => GoRouteData.$route(
+      path: '/debug',
+      factory: $DebugRouteExtension._fromState,
+    );
+
+extension $DebugRouteExtension on DebugRoute {
+  static DebugRoute _fromState(GoRouterState state) => const DebugRoute();
+
+  String get location => GoRouteData.$location(
+        '/debug',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 // **************************************************************************
