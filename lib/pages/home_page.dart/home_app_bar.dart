@@ -73,11 +73,14 @@ class HomeAppBar extends ConsumerWidget {
                   ],
                 ),
               ),
-              IconButton(
-                onPressed: () => const SettingsRoute().go(context),
-                padding: const EdgeInsets.all(verticalPadding),
-                visualDensity: VisualDensity.compact,
-                icon: const Icon(AppIcons.settings),
+              GestureDetector(
+                onLongPress: () => const DebugRoute().push<void>(context),
+                child: IconButton(
+                  onPressed: () => const SettingsRoute().go(context),
+                  padding: const EdgeInsets.all(verticalPadding),
+                  visualDensity: VisualDensity.compact,
+                  icon: const Icon(AppIcons.settings),
+                ),
               ),
             ],
           ),

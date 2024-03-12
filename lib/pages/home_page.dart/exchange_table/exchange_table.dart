@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart' hide Provider;
 import 'package:provider/provider.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
@@ -67,6 +68,8 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
       } else {
         notifier.decrease();
       }
+
+      HapticFeedback.mediumImpact();
     }
   }
 
@@ -336,6 +339,7 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
     }
 
     void onTap() {
+      HapticFeedback.mediumImpact();
       if (_isExpanded || isAfterExpanded) {
         ref.read(exchangeTableExpandedRowsProvider.notifier).collapse();
       } else if (_canExpand) {

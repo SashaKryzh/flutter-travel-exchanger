@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/config/theme/app_icons.dart';
@@ -68,10 +69,12 @@ class _CurrencyButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void onTap(Currency currency) {
+      HapticFeedback.lightImpact();
       CustomAmountRoute(currencyCode: currency.code).go(context);
     }
 
     void onLongTap(Currency currency) {
+      HapticFeedback.mediumImpact();
       SelectCurrencyRoute(currencyCode: currency.code).go(context);
     }
 
@@ -153,6 +156,7 @@ class _SwapButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void swap(Currency from, Currency to) {
+      HapticFeedback.mediumImpact();
       ref.read(exchangeBetweenProvider.notifier).swap(from, to);
     }
 

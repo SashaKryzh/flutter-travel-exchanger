@@ -17,7 +17,7 @@ class ExchangeTableBackground extends StatelessWidget {
       children: [
         Expanded(
           child: Container(
-            color: context.tableTheme?.fromColor,
+            color: context.tableTheme.fromColor,
           ),
         ),
         for (var i = 1; i < columnsCount; i++) ...[
@@ -27,7 +27,7 @@ class ExchangeTableBackground extends StatelessWidget {
           ),
           Expanded(
             child: Container(
-              color: context.tableTheme?.toColor,
+              color: context.tableTheme.toColor,
             ),
           ),
         ],
