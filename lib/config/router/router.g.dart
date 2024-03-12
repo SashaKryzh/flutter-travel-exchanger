@@ -8,7 +8,7 @@ part of 'router.dart';
 
 List<RouteBase> get $appRoutes => [
       $homeRoute,
-      $searchCurrencyV2Route,
+      $searchCurrencyRoute,
     ];
 
 RouteBase get $homeRoute => GoRouteData.$route(
@@ -20,8 +20,8 @@ RouteBase get $homeRoute => GoRouteData.$route(
           factory: $SettingsRouteExtension._fromState,
         ),
         GoRouteData.$route(
-          path: 'select-currency-v2/:currencyCode',
-          factory: $SelectCurrencyRouteV2Extension._fromState,
+          path: 'select-currency/:currencyCode',
+          factory: $SelectCurrencyRouteExtension._fromState,
         ),
         GoRouteData.$route(
           path: 'custom-amount/:currencyCode',
@@ -64,14 +64,14 @@ extension $SettingsRouteExtension on SettingsRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $SelectCurrencyRouteV2Extension on SelectCurrencyRouteV2 {
-  static SelectCurrencyRouteV2 _fromState(GoRouterState state) =>
-      SelectCurrencyRouteV2(
+extension $SelectCurrencyRouteExtension on SelectCurrencyRoute {
+  static SelectCurrencyRoute _fromState(GoRouterState state) =>
+      SelectCurrencyRoute(
         currencyCode: state.pathParameters['currencyCode']!,
       );
 
   String get location => GoRouteData.$location(
-        '/select-currency-v2/${Uri.encodeComponent(currencyCode)}',
+        '/select-currency/${Uri.encodeComponent(currencyCode)}',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -103,19 +103,19 @@ extension $CustomAmountRouteExtension on CustomAmountRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $searchCurrencyV2Route => GoRouteData.$route(
-      path: '/search-currency-v2',
-      factory: $SearchCurrencyV2RouteExtension._fromState,
+RouteBase get $searchCurrencyRoute => GoRouteData.$route(
+      path: '/search-currency',
+      factory: $SearchCurrencyRouteExtension._fromState,
     );
 
-extension $SearchCurrencyV2RouteExtension on SearchCurrencyV2Route {
-  static SearchCurrencyV2Route _fromState(GoRouterState state) =>
-      SearchCurrencyV2Route(
+extension $SearchCurrencyRouteExtension on SearchCurrencyRoute {
+  static SearchCurrencyRoute _fromState(GoRouterState state) =>
+      SearchCurrencyRoute(
         state.extra as SearchCurrencyRouteExtra,
       );
 
   String get location => GoRouteData.$location(
-        '/search-currency-v2',
+        '/search-currency',
       );
 
   void go(BuildContext context) => context.go(location, extra: $extra);

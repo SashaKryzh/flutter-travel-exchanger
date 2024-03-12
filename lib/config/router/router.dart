@@ -19,7 +19,7 @@ final _router = GoRouter(routes: $appRoutes);
   path: '/',
   routes: [
     TypedGoRoute<SettingsRoute>(path: 'settings'),
-    TypedGoRoute<SelectCurrencyRouteV2>(path: 'select-currency-v2/:currencyCode'),
+    TypedGoRoute<SelectCurrencyRoute>(path: 'select-currency/:currencyCode'),
     TypedGoRoute<CustomAmountRoute>(path: 'custom-amount/:currencyCode'),
   ],
 )
@@ -32,8 +32,8 @@ class HomeRoute extends GoRouteData {
   }
 }
 
-class SelectCurrencyRouteV2 extends GoRouteData {
-  const SelectCurrencyRouteV2({
+class SelectCurrencyRoute extends GoRouteData {
+  const SelectCurrencyRoute({
     required this.currencyCode,
   });
 
@@ -41,15 +41,15 @@ class SelectCurrencyRouteV2 extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return SelectCurrencyPageV2(currencyCode: currencyCode);
+    return SelectCurrencyPage(currencyCode: currencyCode);
   }
 }
 
-@TypedGoRoute<SearchCurrencyV2Route>(
-  path: '/search-currency-v2',
+@TypedGoRoute<SearchCurrencyRoute>(
+  path: '/search-currency',
 )
-class SearchCurrencyV2Route extends GoRouteData {
-  const SearchCurrencyV2Route(
+class SearchCurrencyRoute extends GoRouteData {
+  const SearchCurrencyRoute(
     this.$extra,
   );
 
@@ -57,7 +57,7 @@ class SearchCurrencyV2Route extends GoRouteData {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return SearchCurrencyPageV2(
+    return SearchCurrencyPage(
       selectedCurrency: $extra.selectedCurrency,
       onSelectCurrency: $extra.onSelectCurrency,
     );

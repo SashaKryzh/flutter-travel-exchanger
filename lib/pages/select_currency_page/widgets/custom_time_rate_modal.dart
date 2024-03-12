@@ -59,7 +59,7 @@ class CustomTimeRateModal extends HookConsumerWidget {
     }
 
     void changeCurrency() {
-      SearchCurrencyV2Route(
+      SearchCurrencyRoute(
         SearchCurrencyRouteExtra(
           selectedCurrency: from,
           onSelectCurrency: onSelectCurrency,

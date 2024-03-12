@@ -7,8 +7,8 @@ import 'package:travel_exchanger/pages/select_currency_page/select_currency_prov
 import 'package:travel_exchanger/pages/select_currency_page/widgets/currency_list_item.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/search_bar.dart';
 
-class SearchCurrencyPageV2 extends HookConsumerWidget {
-  const SearchCurrencyPageV2({
+class SearchCurrencyPage extends HookConsumerWidget {
+  const SearchCurrencyPage({
     super.key,
     required this.selectedCurrency,
     required this.onSelectCurrency,

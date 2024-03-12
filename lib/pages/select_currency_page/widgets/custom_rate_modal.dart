@@ -141,7 +141,7 @@ class _CurrencyIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void onTap() {
-      SearchCurrencyV2Route(
+      SearchCurrencyRoute(
         SearchCurrencyRouteExtra(
           onSelectCurrency: (value) {},
           selectedCurrency: Currency.eur,

@@ -23,7 +23,7 @@ class HomeAppBar extends ConsumerWidget {
     final between = ref.watch(exchangeBetweenProvider);
 
     void onCurrencyTap(Currency currency) {
-      SelectCurrencyRouteV2(currencyCode: currency.code).go(context);
+      SelectCurrencyRoute(currencyCode: currency.code).go(context);
     }
 
     return Container(

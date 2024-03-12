@@ -25,8 +25,8 @@ import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
 const kSectionHeadingBeforePadding = 20.0;
 
-class SelectCurrencyPageV2 extends HookWidget {
-  const SelectCurrencyPageV2({
+class SelectCurrencyPage extends HookWidget {
+  const SelectCurrencyPage({
     super.key,
     required this.currencyCode,
   });
