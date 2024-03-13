@@ -194,6 +194,7 @@ RatesData _$RatesDataFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$RatesData {
+  DateTime get updatedAt => throw _privateConstructorUsedError;
   Currency get base => throw _privateConstructorUsedError;
   List<Rate> get rates => throw _privateConstructorUsedError;
 
@@ -208,7 +209,7 @@ abstract class $RatesDataCopyWith<$Res> {
   factory $RatesDataCopyWith(RatesData value, $Res Function(RatesData) then) =
       _$RatesDataCopyWithImpl<$Res, RatesData>;
   @useResult
-  $Res call({Currency base, List<Rate> rates});
+  $Res call({DateTime updatedAt, Currency base, List<Rate> rates});
 }
 
 /// @nodoc
@@ -224,10 +225,15 @@ class _$RatesDataCopyWithImpl<$Res, $Val extends RatesData>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? updatedAt = null,
     Object? base = null,
     Object? rates = null,
   }) {
     return _then(_value.copyWith(
+      updatedAt: null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       base: null == base
           ? _value.base
           : base // ignore: cast_nullable_to_non_nullable
@@ -248,7 +254,7 @@ abstract class _$$RatesDataImplCopyWith<$Res>
       __$$RatesDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Currency base, List<Rate> rates});
+  $Res call({DateTime updatedAt, Currency base, List<Rate> rates});
 }
 
 /// @nodoc
@@ -262,10 +268,15 @@ class __$$RatesDataImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? updatedAt = null,
     Object? base = null,
     Object? rates = null,
   }) {
     return _then(_$RatesDataImpl(
+      null == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
       null == base
           ? _value.base
           : base // ignore: cast_nullable_to_non_nullable
@@ -280,12 +291,16 @@ class __$$RatesDataImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$RatesDataImpl implements _RatesData {
-  _$RatesDataImpl(this.base, final List<Rate> rates) : _rates = rates;
+class _$RatesDataImpl extends _RatesData {
+  _$RatesDataImpl(this.updatedAt, this.base, final List<Rate> rates)
+      : _rates = rates,
+        super._();
 
   factory _$RatesDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$RatesDataImplFromJson(json);
 
+  @override
+  final DateTime updatedAt;
   @override
   final Currency base;
   final List<Rate> _rates;
@@ -298,7 +313,7 @@ class _$RatesDataImpl implements _RatesData {
 
   @override
   String toString() {
-    return 'RatesData(base: $base, rates: $rates)';
+    return 'RatesData(updatedAt: $updatedAt, base: $base, rates: $rates)';
   }
 
   @override
@@ -306,14 +321,16 @@ class _$RatesDataImpl implements _RatesData {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$RatesDataImpl &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
             (identical(other.base, base) || other.base == base) &&
             const DeepCollectionEquality().equals(other._rates, _rates));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, base, const DeepCollectionEquality().hash(_rates));
+  int get hashCode => Object.hash(runtimeType, updatedAt, base,
+      const DeepCollectionEquality().hash(_rates));
 
   @JsonKey(ignore: true)
   @override
@@ -329,13 +346,16 @@ class _$RatesDataImpl implements _RatesData {
   }
 }
 
-abstract class _RatesData implements RatesData {
-  factory _RatesData(final Currency base, final List<Rate> rates) =
-      _$RatesDataImpl;
+abstract class _RatesData extends RatesData {
+  factory _RatesData(final DateTime updatedAt, final Currency base,
+      final List<Rate> rates) = _$RatesDataImpl;
+  _RatesData._() : super._();
 
   factory _RatesData.fromJson(Map<String, dynamic> json) =
       _$RatesDataImpl.fromJson;
 
+  @override
+  DateTime get updatedAt;
   @override
   Currency get base;
   @override

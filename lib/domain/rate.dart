@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 
@@ -38,13 +39,28 @@ enum RateSource {
   bool get isCustom => this == RateSource.custom;
 }
 
-// TODO: add updated at
 @freezed
 class RatesData with _$RatesData {
+  const RatesData._();
+
   factory RatesData(
+    DateTime updatedAt,
     Currency base,
     List<Rate> rates,
   ) = _RatesData;
 
   factory RatesData.fromJson(Map<String, dynamic> json) => _$RatesDataFromJson(json);
+}
+
+class RatesDataTimestamps extends Equatable {
+  const RatesDataTimestamps({
+    required this.updatedAt,
+    required this.lastFetchedAt,
+  });
+
+  final DateTime updatedAt;
+  final DateTime lastFetchedAt;
+
+  @override
+  List<Object?> get props => [updatedAt, lastFetchedAt];
 }

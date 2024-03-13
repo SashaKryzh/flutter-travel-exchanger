@@ -28,6 +28,7 @@ const _$RateSourceEnumMap = {
 
 _$RatesDataImpl _$$RatesDataImplFromJson(Map<String, dynamic> json) =>
     _$RatesDataImpl(
+      DateTime.parse(json['updatedAt'] as String),
       Currency.fromJson(json['base'] as Map<String, dynamic>),
       (json['rates'] as List<dynamic>)
           .map((e) => Rate.fromJson(e as Map<String, dynamic>))
@@ -36,6 +37,7 @@ _$RatesDataImpl _$$RatesDataImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$RatesDataImplToJson(_$RatesDataImpl instance) =>
     <String, dynamic>{
+      'updatedAt': instance.updatedAt.toIso8601String(),
       'base': instance.base.toJson(),
       'rates': instance.rates.map((e) => e.toJson()).toList(),
     };

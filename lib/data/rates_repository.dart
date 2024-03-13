@@ -42,8 +42,7 @@ class RatesRepository {
     if (stored != null && stored.rates.isNotEmpty) {
       _setRatesData = stored;
     } else {
-      final remoteRates = await _fetchRemoteRates();
-      _setRatesData = RatesData(remoteRates.base, remoteRates.rates);
+      _setRatesData = await _fetchRemoteRates();
       await _storeRates(_ratesData);
       await _storeRemoteTimestamp();
     }
@@ -66,7 +65,7 @@ class RatesRepository {
     }
 
     final mergedRates = (_ratesData.rates + remoteRates.rates).toSet().toList();
-    _setRatesData = RatesData(remoteRates.base, mergedRates);
+    _setRatesData = RatesData(remoteRates.updatedAt, remoteRates.base, mergedRates);
     await _storeRates(_ratesData);
     await _storeRemoteTimestamp();
   }
@@ -106,6 +105,13 @@ class RatesRepository {
     await _storeRates(_ratesData);
   }
 
+  Future<RatesDataTimestamps> getTimestamps() async {
+    return RatesDataTimestamps(
+      updatedAt: _ratesData.updatedAt,
+      lastFetchedAt: _getStoredTimestamp(),
+    );
+  }
+
   Future<RatesData> _fetchRemoteRates() async {
     logger.d('Fetching rates');
 
@@ -115,6 +121,7 @@ class RatesRepository {
       final response = await _supabase.functions.invoke('rates', method: HttpMethod.get);
       final data = GetRatesResponseDtoMapper.fromMap(response.data as Map<String, dynamic>);
       ratesData = RatesData(
+        data.updatedAt,
         MoneyCurrency(data.base),
         data.rates.map((e) => e.toDomain()).toList(),
       );
@@ -124,14 +131,14 @@ class RatesRepository {
         error: e,
         stackTrace: stackTrace,
       );
-      ratesData = RatesData(Currency.eur, []);
+      ratesData = RatesData(DateTime.now(), Currency.eur, []);
     } on SocketException catch (e, stackTrace) {
       logger.e(
         'SocketException: ${e.message}',
         error: e,
         stackTrace: stackTrace,
       );
-      ratesData = RatesData(Currency.eur, []);
+      ratesData = RatesData(DateTime.now(), Currency.eur, []);
     }
 
     if (ratesData.rates.isEmpty) {
