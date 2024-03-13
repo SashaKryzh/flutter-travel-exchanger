@@ -8,6 +8,7 @@ const oneHour = 60 * 60 * 1000;
 
 type Data = {
   success: true;
+  updatedAt: string;
   base: string;
   rates: Rate[];
 };
@@ -29,43 +30,6 @@ type ApiResponse = Data | Error;
 type RateDB = Omit<InferInsertModel<typeof rates>, "updatedAt">;
 
 const base = "EUR";
-
-async function getBase() {
-  const baseRate = await db.select().from(rates).where(
-    eq(rates.base, base),
-  );
-  return baseRate.length > 0 ? baseRate[0] : null;
-}
-
-async function getAllRates() {
-  const data = await db.select().from(rates).where(eq(rates.base, base));
-  return data;
-}
-
-async function putRates(ratesList: RateDB[]) {
-  const date = new Date().toISOString();
-  const ratesInsert = ratesList.map((rate) => ({ ...rate, updatedAt: date }));
-
-  await db.insert(rates).values(ratesInsert).onConflictDoUpdate({
-    target: [rates.base, rates.target],
-    set: { rate: sql`excluded.rate`, updatedAt: date },
-  });
-}
-
-async function getRatesFromApi() {
-  const response = await fetch(
-    `http://api.exchangeratesapi.io/v1/latest?access_key=${apiKey}&base=${base}`,
-  );
-
-  const json = await response.json();
-  const parsedBody = exchangeRateSchema.parse(json);
-
-  if (!parsedBody.success) {
-    throw new Error(JSON.stringify(parsedBody));
-  }
-
-  return parsedBody;
-}
 
 Deno.serve(async (req) => {
   const { method } = req;
@@ -89,6 +53,7 @@ Deno.serve(async (req) => {
         JSON.stringify(
           {
             success: true,
+            updatedAt: baseRate.updatedAt,
             base: base,
             rates: data,
           } satisfies ApiResponse,
@@ -112,10 +77,14 @@ Deno.serve(async (req) => {
 
     data = await getAllRates();
 
+    // TODO: Implement checking that all rates are updated
+    // and that there are no rates with a different base
+
     return new Response(
       JSON.stringify(
         {
           success: true,
+          updatedAt: new Date().toISOString(),
           base: base,
           rates: data,
         } satisfies ApiResponse,
@@ -135,6 +104,47 @@ Deno.serve(async (req) => {
     );
   }
 });
+
+// DB
+
+async function getBase() {
+  const baseRate = await db.select().from(rates).where(
+    eq(rates.base, base),
+  );
+  return baseRate.length > 0 ? baseRate[0] : null;
+}
+
+async function getAllRates() {
+  const data = await db.select().from(rates).where(eq(rates.base, base));
+  return data;
+}
+
+async function putRates(ratesList: RateDB[]) {
+  const date = new Date().toISOString();
+  const ratesInsert = ratesList.map((rate) => ({ ...rate, updatedAt: date }));
+
+  await db.insert(rates).values(ratesInsert).onConflictDoUpdate({
+    target: [rates.base, rates.target],
+    set: { rate: sql`excluded.rate`, updatedAt: date },
+  });
+}
+
+// API
+
+async function getRatesFromApi() {
+  const response = await fetch(
+    `http://api.exchangeratesapi.io/v1/latest?access_key=${apiKey}&base=${base}`,
+  );
+
+  const json = await response.json();
+  const parsedBody = exchangeRateSchema.parse(json);
+
+  if (!parsedBody.success) {
+    throw new Error(JSON.stringify(parsedBody));
+  }
+
+  return parsedBody;
+}
 
 const currencyRatesSchema = z.record(z.number());
 
