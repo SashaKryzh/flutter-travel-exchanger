@@ -87,7 +87,11 @@ class RatesRepository {
     await _storeRates(_ratesData);
   }
 
-  Future<void> removeCustomRateBetween(MoneyCurrency a, MoneyCurrency b, {bool notify = true}) async {
+  Future<void> removeCustomRateBetween(
+    MoneyCurrency a,
+    MoneyCurrency b, {
+    bool notify = true,
+  }) async {
     final rates = [..._ratesData.rates];
     rates.removeWhere(
       (e) =>
@@ -109,7 +113,7 @@ class RatesRepository {
 
     try {
       final response = await _supabase.functions.invoke('rates', method: HttpMethod.get);
-      final data = GetRatesResponseDto.fromJson(response.data as Map<String, dynamic>);
+      final data = GetRatesResponseDtoMapper.fromMap(response.data as Map<String, dynamic>);
       ratesData = RatesData(
         MoneyCurrency(data.base),
         data.rates.map((e) => e.toDomain()).toList(),

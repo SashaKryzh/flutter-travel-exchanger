@@ -1,17 +1,19 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:dart_mappable/dart_mappable.dart';
 import 'package:travel_exchanger/data/dto/rate_dto.dart';
 
-part 'get_rates_response_dto.freezed.dart';
-part 'get_rates_response_dto.g.dart';
+part 'get_rates_response_dto.mapper.dart';
 
-@freezed
-class GetRatesResponseDto with _$GetRatesResponseDto {
-  factory GetRatesResponseDto({
-    required bool success,
-    required String base,
-    required List<RateDto> rates,
-  }) = _GetRatesResponseDto;
+@MappableClass()
+class GetRatesResponseDto with GetRatesResponseDtoMappable {
+  const GetRatesResponseDto({
+    required this.success,
+    required this.updatedAt,
+    required this.base,
+    required this.rates,
+  });
 
-  factory GetRatesResponseDto.fromJson(Map<String, dynamic> json) =>
-      _$GetRatesResponseDtoFromJson(json);
+  final bool success;
+  final DateTime updatedAt;
+  final String base;
+  final List<RateDto> rates;
 }
