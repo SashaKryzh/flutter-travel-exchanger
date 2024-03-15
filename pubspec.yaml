@@ -38,6 +38,7 @@ dependencies:
   google_fonts: ^6.1.0
   auto_size_text: ^3.0.0
   theme_tailor_annotation: ^3.0.1
+  fluttertoast: ^8.2.4
 
   cupertino_icons: ^1.0.2
 

@@ -42,7 +42,7 @@ class _ListenStateHook extends HookState<void, _ListenHook> {
   }
 
   @override
-  void build(BuildContext context) => {};
+  void build(BuildContext context) {}
 
   @override
   String get debugLabel => 'useListen';
