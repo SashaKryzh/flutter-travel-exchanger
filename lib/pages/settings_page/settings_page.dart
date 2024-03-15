@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
+import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
+import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -20,10 +24,13 @@ class SettingsPage extends ConsumerWidget {
       ),
       body: ListView(
         children: [
-          ElevatedButton(
+          const Gap(48),
+          const RatesDataTimestampsWidget().padding(x: 16),
+          const Gap(48),
+          OutlinedButton(
             onPressed: () => ref.read(sharedPreferencesProvider).clear(),
             child: const Text('Clear All Data'),
-          ),
+          ).padding(x: 16),
         ],
       ),
     );
@@ -78,6 +85,38 @@ class ThemeModeIconButton extends HookConsumerWidget {
               ThemeMode.dark => Icons.brightness_3,
             },
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class RatesDataTimestampsWidget extends ConsumerWidget {
+  const RatesDataTimestampsWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final timestampsAsync = ref.watch(ratesDataTimestampsProvider);
+    final timestamps = timestampsAsync.valueOrNull;
+
+    String format(DateTime? dateTime) {
+      final formatter = DateFormat.Hm().add_MMMEd();
+      return dateTime == null ? '' : formatter.format(dateTime);
+    }
+
+    return AnimatedOpacity(
+      opacity: timestamps == null ? 0 : 1,
+      duration: const Duration(milliseconds: 100),
+      child: VStack(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Rates updated at ${format(timestamps?.updatedAt)}',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const Gap(8),
+          Text('Last fetched at ${format(timestamps?.lastFetchedAt)}'),
         ],
       ),
     );

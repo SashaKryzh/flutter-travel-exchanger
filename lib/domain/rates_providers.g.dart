@@ -34,6 +34,24 @@ final ratesStreamProvider = AutoDisposeStreamProvider<RatesData>.internal(
 );
 
 typedef RatesStreamRef = AutoDisposeStreamProviderRef<RatesData>;
+String _$ratesDataTimestampsHash() =>
+    r'df81cd179fef93df02038dcc9c872151a817b743';
+
+/// See also [ratesDataTimestamps].
+@ProviderFor(ratesDataTimestamps)
+final ratesDataTimestampsProvider =
+    AutoDisposeFutureProvider<RatesDataTimestamps>.internal(
+  ratesDataTimestamps,
+  name: r'ratesDataTimestampsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$ratesDataTimestampsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef RatesDataTimestampsRef
+    = AutoDisposeFutureProviderRef<RatesDataTimestamps>;
 String _$timeRateDataStreamHash() =>
     r'2313870406c2058cfffdd667c6d3a54c8c3765ab';
 

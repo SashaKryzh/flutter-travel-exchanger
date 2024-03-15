@@ -39,6 +39,7 @@ dependencies:
   auto_size_text: ^3.0.0
   theme_tailor_annotation: ^3.0.1
   fluttertoast: ^8.2.4
+  gap: ^3.0.1
 
   cupertino_icons: ^1.0.2
 
