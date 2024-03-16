@@ -63,6 +63,7 @@ class HomeAppBar extends ConsumerWidget {
                       Expanded(
                         child: _ColumnHeader(
                           currency: between.from,
+                          useShortName: true,
                           showCustomRateBadge: false,
                           alignment: ColumnAlignment.right,
                           onTap: () => onCurrencyTap(between.from),
@@ -71,6 +72,7 @@ class HomeAppBar extends ConsumerWidget {
                       Expanded(
                         child: _ColumnHeader(
                           currency: between.to1,
+                          useShortName: false,
                           showCustomRateBadge: showCustomRateBadge(between.to1),
                           alignment:
                               between.isThree ? ColumnAlignment.center : ColumnAlignment.left,
@@ -81,6 +83,7 @@ class HomeAppBar extends ConsumerWidget {
                         Expanded(
                           child: _ColumnHeader(
                             currency: between.to2!,
+                            useShortName: false,
                             showCustomRateBadge: showCustomRateBadge(between.to2!),
                             alignment: ColumnAlignment.left,
                             onTap: () => onCurrencyTap(between.to2!),
@@ -111,11 +114,13 @@ class _ColumnHeader extends StatelessWidget {
   const _ColumnHeader({
     required this.currency,
     required this.showCustomRateBadge,
+    required this.useShortName,
     required this.alignment,
     required this.onTap,
   });
 
   final Currency currency;
+  final bool useShortName;
   final bool showCustomRateBadge;
   final ColumnAlignment alignment;
   final VoidCallback onTap;
@@ -137,7 +142,7 @@ class _ColumnHeader extends StatelessWidget {
           child: CustomRateBadge(
             show: showCustomRateBadge,
             child: AutoSizeText(
-              currency.displayCode(context),
+              useShortName ? currency.displayCodeShort(context) : currency.displayCode(context),
               group: _kAutoSizeGroup,
               maxLines: 1,
             ).textStyle(

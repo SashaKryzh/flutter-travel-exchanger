@@ -22,6 +22,8 @@ sealed class Currency extends Equatable {
 
   String displayCode([BuildContext? context]);
 
+  String displayCodeShort([BuildContext? context]);
+
   bool get isMoney => this is MoneyCurrency;
   bool get isTime => this is TimeCurrency;
 
@@ -64,6 +66,9 @@ class MoneyCurrency extends Currency {
   String displayCode([BuildContext? context]) {
     return code.toUpperCase();
   }
+
+  @override
+  String displayCodeShort([BuildContext? context]) => displayCode(context);
 }
 
 class TimeCurrency extends Currency {
@@ -71,9 +76,15 @@ class TimeCurrency extends Currency {
 
   static const _timeKey = 'TIME';
   static const _yourTime = 'Your Time';
+  static const _yourTimeShort = 'Time';
 
   @override
   String name(BuildContext context) {
+    return _yourTime;
+  }
+
+  @override
+  String nameFromTranslations(Translations t) {
     return _yourTime;
   }
 
@@ -83,7 +94,5 @@ class TimeCurrency extends Currency {
   }
 
   @override
-  String nameFromTranslations(Translations t) {
-    return _yourTime;
-  }
+  String displayCodeShort([BuildContext? context]) => _yourTimeShort;
 }
