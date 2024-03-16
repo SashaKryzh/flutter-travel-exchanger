@@ -38,6 +38,10 @@ class AppTheme {
   }
 }
 
+extension ThemeDataX on ThemeData {
+  Color get customRateColor => Colors.orange[300]!;
+}
+
 extension ThemeContextX on BuildContext {
   ExchangeTableTheme get tableTheme => theme.extension<ExchangeTableTheme>()!;
 }

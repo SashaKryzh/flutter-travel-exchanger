@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:travel_exchanger/config/theme/app_icons.dart';
+import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/domain/value.dart';
@@ -97,7 +98,8 @@ class SelectedCurrencyListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final activeHighlightColor = active ? context.colorScheme.primary : null;
 
-    final rateColor = rate.source.isApi ? context.theme.disabledColor : Colors.orange[300];
+    final rateColor =
+        rate.source.isApi ? context.theme.disabledColor : context.theme.customRateColor;
 
     return _Row(
       onTap: onTap,

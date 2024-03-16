@@ -6,6 +6,7 @@ import 'package:travel_exchanger/data/time_rate_repository.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rate.dart';
 import 'package:travel_exchanger/utils/logger.dart';
+import 'package:travel_exchanger/utils/riverpod_extensions.dart';
 
 part 'rates_providers.g.dart';
 
@@ -38,6 +39,7 @@ Future<RatesDataTimestamps> ratesDataTimestamps(RatesDataTimestampsRef ref) asyn
 
 @riverpod
 Stream<TimeRateData?> timeRateDataStream(TimeRateDataStreamRef ref) {
+  ref.cacheFor(const Duration(minutes: 5));
   return ref.watch(timeRateRepositoryProvider).timeRateDataStream;
 }
 
@@ -58,14 +60,22 @@ RateForData rate(RateRef ref, Currency fromm, Currency to) {
 
   // from -> to
   final fromTo = rates.fromTo(fromm, to);
-  if (fromTo != null) {
+  if (fromTo != null && fromTo.source.isCustom) {
+    // from -> is custom
     return RateForData(fromTo.rate, fromTo.source);
-  }
-
-  // to -> from
-  final toFrom = rates.fromTo(to, fromm);
-  if (toFrom != null) {
-    return RateForData(1 / toFrom.rate, toFrom.source);
+  } else {
+    // to -> from
+    final toFrom = rates.fromTo(to, fromm);
+    if (toFrom != null && toFrom.source.isCustom) {
+      // to -> from is custom
+      return RateForData(1 / toFrom.rate, toFrom.source);
+    } else if (fromTo != null) {
+      // from -> to is not null
+      return RateForData(fromTo.rate, fromTo.source);
+    } else if (toFrom != null) {
+      // to -> from is not null
+      return RateForData(1 / toFrom.rate, toFrom.source);
+    }
   }
 
   // We should't use custom rates for indirect conversions

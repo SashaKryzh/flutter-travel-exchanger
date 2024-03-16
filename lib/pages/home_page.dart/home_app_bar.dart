@@ -6,6 +6,7 @@ import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_background.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
@@ -21,9 +22,17 @@ class HomeAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final between = ref.watch(exchangeBetweenProvider);
+    final _ = ref.watch(ratesProvider);
 
     void onCurrencyTap(Currency currency) {
       SelectCurrencyRoute(currencyCode: currency.code).go(context);
+    }
+
+    bool showCustomRateBadge(Currency currency) {
+      if (currency.isTime || between.from.isTime) {
+        return false;
+      }
+      return ref.read(rateProvider(between.from, currency)).source.isCustom;
     }
 
     return Container(
@@ -51,6 +60,7 @@ class HomeAppBar extends ConsumerWidget {
                     Expanded(
                       child: _ColumnHeader(
                         currency: between.from,
+                        showCustomRateBadge: false,
                         alignment: ColumnAlignment.right,
                         onTap: () => onCurrencyTap(between.from),
                       ),
@@ -58,6 +68,7 @@ class HomeAppBar extends ConsumerWidget {
                     Expanded(
                       child: _ColumnHeader(
                         currency: between.to1,
+                        showCustomRateBadge: showCustomRateBadge(between.to1),
                         alignment: between.isThree ? ColumnAlignment.center : ColumnAlignment.left,
                         onTap: () => onCurrencyTap(between.to1),
                       ),
@@ -66,6 +77,7 @@ class HomeAppBar extends ConsumerWidget {
                       Expanded(
                         child: _ColumnHeader(
                           currency: between.to2!,
+                          showCustomRateBadge: showCustomRateBadge(between.to2!),
                           alignment: ColumnAlignment.left,
                           onTap: () => onCurrencyTap(between.to2!),
                         ),
@@ -93,35 +105,83 @@ class HomeAppBar extends ConsumerWidget {
 class _ColumnHeader extends StatelessWidget {
   const _ColumnHeader({
     required this.currency,
+    required this.showCustomRateBadge,
     required this.alignment,
     required this.onTap,
   });
 
   final Currency currency;
+  final bool showCustomRateBadge;
   final ColumnAlignment alignment;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final textAlign = switch (alignment) {
-      ColumnAlignment.left => TextAlign.start,
-      ColumnAlignment.center => TextAlign.center,
-      ColumnAlignment.right => TextAlign.end,
+    final alignment = switch (this.alignment) {
+      ColumnAlignment.left => Alignment.centerLeft,
+      ColumnAlignment.center => Alignment.center,
+      ColumnAlignment.right => Alignment.centerRight,
     };
 
     return GestureDetector(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: kValuePadding),
-        child: AutoSizeText(
-          currency.displayCode(context),
-          group: _kAutoSizeGroup,
-          maxLines: 1,
-        ).textStyle(
-          context.textTheme.titleLarge?.copyWith(),
-          align: textAlign,
+        child: Align(
+          alignment: alignment,
+          child: CustomRateBadge(
+            show: showCustomRateBadge,
+            child: AutoSizeText(
+              currency.displayCode(context),
+              group: _kAutoSizeGroup,
+              maxLines: 1,
+            ).textStyle(
+              context.textTheme.titleLarge?.copyWith(height: 1),
+            ),
+          ),
         ),
       ),
+    );
+  }
+}
+
+class CustomRateBadge extends StatelessWidget {
+  const CustomRateBadge({
+    super.key,
+    required this.show,
+    required this.child,
+  });
+
+  final bool show;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    const double badgeSize = 8;
+
+    Widget buildBadge() {
+      return Positioned(
+        top: 0,
+        right: 0,
+        child: Transform.translate(
+          offset: const Offset(badgeSize + 2, 0),
+          child: Container(
+            width: badgeSize,
+            height: badgeSize,
+            decoration: BoxDecoration(
+              color: context.theme.customRateColor,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Stack(
+      children: [
+        if (show) buildBadge(),
+        child,
+      ],
     );
   }
 }
