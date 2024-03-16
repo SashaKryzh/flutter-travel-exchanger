@@ -1,10 +1,12 @@
 import 'package:collection/collection.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/config/i18n/strings_providers.dart';
 import 'package:travel_exchanger/domain/currencies_providers.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/domain/popular_provider.dart';
 
 part 'select_currency_providers.freezed.dart';
 part 'select_currency_providers.g.dart';
@@ -19,6 +21,8 @@ List<Currency> searchCurrencies(
   String query, {
   bool Function(Currency currency)? filter,
 }) {
+  final popularCurrencies = ref.watch(popularCurrenciesProvider);
+
   var currencies = ref.watch(currenciesProvider).sortedBy((e) => e.displayCode());
   if (filter != null) {
     currencies = currencies.where(filter).toList();
@@ -26,7 +30,8 @@ List<Currency> searchCurrencies(
 
   query = query.trim();
   if (query.isEmpty) {
-    return currencies;
+    return popularCurrencies.toList()
+      ..addAll(currencies.where((e) => !popularCurrencies.contains(e)));
   }
 
   final t = ref.watch(tProvider);
