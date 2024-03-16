@@ -35,7 +35,7 @@ final ratesStreamProvider = AutoDisposeStreamProvider<RatesData>.internal(
 
 typedef RatesStreamRef = AutoDisposeStreamProviderRef<RatesData>;
 String _$ratesDataTimestampsHash() =>
-    r'df81cd179fef93df02038dcc9c872151a817b743';
+    r'ac8110eb77eb32992800920ce190588b4ce90faa';
 
 /// See also [ratesDataTimestamps].
 @ProviderFor(ratesDataTimestamps)
@@ -53,7 +53,7 @@ final ratesDataTimestampsProvider =
 typedef RatesDataTimestampsRef
     = AutoDisposeFutureProviderRef<RatesDataTimestamps>;
 String _$timeRateDataStreamHash() =>
-    r'2313870406c2058cfffdd667c6d3a54c8c3765ab';
+    r'acd0ba015e866a4aa1f8903320086043bf935c96';
 
 /// See also [timeRateDataStream].
 @ProviderFor(timeRateDataStream)
@@ -83,7 +83,7 @@ final timeRateDataProvider = AutoDisposeProvider<TimeRateData?>.internal(
 );
 
 typedef TimeRateDataRef = AutoDisposeProviderRef<TimeRateData?>;
-String _$rateHash() => r'c80a305b6ea407eb201cdc67c7a21217105825e8';
+String _$rateHash() => r'7b01374c7775b0066e5867d75aa3f552ca75eed0';
 
 /// Copied from Dart SDK
 class _SystemHash {

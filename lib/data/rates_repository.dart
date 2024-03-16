@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,7 +65,11 @@ class RatesRepository {
       return;
     }
 
-    final mergedRates = (_ratesData.rates + remoteRates.rates).toSet().toList();
+    final mergedRates = (_ratesData.rates + remoteRates.rates)
+        .map(RateEqualityExceptRateWrapper.new)
+        .toSet()
+        .map((e) => e.rate)
+        .toList();
     _setRatesData = RatesData(remoteRates.updatedAt, remoteRates.base, mergedRates);
     await _storeRates(_ratesData);
     await _storeRemoteTimestamp();
@@ -204,4 +209,13 @@ class RatesRepository {
 extension ListRateX on List<Rate> {
   List<Rate> get remoteRates => where((e) => e.source == RateSource.api).toList();
   List<Rate> get customRates => where((e) => e.source == RateSource.custom).toList();
+}
+
+class RateEqualityExceptRateWrapper extends Equatable {
+  const RateEqualityExceptRateWrapper(this.rate);
+
+  final Rate rate;
+
+  @override
+  List<Object?> get props => [rate.from, rate.to, rate.source];
 }

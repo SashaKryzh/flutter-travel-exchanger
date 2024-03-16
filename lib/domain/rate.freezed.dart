@@ -150,6 +150,21 @@ class _$RateImpl extends _Rate {
     return 'Rate(from: $from, to: $to, rate: $rate, source: $source)';
   }
 
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RateImpl &&
+            (identical(other.from, from) || other.from == from) &&
+            (identical(other.to, to) || other.to == to) &&
+            (identical(other.rate, rate) || other.rate == rate) &&
+            (identical(other.source, source) || other.source == source));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, from, to, rate, source);
+
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')

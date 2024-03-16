@@ -17,18 +17,6 @@ class Rate with _$Rate {
   }) = _Rate;
 
   factory Rate.fromJson(Map<String, dynamic> json) => _$RateFromJson(json);
-
-  @override
-  bool operator ==(Object other) {
-    if (other is Rate) {
-      return from == other.from && to == other.to && source == other.source;
-    } else {
-      return false;
-    }
-  }
-
-  @override
-  int get hashCode => Object.hash(from, to, source);
 }
 
 enum RateSource {
