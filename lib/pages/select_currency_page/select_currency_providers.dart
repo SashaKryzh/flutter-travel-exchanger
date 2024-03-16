@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/config/i18n/strings_providers.dart';

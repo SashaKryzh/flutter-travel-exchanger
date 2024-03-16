@@ -23,11 +23,7 @@ class CustomAmountState with _$CustomAmountState {
     required Values values,
   }) = _CustomAmountState;
 
-  double get fromValue => values.$1.$1 == from
-      ? values.$1.$2
-      : values.$2.$1 == from
-          ? values.$2.$2
-          : values.$3!.$2;
+  double get fromValue => valueFor(from);
 
   double valueFor(Currency currency) {
     return values.$1.$1 == currency

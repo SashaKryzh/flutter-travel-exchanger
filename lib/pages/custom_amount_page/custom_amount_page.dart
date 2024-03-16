@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/pages/custom_amount_page/formatters/currency_input_formatter.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_providers.dart';
+import 'package:travel_exchanger/pages/custom_amount_page/formatters/replace_formatter.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
-import 'package:travel_exchanger/utils/logger.dart';
 import 'package:travel_exchanger/widgets/glass_container.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
@@ -66,17 +65,15 @@ class _InputContainer extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isFirstBuild = usePrevious(false) ?? true;
-
     final focusNode = useFocusNode();
     final controller = useTextEditingController();
+
+    final isFirstBuild = usePrevious(false) ?? true;
 
     final isSelected = _state.from == currency;
     final value = _state.valueFor(currency);
 
-    // ignore: move-variable-closer-to-its-usage
     final prevValue = usePrevious(value);
-    // ignore: move-variable-closer-to-its-usage
     final prevIsSelected = usePrevious(isSelected) ?? false;
     final justReceivedFocus = useState(isSelected);
 
@@ -176,129 +173,6 @@ class _InputContainer extends HookConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-String get decimalSeparator => NumberFormat().symbols.DECIMAL_SEP;
-
-NumberFormat format({int decimalDigits = 2}) => NumberFormat.simpleCurrency(
-      name: '',
-      decimalDigits: decimalDigits,
-    );
-
-String formatValue(double value, {int decimalDigits = 2}) {
-  return format(decimalDigits: decimalDigits).format(value).trim();
-}
-
-class CurrencyInputFormatter extends TextInputFormatter {
-  const CurrencyInputFormatter();
-
-  @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    // Intl.defaultLocale = 'uk_UA';
-
-    logger.d(
-      'CurrencyInputFormatter: oldValue = "${oldValue.text}"; newValue = "${newValue.text}"',
-    );
-
-    var newText = newValue.text;
-
-    if (newText.isEmpty) {
-      return newValue;
-    }
-
-    // Replace entered decimal separator with the default one.
-    if ((newText.length == 1 || newText.length > oldValue.text.length) &&
-        ',.'.contains(newText.characters.last)) {
-      newText = newText.substring(0, newText.length - 1) + decimalSeparator;
-    }
-
-    // More than one decimal separator.
-    if (newText.indexOf(decimalSeparator) != newText.lastIndexOf(decimalSeparator)) {
-      _logNewText(oldValue.text);
-      return oldValue;
-    }
-
-    // Contains space.
-    if (newText.contains(' ')) {
-      _logNewText(oldValue.text);
-      return oldValue;
-    }
-
-    final decimalSeparatorInText = newText.contains(decimalSeparator);
-    final decimalDigits =
-        decimalSeparatorInText ? newText.length - newText.indexOf(decimalSeparator) - 1 : 0;
-
-    if (newText.length == 1 && decimalSeparatorInText) {
-      final zeroWithSeparatorText = '0$decimalSeparator';
-      _logNewText(zeroWithSeparatorText);
-      return newValue.copyWith(
-        text: zeroWithSeparatorText,
-        selection: const TextSelection.collapsed(offset: 2),
-      );
-    }
-
-    // More than two decimal digits.
-    if (decimalDigits > 2) {
-      _logNewText(oldValue.text);
-      return oldValue;
-    }
-
-    final value = format().tryParse(newText)?.toDouble();
-    if (value == null) {
-      _logNewText(oldValue.text);
-      return oldValue;
-    }
-    newText = formatValue(value, decimalDigits: decimalDigits);
-    // Add decimal separator if it was removed.
-    if (decimalDigits == 0 && decimalSeparatorInText) {
-      newText += decimalSeparator;
-    }
-
-    _logNewText(newText);
-    return newValue.copyWith(
-      text: newText,
-      selection: TextSelection.collapsed(offset: newText.length),
-    );
-  }
-
-  void _logNewText(String newText) {
-    logger.d('CurrencyInputFormatter: newText = "$newText"');
-  }
-}
-
-class ReplaceFormatter extends TextInputFormatter {
-  const ReplaceFormatter({
-    required this.replaceWithNextCharacter,
-    required this.onReplaced,
-  });
-
-  final bool replaceWithNextCharacter;
-  final VoidCallback onReplaced;
-
-  @override
-  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
-    if (!replaceWithNextCharacter) {
-      return newValue;
-    }
-
-    var newText = newValue.text;
-    final diff = newText.length - oldValue.text.length;
-
-    if (diff > 0) {
-      // Entered character
-      newText = newText.characters.last;
-    } else if (diff < 0) {
-      // Deleted character
-      newText = '';
-    }
-
-    logger.d('ReplaceFormatter: newText = "$newText"');
-    onReplaced();
-    return newValue.copyWith(
-      text: newText,
-      selection: TextSelection.collapsed(offset: newText.length),
     );
   }
 }
