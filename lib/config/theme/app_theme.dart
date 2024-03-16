@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/config/theme/exchange_table_theme.dart';
@@ -27,6 +28,13 @@ class AppTheme {
 
     return baseTheme.copyWith(
       textTheme: GoogleFonts.juraTextTheme(baseTheme.textTheme),
+      appBarTheme: baseTheme.appBarTheme.copyWith(
+        systemOverlayStyle:
+            (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark).copyWith(
+          systemNavigationBarColor: Colors.transparent,
+          statusBarColor: Colors.transparent,
+        ),
+      ),
       extensions: [
         ExchangeTableTheme(
           borderColor: Colors.black,

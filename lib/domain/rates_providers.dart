@@ -34,12 +34,12 @@ Stream<RatesData> ratesStream(RatesStreamRef ref) {
 
 @riverpod
 Future<RatesDataTimestamps> ratesDataTimestamps(RatesDataTimestampsRef ref) async {
+  ref.cacheFor(const Duration(minutes: 5));
   return ref.watch(ratesRepositoryProvider).getTimestamps();
 }
 
 @riverpod
 Stream<TimeRateData?> timeRateDataStream(TimeRateDataStreamRef ref) {
-  ref.cacheFor(const Duration(minutes: 5));
   return ref.watch(timeRateRepositoryProvider).timeRateDataStream;
 }
 
