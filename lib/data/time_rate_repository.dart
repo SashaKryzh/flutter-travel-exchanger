@@ -78,7 +78,7 @@ class TimeRateRepository {
       return data;
     } catch (e, stackTrace) {
       logger.e('Failed to load time rate data', error: e, stackTrace: stackTrace);
-      // TODO: Clear?
+      await _clear();
       return null;
     }
   }
