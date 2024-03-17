@@ -37,6 +37,7 @@ class VStack extends StatelessWidget {
     this.gap = 0,
     this.mainAxisSize = MainAxisSize.min,
     this.mainAxisAlignment = MainAxisAlignment.center,
+    // TODO: Change to start
     this.crossAxisAlignment = CrossAxisAlignment.center,
     required this.children,
   });

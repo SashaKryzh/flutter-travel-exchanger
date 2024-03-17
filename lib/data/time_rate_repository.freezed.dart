@@ -22,7 +22,7 @@ TimeRateData _$TimeRateDataFromJson(Map<String, dynamic> json) {
 mixin _$TimeRateData {
 // TODO: Change to MoneyCurrency, this is temporary fix for freezed generation.
   Currency get to => throw _privateConstructorUsedError;
-  double get rate => throw _privateConstructorUsedError;
+  double get perHour => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -36,7 +36,7 @@ abstract class $TimeRateDataCopyWith<$Res> {
           TimeRateData value, $Res Function(TimeRateData) then) =
       _$TimeRateDataCopyWithImpl<$Res, TimeRateData>;
   @useResult
-  $Res call({Currency to, double rate});
+  $Res call({Currency to, double perHour});
 }
 
 /// @nodoc
@@ -53,16 +53,16 @@ class _$TimeRateDataCopyWithImpl<$Res, $Val extends TimeRateData>
   @override
   $Res call({
     Object? to = null,
-    Object? rate = null,
+    Object? perHour = null,
   }) {
     return _then(_value.copyWith(
       to: null == to
           ? _value.to
           : to // ignore: cast_nullable_to_non_nullable
               as Currency,
-      rate: null == rate
-          ? _value.rate
-          : rate // ignore: cast_nullable_to_non_nullable
+      perHour: null == perHour
+          ? _value.perHour
+          : perHour // ignore: cast_nullable_to_non_nullable
               as double,
     ) as $Val);
   }
@@ -76,7 +76,7 @@ abstract class _$$TimeRateDataImplCopyWith<$Res>
       __$$TimeRateDataImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({Currency to, double rate});
+  $Res call({Currency to, double perHour});
 }
 
 /// @nodoc
@@ -91,16 +91,16 @@ class __$$TimeRateDataImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? to = null,
-    Object? rate = null,
+    Object? perHour = null,
   }) {
     return _then(_$TimeRateDataImpl(
       to: null == to
           ? _value.to
           : to // ignore: cast_nullable_to_non_nullable
               as Currency,
-      rate: null == rate
-          ? _value.rate
-          : rate // ignore: cast_nullable_to_non_nullable
+      perHour: null == perHour
+          ? _value.perHour
+          : perHour // ignore: cast_nullable_to_non_nullable
               as double,
     ));
   }
@@ -109,7 +109,7 @@ class __$$TimeRateDataImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$TimeRateDataImpl with DiagnosticableTreeMixin implements _TimeRateData {
-  _$TimeRateDataImpl({required this.to, required this.rate});
+  _$TimeRateDataImpl({required this.to, required this.perHour});
 
   factory _$TimeRateDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$TimeRateDataImplFromJson(json);
@@ -118,11 +118,11 @@ class _$TimeRateDataImpl with DiagnosticableTreeMixin implements _TimeRateData {
   @override
   final Currency to;
   @override
-  final double rate;
+  final double perHour;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'TimeRateData(to: $to, rate: $rate)';
+    return 'TimeRateData(to: $to, perHour: $perHour)';
   }
 
   @override
@@ -131,7 +131,7 @@ class _$TimeRateDataImpl with DiagnosticableTreeMixin implements _TimeRateData {
     properties
       ..add(DiagnosticsProperty('type', 'TimeRateData'))
       ..add(DiagnosticsProperty('to', to))
-      ..add(DiagnosticsProperty('rate', rate));
+      ..add(DiagnosticsProperty('perHour', perHour));
   }
 
   @override
@@ -140,12 +140,12 @@ class _$TimeRateDataImpl with DiagnosticableTreeMixin implements _TimeRateData {
         (other.runtimeType == runtimeType &&
             other is _$TimeRateDataImpl &&
             (identical(other.to, to) || other.to == to) &&
-            (identical(other.rate, rate) || other.rate == rate));
+            (identical(other.perHour, perHour) || other.perHour == perHour));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, to, rate);
+  int get hashCode => Object.hash(runtimeType, to, perHour);
 
   @JsonKey(ignore: true)
   @override
@@ -164,7 +164,7 @@ class _$TimeRateDataImpl with DiagnosticableTreeMixin implements _TimeRateData {
 abstract class _TimeRateData implements TimeRateData {
   factory _TimeRateData(
       {required final Currency to,
-      required final double rate}) = _$TimeRateDataImpl;
+      required final double perHour}) = _$TimeRateDataImpl;
 
   factory _TimeRateData.fromJson(Map<String, dynamic> json) =
       _$TimeRateDataImpl.fromJson;
@@ -172,7 +172,7 @@ abstract class _TimeRateData implements TimeRateData {
   @override // TODO: Change to MoneyCurrency, this is temporary fix for freezed generation.
   Currency get to;
   @override
-  double get rate;
+  double get perHour;
   @override
   @JsonKey(ignore: true)
   _$$TimeRateDataImplCopyWith<_$TimeRateDataImpl> get copyWith =>

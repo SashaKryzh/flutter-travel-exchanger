@@ -7,6 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rate.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 
 part 'time_rate_repository.g.dart';
 part 'time_rate_repository.freezed.dart';
@@ -16,6 +17,9 @@ TimeRateRepository timeRateRepository(TimeRateRepositoryRef _) {
   throw Exception('Time repository provider should be overridden');
 }
 
+/// Time rate repository
+///
+/// Rate is stored as units of currency per hour.
 class TimeRateRepository {
   static const _timeRateDataKey = 'timeRateDataKey';
 
@@ -37,19 +41,19 @@ class TimeRateRepository {
     _setData = await _load();
   }
 
-  Future<void> setTimeRate(MoneyCurrency to, double rateInSeconds) async {
+  Future<void> setTimeRate(MoneyCurrency to, {required double perHour}) async {
     final data = _data;
     if (data == null) {
       final newData = TimeRateData(
         to: to,
-        rate: rateInSeconds,
+        perHour: perHour,
       );
       _setData = newData;
       await _store(newData);
     } else {
       final newData = data.copyWith(
         to: to,
-        rate: rateInSeconds,
+        perHour: perHour,
       );
       _setData = newData;
       await _store(newData);
@@ -62,15 +66,21 @@ class TimeRateRepository {
   }
 
   Future<TimeRateData?> _load() async {
-    final jsonString = _sharedPreferences.getString(_timeRateDataKey);
-    if (jsonString == null) {
+    try {
+      final jsonString = _sharedPreferences.getString(_timeRateDataKey);
+      if (jsonString == null) {
+        return null;
+      }
+      final data = await compute(
+        (m) => TimeRateData.fromJson(jsonDecode(m) as Map<String, dynamic>),
+        jsonString,
+      );
+      return data;
+    } catch (e, stackTrace) {
+      logger.e('Failed to load time rate data', error: e, stackTrace: stackTrace);
+      // TODO: Clear?
       return null;
     }
-    final data = await compute(
-      (m) => TimeRateData.fromJson(jsonDecode(m) as Map<String, dynamic>),
-      jsonString,
-    );
-    return data;
   }
 
   Future<void> _store(TimeRateData data) async {
@@ -88,7 +98,7 @@ class TimeRateData with _$TimeRateData {
   factory TimeRateData({
     // TODO: Change to MoneyCurrency, this is temporary fix for freezed generation.
     required Currency to,
-    required double rate,
+    required double perHour,
   }) = _TimeRateData;
 
   factory TimeRateData.fromJson(Map<String, dynamic> json) => _$TimeRateDataFromJson(json);
@@ -99,7 +109,7 @@ extension TimeRateDataX on TimeRateData {
     return Rate(
       from: Currency.time,
       to: to,
-      rate: rate,
+      rate: perHour,
       source: RateSource.custom,
     );
   }

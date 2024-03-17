@@ -6,13 +6,13 @@ import 'package:travel_exchanger/utils/logger.dart';
 
 String get decimalSeparator => NumberFormat().symbols.DECIMAL_SEP;
 
-NumberFormat format({int decimalDigits = 2}) => NumberFormat.simpleCurrency(
+NumberFormat moneyFormatter({int decimalDigits = 2}) => NumberFormat.simpleCurrency(
       name: '',
       decimalDigits: decimalDigits,
     );
 
-String formatValue(double value, {int decimalDigits = 2}) {
-  return format(decimalDigits: decimalDigits).format(value).trim();
+String formatMoney(double value, {int decimalDigits = 2}) {
+  return moneyFormatter(decimalDigits: decimalDigits).format(value);
 }
 
 class CurrencyInputFormatter extends TextInputFormatter {
@@ -69,12 +69,12 @@ class CurrencyInputFormatter extends TextInputFormatter {
       return oldValue;
     }
 
-    final value = format().tryParse(newText)?.toDouble();
+    final value = moneyFormatter().tryParse(newText)?.toDouble();
     if (value == null) {
       _logNewText(oldValue.text);
       return oldValue;
     }
-    newText = formatValue(value, decimalDigits: decimalDigits);
+    newText = formatMoney(value, decimalDigits: decimalDigits);
     // Add decimal separator if it was removed.
     if (decimalDigits == 0 && decimalSeparatorInText) {
       newText += decimalSeparator;

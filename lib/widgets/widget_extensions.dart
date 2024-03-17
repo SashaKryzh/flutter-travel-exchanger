@@ -47,6 +47,14 @@ extension WidgetX on Widget {
 
   @widgetFactory
   Widget expanded({Key? key, int flex = 1}) => Expanded(key: key, flex: flex, child: this);
+
+  @widgetFactory
+  Widget center({Key? key, double? widthFactor, double? heightFactor}) => Center(
+        key: key,
+        widthFactor: widthFactor,
+        heightFactor: heightFactor,
+        child: this,
+      );
 }
 
 extension WidgetListX on List<Widget> {

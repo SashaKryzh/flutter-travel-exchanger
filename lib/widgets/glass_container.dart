@@ -16,7 +16,7 @@ class GlassContainer extends StatelessWidget {
 
   final Widget? child;
   final Color? color;
-  final EdgeInsets? padding;
+  final EdgeInsetsGeometry? padding;
   final BorderRadius? borderRadius;
   final double blur;
   final BoxBorder? border;

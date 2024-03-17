@@ -7,7 +7,7 @@ part of 'custom_amount_providers.dart';
 // **************************************************************************
 
 String _$customAmountConverterHash() =>
-    r'8220ae527c239dcb12e0afbb1f80d35480b69cea';
+    r'b186448d63137b3701da9e14766923b9dc39d2c8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -172,5 +172,23 @@ class _CustomAmountConverterProviderElement
   @override
   String get fromCode => (origin as CustomAmountConverterProvider).fromCode;
 }
+
+String _$customAmountTimeContainerHash() =>
+    r'28c6cf2e3fec30c2a16a08f1532670fa13647eef';
+
+/// See also [CustomAmountTimeContainer].
+@ProviderFor(CustomAmountTimeContainer)
+final customAmountTimeContainerProvider = AutoDisposeNotifierProvider<
+    CustomAmountTimeContainer, CustomAmountTimeFrom>.internal(
+  CustomAmountTimeContainer.new,
+  name: r'customAmountTimeContainerProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$customAmountTimeContainerHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$CustomAmountTimeContainer = AutoDisposeNotifier<CustomAmountTimeFrom>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

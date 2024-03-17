@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/utils/time_currency_utils.dart';
 
 sealed class Value {
   const Value._(this.value, this.currency);
@@ -29,11 +30,19 @@ class MoneyValue extends Value {
 }
 
 class TimeValue extends Value {
-  const TimeValue(double value) : super._(value, Currency.time);
+  const TimeValue(double hours) : super._(hours, Currency.time);
+
+  factory TimeValue.fromMinutes(double minutes) {
+    return TimeValue(minutes / kMinutesInHour);
+  }
+
+  factory TimeValue.fromDays(double days) {
+    return TimeValue(days * kHoursInDay);
+  }
 
   @override
   String format() {
-    final duration = Duration(seconds: value.toInt());
+    final duration = Duration(seconds: (value * kSecondsInHour).toInt());
     if (duration.inSeconds < 60) {
       return '${duration.inSeconds}s';
     } else if (duration.inMinutes < 60) {

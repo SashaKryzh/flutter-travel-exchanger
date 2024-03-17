@@ -7,7 +7,6 @@ import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
-import 'package:travel_exchanger/utils/time_currency_utils.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
 import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
@@ -35,15 +34,14 @@ class CustomTimeRateModal extends HookConsumerWidget {
     final initialTimeRate = useMemoized(() {
       final timeRateData = ref.read(timeRateDataProvider);
       if (timeRateData == null) return null;
-      final hourlyRate = convertSecondlyRateToHourly(timeRateData.rate);
-      return hourlyRate.toStringAsFixed(2);
+      // TODO: Improve formatting.
+      return timeRateData.perHour.toStringAsFixed(2);
     });
     final textController = useTextEditingController(text: initialTimeRate ?? '');
 
     void onSave() {
-      final rate = double.parse(textController.text);
-      final hourlyRate = convertHourlyRateToSecondlyRate(rate);
-      ref.read(timeRateRepositoryProvider).setTimeRate(fromCurrency.value, hourlyRate);
+      final perHour = double.parse(textController.text);
+      ref.read(timeRateRepositoryProvider).setTimeRate(fromCurrency.value, perHour: perHour);
       onClose();
     }
 

@@ -1,9 +1,4 @@
-const kSecondsInHour = 3600;
-
-double convertHourlyRateToSecondlyRate(double hourlyRate) {
-  return hourlyRate / kSecondsInHour;
-}
-
-double convertSecondlyRateToHourly(double secondlyRate) {
-  return secondlyRate * kSecondsInHour;
-}
+const kHoursInDay = 24;
+const kMinutesInHour = 60;
+const kSecondsInMinute = 60;
+const kSecondsInHour = kMinutesInHour * kSecondsInMinute;

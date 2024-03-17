@@ -9,13 +9,13 @@ part of 'time_rate_repository.dart';
 _$TimeRateDataImpl _$$TimeRateDataImplFromJson(Map<String, dynamic> json) =>
     _$TimeRateDataImpl(
       to: Currency.fromJson(json['to'] as Map<String, dynamic>),
-      rate: (json['rate'] as num).toDouble(),
+      perHour: (json['perHour'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$$TimeRateDataImplToJson(_$TimeRateDataImpl instance) =>
     <String, dynamic>{
       'to': instance.to.toJson(),
-      'rate': instance.rate,
+      'perHour': instance.perHour,
     };
 
 // **************************************************************************

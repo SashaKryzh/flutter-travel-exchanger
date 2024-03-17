@@ -1,9 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/currencies_providers.dart';
 import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
+import 'package:travel_exchanger/domain/value.dart';
 
 part 'custom_amount_providers.freezed.dart';
 part 'custom_amount_providers.g.dart';
@@ -40,6 +41,13 @@ class CustomAmountConverter extends _$CustomAmountConverter {
   CustomAmountState build(String fromCode) {
     final from = ref.watch(currenciesProvider).getCurrencyFromCode(fromCode);
 
+    ref.listen(
+      customAmountTimeContainerProvider,
+      (prev, curr) {
+        if (prev != curr) _recalculate();
+      },
+    );
+
     return CustomAmountState(
       from: from,
       values: _calculateValues(from: from, amount: 1),
@@ -59,10 +67,27 @@ class CustomAmountConverter extends _$CustomAmountConverter {
     );
   }
 
+  void _recalculate() {
+    state = state.copyWith(
+      values: _calculateValues(),
+    );
+  }
+
   Values _calculateValues({Currency? from, double? amount}) {
     final between = ref.read(exchangeBetweenProvider);
     final from1 = from ?? state.from;
     final amount1 = amount ?? state.fromValue;
+
+    final double amountAdjusted;
+    if (from1.isTime) {
+      amountAdjusted = switch (ref.read(customAmountTimeContainerProvider)) {
+        CustomAmountTimeFrom.minutes => TimeValue.fromMinutes(amount1).value,
+        CustomAmountTimeFrom.hours => amount1,
+        CustomAmountTimeFrom.days => TimeValue.fromDays(amount1).value,
+      };
+    } else {
+      amountAdjusted = amount1;
+    }
 
     double convert(Currency to) {
       if (to == from1) {
@@ -70,7 +95,7 @@ class CustomAmountConverter extends _$CustomAmountConverter {
       }
 
       final rate = ref.read(rateProvider(from1, to));
-      return amount1 * rate.rate;
+      return amountAdjusted * rate.rate;
     }
 
     final third = between.to2;
@@ -82,3 +107,17 @@ class CustomAmountConverter extends _$CustomAmountConverter {
     );
   }
 }
+
+@riverpod
+class CustomAmountTimeContainer extends _$CustomAmountTimeContainer {
+  @override
+  CustomAmountTimeFrom build() {
+    return CustomAmountTimeFrom.hours;
+  }
+
+  void setFrom(CustomAmountTimeFrom from) {
+    state = from;
+  }
+}
+
+enum CustomAmountTimeFrom { minutes, hours, days }
