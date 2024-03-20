@@ -98,9 +98,10 @@ class __$$ExchangeTableExpandedRowsStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ExchangeTableExpandedRowsStateImpl
-    implements _ExchangeTableExpandedRowsState {
+    extends _ExchangeTableExpandedRowsState {
   _$ExchangeTableExpandedRowsStateImpl(final Set<ExpandableRowState> rows)
-      : _rows = rows;
+      : _rows = rows,
+        super._();
 
   final Set<ExpandableRowState> _rows;
   @override
@@ -137,9 +138,10 @@ class _$ExchangeTableExpandedRowsStateImpl
 }
 
 abstract class _ExchangeTableExpandedRowsState
-    implements ExchangeTableExpandedRowsState {
+    extends ExchangeTableExpandedRowsState {
   factory _ExchangeTableExpandedRowsState(final Set<ExpandableRowState> rows) =
       _$ExchangeTableExpandedRowsStateImpl;
+  _ExchangeTableExpandedRowsState._() : super._();
 
   @override
   Set<ExpandableRowState> get rows;

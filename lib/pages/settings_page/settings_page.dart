@@ -24,6 +24,10 @@ class SettingsPage extends ConsumerWidget {
       ),
       body: ListView(
         children: [
+          const Gap(12),
+          const AppearanceSection(),
+          const Gap(48),
+          const Divider().padding(x: 16),
           const Gap(48),
           const RatesDataTimestampsWidget().padding(x: 16),
           const Gap(48),
@@ -88,6 +92,54 @@ class ThemeModeIconButton extends HookConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+class AppearanceSection extends ConsumerWidget {
+  const AppearanceSection({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final seedColor = ref.watch(seedColorNotifierProvider);
+
+    void changeColor(Color color) {
+      ref.read(seedColorNotifierProvider.notifier).setSeedColor(color);
+    }
+
+    Widget buildColorPicker(Color color) {
+      final isSelected = seedColor == color;
+
+      return GestureDetector(
+        onTap: () => changeColor(color),
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isSelected ? context.colorScheme.onBackground : Colors.transparent,
+              width: 2,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return VStack(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Appearance',
+          style: context.textTheme.titleLarge,
+        ),
+        const Gap(16),
+        Wrap(
+          spacing: 12,
+          children: seedColors.map(buildColorPicker).toList(),
+        ),
+      ],
+    ).padding(x: 16);
   }
 }
 

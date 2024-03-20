@@ -63,9 +63,18 @@ class ExpandableRowState extends Equatable {
 
 @freezed
 class ExchangeTableExpandedRowsState with _$ExchangeTableExpandedRowsState {
+  const ExchangeTableExpandedRowsState._();
   factory ExchangeTableExpandedRowsState(
     Set<ExpandableRowState> rows,
   ) = _ExchangeTableExpandedRowsState;
+
+  int? get lastExpandedLevel {
+    return rows.lastOrNull?.level;
+  }
+
+  int get lastShownLevel {
+    return rows.isNotEmpty ? rows.last.level + 1 : 0;
+  }
 }
 
 @riverpod

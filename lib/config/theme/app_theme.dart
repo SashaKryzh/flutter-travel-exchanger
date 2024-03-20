@@ -3,19 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/config/theme/exchange_table_theme.dart';
+import 'package:travel_exchanger/data/shared_preferences.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 
 part 'app_theme.g.dart';
 
 class AppTheme {
-  ThemeData theme() => _theme(false);
-
-  ThemeData darkTheme() => _theme(true);
-
-  ThemeData _theme(bool isDark) {
+  ThemeData theme({required Color seedColor, bool isDark = false}) {
     final colorScheme = ColorScheme.fromSeed(
       brightness: isDark ? Brightness.dark : Brightness.light,
-      seedColor: Colors.red,
+      seedColor: seedColor,
     );
 
     final baseTheme = ThemeData(
@@ -65,3 +62,44 @@ class ThemeModeNotifier extends _$ThemeModeNotifier {
     state = themeMode;
   }
 }
+
+@riverpod
+class SeedColorNotifier extends _$SeedColorNotifier {
+  @override
+  Color build() {
+    return _readStoredState() ?? seedColors.first;
+  }
+
+  void setSeedColor(Color color) {
+    state = color;
+    _storeState();
+  }
+
+  void _storeState() {
+    ref.read(sharedPreferencesProvider).setInt('seedColorKey', state.value);
+  }
+
+  Color? _readStoredState() {
+    final value = ref.read(sharedPreferencesProvider).getInt('seedColorKey');
+    if (value == null) {
+      return null;
+    }
+
+    final color = Color(value);
+
+    if (!seedColors.contains(color)) {
+      ref.read(sharedPreferencesProvider).remove('seedColorKey');
+      return null;
+    } else {
+      return color;
+    }
+  }
+}
+
+final seedColors = [
+  Colors.red.value,
+  Colors.orange.value,
+  Colors.green.value,
+  Colors.blue.value,
+  Colors.purple.value,
+].map(Color.new);

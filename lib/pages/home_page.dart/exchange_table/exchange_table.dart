@@ -97,26 +97,46 @@ class _ExchangeTableState extends ConsumerState<ExchangeTable> with SingleTicker
       behavior: HitTestBehavior.translucent,
       onHorizontalDragUpdate: (details) => _updateDrag(details.delta.dx),
       onHorizontalDragEnd: (_) => _resetDrag(),
-      child: ProxyProvider0(
-        create: (_) => _SlideAnimationProvider(animation),
-        update: (_, __) => _SlideAnimationProvider(animation),
+      child: Provider.value(
+        value: _SlideAnimationProvider(animation),
         child: ExchangeTableBackgroundWrapper(
           columnsCount: ref.watch(exchangeBetweenProvider).length,
-          child: LayoutBuilder(
-            builder: (context, constraints) => ProxyProvider0(
-              create: (_) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
-              update: (_, __) => _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: ConstrainedBox(
-                  constraints: constraints,
-                  child: const _ExchangeTableContent(),
+          child: _TableBackgroundShadow(
+            child: LayoutBuilder(
+              builder: (context, constraints) => Provider.value(
+                value: _ExchangeTableLayoutProperties(tableHeight: constraints.maxHeight),
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: constraints,
+                    child: const _ExchangeTableContent(),
+                  ),
                 ),
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TableBackgroundShadow extends ConsumerWidget {
+  const _TableBackgroundShadow({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final expandedRowsState = ref.watch(exchangeTableExpandedRowsProvider);
+
+    return Container(
+      color: levelShadowColor(
+        context,
+        level: expandedRowsState.lastExpandedLevel ?? 0,
+        lastShownLevel: expandedRowsState.lastShownLevel,
+      ),
+      child: child,
     );
   }
 }
@@ -435,41 +455,50 @@ class _ValuesRow extends ConsumerWidget {
     final isThree = convertedValues.$2 != null;
     final currency = ref.watch(exchangeBetweenProvider).from;
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: bottomBorder
-              ? BorderSide(
-                  color: context.tableTheme.borderColor,
-                  width: 1,
-                )
-              : BorderSide.none,
+    final shadowColor = levelShadowColor(
+      context,
+      level: level,
+      lastShownLevel: ref.watch(exchangeTableExpandedRowsProvider).lastShownLevel,
+    );
+
+    return ExchangeTableBackgroundWrapper(
+      columnsCount: ref.watch(exchangeBetweenProvider).length,
+      child: AnimatedContainer(
+        duration: kExchangeRowExpandAnimationDuration,
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: bottomBorder
+                ? BorderSide(
+                    color: context.tableTheme.borderColor,
+                    width: 1,
+                  )
+                : BorderSide.none,
+          ),
+          color: shadowColor,
         ),
-        color: Colors.black.withOpacity((0.2 * level).clamp(0, 1)),
-        // color: context.tableTheme?.fromColor,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _ValueItem(
-              value: Value(value, currency),
-              alignment: ColumnAlignment.right,
-            ),
-          ),
-          Expanded(
-            child: _ValueItem(
-              value: convertedValues.$1,
-              alignment: isThree ? ColumnAlignment.center : ColumnAlignment.left,
-            ),
-          ),
-          if (convertedValues.$2 != null)
+        child: Row(
+          children: [
             Expanded(
               child: _ValueItem(
-                value: convertedValues.$2!,
-                alignment: ColumnAlignment.left,
+                value: Value(value, currency),
+                alignment: ColumnAlignment.right,
               ),
             ),
-        ],
+            Expanded(
+              child: _ValueItem(
+                value: convertedValues.$1,
+                alignment: isThree ? ColumnAlignment.center : ColumnAlignment.left,
+              ),
+            ),
+            if (convertedValues.$2 != null)
+              Expanded(
+                child: _ValueItem(
+                  value: convertedValues.$2!,
+                  alignment: ColumnAlignment.left,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -530,4 +559,17 @@ class _ValueItem extends StatelessWidget {
 
 extension on BuildContext {
   _ExchangeTableLayoutProperties get watchLayoutProperties => watch();
+}
+
+Color levelShadowColor(BuildContext context, {required int level, required int lastShownLevel}) {
+  final opacities = context.isDark ? [0.0, 0.2, 0.3] : [0.0, 0.1, 0.2];
+  final double opacity;
+  if (level == 0) {
+    opacity = opacities[0];
+  } else if (level == 1 || level < lastShownLevel) {
+    opacity = opacities[1];
+  } else {
+    opacity = opacities[2];
+  }
+  return Colors.black.withOpacity(opacity);
 }

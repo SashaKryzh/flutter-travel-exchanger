@@ -7,7 +7,7 @@ part of 'custom_amount_providers.dart';
 // **************************************************************************
 
 String _$customAmountConverterHash() =>
-    r'b186448d63137b3701da9e14766923b9dc39d2c8';
+    r'decba9fdbb6be15d000666744b6ef965d58cf2f1';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -174,7 +174,7 @@ class _CustomAmountConverterProviderElement
 }
 
 String _$customAmountTimeContainerHash() =>
-    r'28c6cf2e3fec30c2a16a08f1532670fa13647eef';
+    r'210d981662058e8111adeee53dc285280f29e9ea';
 
 /// See also [CustomAmountTimeContainer].
 @ProviderFor(CustomAmountTimeContainer)
