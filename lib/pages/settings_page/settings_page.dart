@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
@@ -76,7 +77,7 @@ class ThemeModeIconButton extends HookConsumerWidget {
         children: [
           Text(
             switch (themeMode) {
-              ThemeMode.system => 'System',
+              ThemeMode.system => 'Automatic',
               ThemeMode.light => 'Light',
               ThemeMode.dark => 'Dark',
             },
@@ -84,9 +85,9 @@ class ThemeModeIconButton extends HookConsumerWidget {
           const SizedSpacer(8),
           Icon(
             switch (themeMode) {
-              ThemeMode.system => Icons.brightness_auto,
-              ThemeMode.light => Icons.brightness_high,
-              ThemeMode.dark => Icons.brightness_3,
+              ThemeMode.system => AppIcons.systemMode,
+              ThemeMode.light => AppIcons.lightMode,
+              ThemeMode.dark => AppIcons.darkMode,
             },
           ),
         ],

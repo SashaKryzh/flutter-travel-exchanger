@@ -15,4 +15,7 @@ abstract class AppIcons {
   static const swap = _L.arrow_right_left;
   static const search = _L.search;
   static const rearrangeIndicator = _L.grip_vertical;
+  static const darkMode = _L.moon;
+  static const lightMode = _L.sun;
+  static const systemMode = _L.sun_moon;
 }
