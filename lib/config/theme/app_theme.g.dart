@@ -6,12 +6,12 @@ part of 'app_theme.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$themeModeNotifierHash() => r'4749ddc502e623a535c52e9e58b6cd39666cf41a';
+String _$themeModeNotifierHash() => r'670fa208491e0ecb2568101d7a6268a5a647d468';
 
 /// See also [ThemeModeNotifier].
 @ProviderFor(ThemeModeNotifier)
 final themeModeNotifierProvider =
-    AutoDisposeNotifierProvider<ThemeModeNotifier, ThemeMode>.internal(
+    AutoDisposeNotifierProvider<ThemeModeNotifier, ThemeModeState>.internal(
   ThemeModeNotifier.new,
   name: r'themeModeNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -21,7 +21,7 @@ final themeModeNotifierProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$ThemeModeNotifier = AutoDisposeNotifier<ThemeMode>;
+typedef _$ThemeModeNotifier = AutoDisposeNotifier<ThemeModeState>;
 String _$seedColorNotifierHash() => r'136f4ac1cf845e8b2e7a2df2d6f7ba7a11768c3a';
 
 /// See also [SeedColorNotifier].

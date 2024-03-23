@@ -33,6 +33,7 @@ class SettingsPage extends ConsumerWidget {
           const RatesDataTimestampsWidget().padding(x: 16),
           const Gap(48),
           OutlinedButton(
+            // TODO: Improve clear method.
             onPressed: () => ref.read(sharedPreferencesProvider).clear(),
             child: const Text('Clear All Data'),
           ).padding(x: 16),
@@ -47,7 +48,7 @@ class ThemeModeIconButton extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeNotifierProvider);
+    final themeMode = ref.watch(themeModeNotifierProvider).themeMode;
     final isDark = context.theme.brightness == Brightness.dark;
 
     final order = useMemoized(

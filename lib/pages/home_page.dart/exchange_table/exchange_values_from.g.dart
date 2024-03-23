@@ -7,7 +7,7 @@ part of 'exchange_values_from.dart';
 // **************************************************************************
 
 String _$exchangeValuesFromNotifierHash() =>
-    r'4bd919ef2cff14bc61f8ef05fceafb50c73d90e6';
+    r'ad9fcecfae67dd533e54b4654446b61652830bbe';
 
 /// See also [ExchangeValuesFromNotifier].
 @ProviderFor(ExchangeValuesFromNotifier)
