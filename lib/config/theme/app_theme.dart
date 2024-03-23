@@ -51,6 +51,7 @@ extension ThemeContextX on BuildContext {
   ExchangeTableTheme get tableTheme => theme.extension<ExchangeTableTheme>()!;
 }
 
+// TODO: Store theme mode.
 @riverpod
 class ThemeModeNotifier extends _$ThemeModeNotifier {
   @override

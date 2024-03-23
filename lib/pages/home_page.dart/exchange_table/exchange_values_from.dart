@@ -39,7 +39,7 @@ enum ExchangeValuesFrom {
 class ExchangeValuesFromNotifier extends _$ExchangeValuesFromNotifier {
   @override
   ExchangeValuesFrom build() {
-    return ExchangeValuesFrom.v1;
+    return ExchangeValuesFrom.v10;
   }
 
   bool increase() {
