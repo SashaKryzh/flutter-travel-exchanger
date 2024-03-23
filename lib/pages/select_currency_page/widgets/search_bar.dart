@@ -52,8 +52,8 @@ class SearchBar extends HookConsumerWidget {
 
     final borderRadius = isOpen.value
         ? const BorderRadius.only(
-            topLeft: Radius.circular(32),
-            topRight: Radius.circular(32),
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
           )
         : BorderRadius.zero;
 
