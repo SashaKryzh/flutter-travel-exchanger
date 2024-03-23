@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
+import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/data/rates_repository.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
+import 'package:travel_exchanger/pages/custom_amount_page/formatters/currency_input_formatter.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
 import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
@@ -31,14 +33,17 @@ class CustomRateModal extends HookConsumerWidget {
     }
 
     final rate = ref.watch(rateProvider(from, to));
-    final initialRight = rate.source.isCustom ? rate.rate.toStringAsFixed(2) : null;
+    final initialRight = rate.source.isCustom ? formatMoney(rate.rate) : null;
 
     final leftController = useTextEditingController(text: '1');
     final rightController = useTextEditingController(text: initialRight);
 
     void onSave() {
-      final left = double.parse(leftController.text);
-      final right = double.parse(rightController.text);
+      final left = moneyFormatter().tryParse(leftController.text);
+      final right = moneyFormatter().tryParse(rightController.text);
+      if (left == null || right == null) {
+        return;
+      }
       final newRate = right / left;
       ref.read(ratesRepositoryProvider).setCustomRate(from, to, newRate);
       onClose();
@@ -55,7 +60,7 @@ class CustomRateModal extends HookConsumerWidget {
       margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30).copyWith(
         bottom: bottomInset,
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
       decoration: BoxDecoration(
         color: context.colorScheme.surface,
         borderRadius: const BorderRadius.all(
@@ -69,6 +74,7 @@ class CustomRateModal extends HookConsumerWidget {
           children: [
             const SizedSpacer(14),
             Stack(
+              alignment: Alignment.center,
               children: [
                 HStack(
                   children: [
@@ -81,6 +87,8 @@ class CustomRateModal extends HookConsumerWidget {
                         controller: leftController,
                         textAlign: TextAlign.center,
                         onSubmitted: (_) => onSave(),
+                        style: context.textTheme.titleLarge,
+                        inputFormatters: const [CurrencyInputFormatter()],
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       ),
                     ]).expanded(),
@@ -95,15 +103,16 @@ class CustomRateModal extends HookConsumerWidget {
                         autofocus: true,
                         textAlign: TextAlign.center,
                         onSubmitted: (_) => onSave(),
+                        style: context.textTheme.titleLarge,
+                        inputFormatters: const [CurrencyInputFormatter()],
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       ),
                     ]).expanded(),
                   ],
                 ),
-                const Positioned.fill(
-                  child: Center(
-                    child: Text('='),
-                  ),
+                Icon(
+                  AppIcons.equal,
+                  color: context.theme.disabledColor,
                 ),
               ],
             ),
