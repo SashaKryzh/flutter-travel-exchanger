@@ -12,7 +12,10 @@ import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_background.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_providers.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_values_from.dart';
+import 'package:travel_exchanger/pages/home_page.dart/exchange_table/widgets/table_close_arrow.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
+import 'package:travel_exchanger/widgets/empty_widget.dart';
+import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
 const kExchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
 const kExpandAnimationCurve = Curves.easeInOut;
@@ -403,6 +406,11 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
               value: widget.value,
               level: widget.level,
               bottomBorder: showBottomBorder,
+              arrowDirection: isExpandedState
+                  ? ArrowDirection.down
+                  : isAfterExpanded
+                      ? ArrowDirection.up
+                      : null,
             ),
           ),
         ),
@@ -443,11 +451,13 @@ class _ValuesRow extends ConsumerWidget {
     required this.value,
     required this.level,
     required this.bottomBorder,
+    required this.arrowDirection,
   }) : assert(level >= 0 && level < 100, 'Most likely you have infinite loop');
 
   final double value;
   final int level;
   final bool bottomBorder;
+  final ArrowDirection? arrowDirection;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -476,27 +486,79 @@ class _ValuesRow extends ConsumerWidget {
           ),
           color: shadowColor,
         ),
-        child: Row(
+        child: Stack(
           children: [
-            Expanded(
-              child: _ValueItem(
-                value: Value(value, currency),
-                alignment: ColumnAlignment.right,
-              ),
-            ),
-            Expanded(
-              child: _ValueItem(
-                value: convertedValues.$1,
-                alignment: isThree ? ColumnAlignment.center : ColumnAlignment.left,
-              ),
-            ),
-            if (convertedValues.$2 != null)
-              Expanded(
-                child: _ValueItem(
-                  value: convertedValues.$2!,
-                  alignment: ColumnAlignment.left,
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const EmptyWidget().expanded(),
+                IndexedStack(
+                  index: arrowDirection == ArrowDirection.down ? 1 : 0,
+                  children: [
+                    SizedBox(
+                      height: context.watchLayoutProperties.rowHeight,
+                      child: TableCloseArrow(
+                        opened: arrowDirection == ArrowDirection.up,
+                        direction: ArrowDirection.up,
+                      ),
+                    ),
+                    SizedBox(
+                      height: context.watchLayoutProperties.rowHeight,
+                      child: TableCloseArrow(
+                        opened: arrowDirection == ArrowDirection.down,
+                        direction: ArrowDirection.down,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+                const EmptyWidget().expanded(),
+                if (isThree) ...[
+                  IndexedStack(
+                    index: arrowDirection == ArrowDirection.down ? 1 : 0,
+                    children: [
+                      SizedBox(
+                        height: context.watchLayoutProperties.rowHeight,
+                        child: TableCloseArrow(
+                          opened: arrowDirection == ArrowDirection.up,
+                          direction: ArrowDirection.up,
+                        ),
+                      ),
+                      SizedBox(
+                        height: context.watchLayoutProperties.rowHeight,
+                        child: TableCloseArrow(
+                          opened: arrowDirection == ArrowDirection.down,
+                          direction: ArrowDirection.down,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const EmptyWidget().expanded(),
+                ],
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: _ValueItem(
+                    value: Value(value, currency),
+                    alignment: ColumnAlignment.right,
+                  ),
+                ),
+                Expanded(
+                  child: _ValueItem(
+                    value: convertedValues.$1,
+                    alignment: isThree ? ColumnAlignment.center : ColumnAlignment.left,
+                  ),
+                ),
+                if (convertedValues.$2 != null)
+                  Expanded(
+                    child: _ValueItem(
+                      value: convertedValues.$2!,
+                      alignment: ColumnAlignment.left,
+                    ),
+                  ),
+              ],
+            ),
           ],
         ),
       ),
