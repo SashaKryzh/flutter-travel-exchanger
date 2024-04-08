@@ -16,7 +16,7 @@ class App extends ConsumerWidget {
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      title: 'Travel Exchanger',
+      title: 'TIM Converter',
       themeMode: themeMode,
       theme: AppTheme().theme(seedColor: ref.watch(seedColorNotifierProvider)),
       darkTheme: AppTheme().theme(seedColor: ref.watch(seedColorNotifierProvider), isDark: true),
