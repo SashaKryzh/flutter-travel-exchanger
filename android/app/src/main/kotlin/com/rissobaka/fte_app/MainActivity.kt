@@ -1,4 +1,4 @@
-package com.example.flutter_quick_starter
+package com.rissobaka.fte_app
 
 import io.flutter.embedding.android.FlutterActivity
 
