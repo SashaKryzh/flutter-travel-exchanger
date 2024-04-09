@@ -12,6 +12,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  firebase_core: 2.29.0
+
   intl: any
   flutter_hooks: ^0.20.5
   hooks_riverpod: ^2.5.1
