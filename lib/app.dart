@@ -5,12 +5,24 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/i18n/strings.g.dart';
 import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
+import 'package:travel_exchanger/utils/analytics/analytics_provider.dart';
 
-class App extends ConsumerWidget {
+class App extends ConsumerStatefulWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<App> createState() => _AppState();
+}
+
+class _AppState extends ConsumerState<App> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(analyticsProvider).logAppOpen();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeNotifierProvider).themeMode;
     final router = ref.watch(routerProvider);
 

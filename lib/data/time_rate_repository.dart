@@ -7,10 +7,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rate.dart';
+import 'package:travel_exchanger/utils/analytics/analytics.dart';
 import 'package:travel_exchanger/utils/logger.dart';
 
-part 'time_rate_repository.g.dart';
 part 'time_rate_repository.freezed.dart';
+part 'time_rate_repository.g.dart';
 
 @riverpod
 TimeRateRepository timeRateRepository(TimeRateRepositoryRef _) {
@@ -42,22 +43,18 @@ class TimeRateRepository {
   }
 
   Future<void> setTimeRate(MoneyCurrency to, {required double perHour}) async {
-    final data = _data;
-    if (data == null) {
-      final newData = TimeRateData(
-        to: to,
-        perHour: perHour,
-      );
-      _setData = newData;
-      await _store(newData);
-    } else {
-      final newData = data.copyWith(
-        to: to,
-        perHour: perHour,
-      );
-      _setData = newData;
-      await _store(newData);
-    }
+    final newData = data?.copyWith(
+          to: to,
+          perHour: perHour,
+        ) ??
+        TimeRateData(
+          to: to,
+          perHour: perHour,
+        );
+
+    analyticsVar.logCustomTimeRate(to, perHour);
+    _setData = newData;
+    await _store(newData);
   }
 
   Future<void> removeTimeRate() async {
