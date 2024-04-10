@@ -56,7 +56,7 @@ class RatesRepository {
 
     if (_ratesData.rates.remoteRates.isNotEmpty &&
         lastStored.isAfter(DateTime.now().subtract(const Duration(hours: 1)))) {
-      logger.d('Rates are not expired');
+      logDebug('Rates are not expired');
       return;
     }
 
@@ -118,7 +118,7 @@ class RatesRepository {
   }
 
   Future<RatesData> _fetchRemoteRates() async {
-    logger.d('Fetching rates');
+    logDebug('Fetching rates');
 
     RatesData ratesData;
 
@@ -131,14 +131,14 @@ class RatesRepository {
         data.rates.map((e) => e.toDomain()).toList(),
       );
     } on FunctionException catch (e, stackTrace) {
-      logger.e(
+      logError(
         'FunctionException: ${e.status} ${e.reasonPhrase ?? ''} ${e.details}',
         error: e,
         stackTrace: stackTrace,
       );
       ratesData = RatesData(DateTime.now(), Currency.eur, []);
     } on SocketException catch (e, stackTrace) {
-      logger.e(
+      logError(
         'SocketException: ${e.message}',
         error: e,
         stackTrace: stackTrace,
@@ -147,7 +147,7 @@ class RatesRepository {
     }
 
     if (ratesData.rates.isEmpty) {
-      logger.e('Remote rates are empty');
+      logError('Remote rates are empty');
     }
 
     return ratesData;
@@ -179,14 +179,14 @@ class RatesRepository {
 
       return ratesData;
     } catch (e, stackTrace) {
-      logger.e('Error fetching stored rates', error: e, stackTrace: stackTrace);
+      logError('Error fetching stored rates', error: e, stackTrace: stackTrace);
       _clear();
       return null;
     }
   }
 
   Future<void> _storeRates(RatesData ratesData) async {
-    logger.d('Storing rates locally');
+    logDebug('Storing rates locally');
 
     final json = ratesData.toJson();
     final ratesDataJsonString = await compute(jsonEncode, json);
