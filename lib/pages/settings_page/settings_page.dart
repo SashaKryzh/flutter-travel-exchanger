@@ -9,6 +9,7 @@ import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
+import 'package:travel_exchanger/utils/remote_config/remote_config.dart';
 import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
@@ -29,6 +30,10 @@ class SettingsPage extends ConsumerWidget {
           const Gap(12),
           const AppearanceSection(),
           const Gap(48),
+          const _ThankYouSection(),
+          const Gap(24),
+          const _FeedbackSection(),
+          const Gap(48),
           const Divider().padding(x: 16),
           const Gap(48),
           const RatesDataTimestampsWidget().padding(x: 16),
@@ -39,6 +44,8 @@ class SettingsPage extends ConsumerWidget {
             child: const Text('Clear All Data'),
           ).padding(x: 16),
           if (kDebugMode) ...[
+            const Gap(48),
+            const Divider().padding(x: 16),
             const Gap(24),
             TextButton(
               onPressed: () => throw Exception(),
@@ -182,5 +189,54 @@ class RatesDataTimestampsWidget extends ConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+class _ThankYouSection extends StatelessWidget {
+  const _ThankYouSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final xProfile = remoteConfig.getXProfileConfig();
+
+    return VStack(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Thank you for using TIM Converter!',
+          style: context.textTheme.titleLarge,
+        ),
+        Text.rich(
+          TextSpan(
+            text: 'Made by ',
+            children: [
+              TextSpan(
+                // TODO: Take from remote config or something like this.
+                text: xProfile.username,
+                style: TextStyle(
+                  color: context.colorScheme.primary,
+                ),
+                // recognizer: TapGestureRecognizer().dis
+              ),
+            ],
+          ),
+          style: context.textTheme.bodyLarge,
+        ),
+      ],
+    ).padding(x: 16);
+  }
+}
+
+class _FeedbackSection extends StatelessWidget {
+  const _FeedbackSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return VStack(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Report a bug or leave a feadback here')
+      ],
+    ).padding(x: 16);
   }
 }
