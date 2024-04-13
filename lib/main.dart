@@ -19,6 +19,7 @@ import 'package:travel_exchanger/data/time_rate_repository.dart';
 import 'package:travel_exchanger/firebase_options.dart';
 import 'package:travel_exchanger/utils/general_provider_observer.dart';
 import 'package:travel_exchanger/utils/logger.dart';
+import 'package:travel_exchanger/utils/remote_config/remote_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +41,7 @@ Future<void> main() async {
 
   await Env.init();
   initLoggerListeners();
+  await remoteConfig.init();
 
   await Supabase.initialize(
     url: Env.supabaseUrl,

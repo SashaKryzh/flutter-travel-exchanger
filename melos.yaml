@@ -50,6 +50,9 @@ scripts:
     run: fvm dart pub global activate full_coverage && melos exec --dir-exists="test" -- "fvm dart pub global run full_coverage"
     description: Generates test files with imports, so coverage will include all files.
 
+  flutterfire-configure:
+    run: flutterfire configure --project=fteapp-fb4e1 --platforms=ios,android
+
 command:
   clean:
     hooks:
