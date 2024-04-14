@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
@@ -8,11 +9,13 @@ import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
+import 'package:travel_exchanger/utils/analytics/analytics.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/utils/remote_config/remote_config.dart';
 import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -30,10 +33,12 @@ class SettingsPage extends ConsumerWidget {
           const Gap(12),
           const AppearanceSection(),
           const Gap(48),
+          const Divider().padding(x: 16),
+          const Gap(48),
           const _ThankYouSection(),
           const Gap(24),
           const _FeedbackSection(),
-          const Gap(48),
+          const Gap(40),
           const Divider().padding(x: 16),
           const Gap(48),
           const RatesDataTimestampsWidget().padding(x: 16),
@@ -192,12 +197,31 @@ class RatesDataTimestampsWidget extends ConsumerWidget {
   }
 }
 
-class _ThankYouSection extends StatelessWidget {
-  const _ThankYouSection({super.key});
+class _ThankYouSection extends HookWidget {
+  const _ThankYouSection();
+
+  void openXProfile() {
+    analyticsVar.logOpenXProfile();
+    final xProfile = remoteConfig.getXProfileConfig();
+    canLaunchUrlString(xProfile.url).then((canLaunch) {
+      if (canLaunch) {
+        launchUrlString(
+          xProfile.url,
+          mode: LaunchMode.externalApplication,
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final xProfile = remoteConfig.getXProfileConfig();
+
+    final recognizer = useRef<TapGestureRecognizer?>(null);
+    useEffect(() {
+      recognizer.value = TapGestureRecognizer()..onTap = openXProfile;
+      return recognizer.value?.dispose;
+    }, []);
 
     return VStack(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,12 +235,11 @@ class _ThankYouSection extends StatelessWidget {
             text: 'Made by ',
             children: [
               TextSpan(
-                // TODO: Take from remote config or something like this.
                 text: xProfile.username,
                 style: TextStyle(
                   color: context.colorScheme.primary,
                 ),
-                // recognizer: TapGestureRecognizer().dis
+                recognizer: recognizer.value,
               ),
             ],
           ),
@@ -228,14 +251,29 @@ class _ThankYouSection extends StatelessWidget {
 }
 
 class _FeedbackSection extends StatelessWidget {
-  const _FeedbackSection({super.key});
+  const _FeedbackSection();
+
+  void openFeedbackForm() {
+    analyticsVar.logOpenFeedbackForm();
+    final feedbackForm = remoteConfig.getFeedbackFormConfig();
+    canLaunchUrlString(feedbackForm.url).then((canLaunch) {
+      if (canLaunch) {
+        launchUrlString(
+          feedbackForm.url,
+          mode: LaunchMode.externalApplication,
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return VStack(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Report a bug or leave a feadback here')
+        TextButton(
+          onPressed: openFeedbackForm,
+          child: const Text('Report a bug or write feedback'),
+        ),
       ],
     ).padding(x: 16);
   }

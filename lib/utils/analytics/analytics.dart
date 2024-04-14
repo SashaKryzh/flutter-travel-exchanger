@@ -22,8 +22,22 @@ final class Analytics {
       },
     );
   }
+
+  Future<void> logOpenXProfile() {
+    return _analytics.logEvent(
+      name: AnalyticsEvent.openXProfile.name,
+    );
+  }
+
+  Future<void> logOpenFeedbackForm() {
+    return _analytics.logEvent(
+      name: AnalyticsEvent.openFeedbackForm.name,
+    );
+  }
 }
 
 enum AnalyticsEvent {
   customTimeRate,
+  openXProfile,
+  openFeedbackForm,
 }
