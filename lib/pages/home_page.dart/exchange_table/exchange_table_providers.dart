@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/domain/onboarding.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_values_from.dart';
@@ -86,19 +87,27 @@ class ExchangeTableExpandedRows extends _$ExchangeTableExpandedRows {
   }
 
   void expand({required int level, required int index}) {
-    final length = state.rows.length;
-    state = state.copyWith(
-      rows: {...state.rows, ExpandableRowState(level: level, index: index)},
+    Onboarding.guard(
+      () {
+        final length = state.rows.length;
+        state = state.copyWith(
+          rows: {...state.rows, ExpandableRowState(level: level, index: index)},
+        );
+        assert(state.rows.length == length + 1, 'This row is already expanded');
+      },
+      event: const ExpandRowEvent(),
     );
-    $appEvents.add(const ExpandRowEvent());
-    assert(state.rows.length == length + 1, 'This row is already expanded');
   }
 
   void collapse() {
-    state = state.copyWith(
-      rows: state.rows.take(state.rows.length - 1).toSet(),
+    Onboarding.guard(
+      () {
+        state = state.copyWith(
+          rows: state.rows.take(state.rows.length - 1).toSet(),
+        );
+      },
+      event: const CollapseRowEvent(),
     );
-    $appEvents.add(const CollapseRowEvent());
   }
 
   void collapseAll() {

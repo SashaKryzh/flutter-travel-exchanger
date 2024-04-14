@@ -8,6 +8,7 @@ import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/domain/onboarding.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_background.dart';
@@ -27,8 +28,10 @@ class HomeAppBar extends ConsumerWidget {
     final _ = ref.watch(ratesProvider);
 
     void onCurrencyTap(Currency currency) {
-      $appEvents.add(const OpenSelectCurrencyPageEvent());
-      SelectCurrencyRoute(currencyCode: currency.code).go(context);
+      Onboarding.guard(
+        () => SelectCurrencyRoute(currencyCode: currency.code).go(context),
+        event: const OpenSelectCurrencyPageEvent(),
+      );
     }
 
     bool showCustomRateBadge(Currency currency) {
@@ -97,7 +100,7 @@ class HomeAppBar extends ConsumerWidget {
                 GestureDetector(
                   onLongPress: () => const DebugRoute().push<void>(context),
                   child: IconButton(
-                    onPressed: () => const SettingsRoute().go(context),
+                    onPressed: () => Onboarding.guard(() => const SettingsRoute().go(context)),
                     padding: const EdgeInsets.all(verticalPadding),
                     visualDensity: VisualDensity.compact,
                     icon: const Icon(AppIcons.settings),

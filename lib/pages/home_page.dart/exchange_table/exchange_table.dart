@@ -293,13 +293,13 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
   var _isExpanded = false;
   var _renderChildren = false;
 
-  void _expand({bool updateNotifier = true}) {
-    if (updateNotifier) {
-      ref
-          .read(exchangeTableExpandedRowsProvider.notifier)
-          .expand(level: widget.level, index: widget.index);
-    }
+  void _expandNotify() {
+    ref
+        .read(exchangeTableExpandedRowsProvider.notifier)
+        .expand(level: widget.level, index: widget.index);
+  }
 
+  void _expand() {
     setState(() {
       _isExpanded = true;
       _renderChildren = true;
@@ -354,8 +354,7 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
     final isAfterExpanded = index - 1 == expandedIndex;
 
     if (_isExpanded != isExpandedState) {
-      // ignore: avoid-unnecessary-setstate
-      isExpandedState ? _expand(updateNotifier: false) : _collapse(updateNotifier: false);
+      isExpandedState ? _expand() : _collapse(updateNotifier: false);
     }
 
     void onTap() {
@@ -363,7 +362,7 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
       if (_isExpanded || isAfterExpanded) {
         ref.read(exchangeTableExpandedRowsProvider.notifier).collapse();
       } else if (_canExpand) {
-        _expand();
+        _expandNotify();
       }
     }
 

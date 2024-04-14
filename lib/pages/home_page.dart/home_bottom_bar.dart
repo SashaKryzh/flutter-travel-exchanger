@@ -6,6 +6,7 @@ import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/domain/onboarding.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_background.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
@@ -71,13 +72,17 @@ class _CurrencyButtons extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     void onTap(Currency currency) {
       HapticFeedback.lightImpact();
-      CustomAmountRoute(currencyCode: currency.code).go(context);
+      Onboarding.guard(
+        () => CustomAmountRoute(currencyCode: currency.code).go(context),
+      );
     }
 
     void onLongTap(Currency currency) {
       HapticFeedback.mediumImpact();
-      $appEvents.add(const OpenSelectCurrencyPageEvent());
-      SelectCurrencyRoute(currencyCode: currency.code).go(context);
+      Onboarding.guard(
+        () => SelectCurrencyRoute(currencyCode: currency.code).go(context),
+        event: const OpenSelectCurrencyPageEvent(),
+      );
     }
 
     final between = ref.watch(exchangeBetweenProvider);
@@ -159,7 +164,9 @@ class _SwapButtons extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     void swap(Currency from, Currency to) {
       HapticFeedback.mediumImpact();
-      ref.read(exchangeBetweenProvider.notifier).swap(from, to);
+      Onboarding.guard(
+        () => ref.read(exchangeBetweenProvider.notifier).swap(from, to),
+      );
     }
 
     final between = ref.watch(exchangeBetweenProvider);

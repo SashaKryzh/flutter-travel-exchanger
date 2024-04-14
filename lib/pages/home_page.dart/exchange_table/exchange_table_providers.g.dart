@@ -172,7 +172,7 @@ class _ConvertedValuesProviderElement
 }
 
 String _$exchangeTableExpandedRowsHash() =>
-    r'43484dfb4d5a4d61e7c35db397a96f886320c74b';
+    r'7fe5004fe79f60a3797bde062f989ba5cfde65a0';
 
 /// See also [ExchangeTableExpandedRows].
 @ProviderFor(ExchangeTableExpandedRows)
