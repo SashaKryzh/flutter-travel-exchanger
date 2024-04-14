@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/config/theme/app_icons.dart';
+import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_background.dart';
@@ -75,6 +76,7 @@ class _CurrencyButtons extends ConsumerWidget {
 
     void onLongTap(Currency currency) {
       HapticFeedback.mediumImpact();
+      $appEvents.add(const OpenSelectCurrencyPageEvent());
       SelectCurrencyRoute(currencyCode: currency.code).go(context);
     }
 

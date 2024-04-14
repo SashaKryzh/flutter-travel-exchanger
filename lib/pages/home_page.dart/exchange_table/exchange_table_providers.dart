@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/domain/value.dart';
@@ -89,6 +90,7 @@ class ExchangeTableExpandedRows extends _$ExchangeTableExpandedRows {
     state = state.copyWith(
       rows: {...state.rows, ExpandableRowState(level: level, index: index)},
     );
+    $appEvents.add(const ExpandRowEvent());
     assert(state.rows.length == length + 1, 'This row is already expanded');
   }
 
@@ -96,6 +98,7 @@ class ExchangeTableExpandedRows extends _$ExchangeTableExpandedRows {
     state = state.copyWith(
       rows: state.rows.take(state.rows.length - 1).toSet(),
     );
+    $appEvents.add(const CollapseRowEvent());
   }
 
   void collapseAll() {

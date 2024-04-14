@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
+import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
@@ -26,6 +27,7 @@ class HomeAppBar extends ConsumerWidget {
     final _ = ref.watch(ratesProvider);
 
     void onCurrencyTap(Currency currency) {
+      $appEvents.add(const OpenSelectCurrencyPageEvent());
       SelectCurrencyRoute(currencyCode: currency.code).go(context);
     }
 

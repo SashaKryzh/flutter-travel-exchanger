@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_providers.dart';
 
 part 'exchange_values_from.g.dart';
@@ -52,6 +53,7 @@ class ExchangeValuesFromNotifier extends _$ExchangeValuesFromNotifier {
       return false;
     }
     state = newState;
+    $appEvents.add(const IncreaseValuesFromEvent());
     return true;
   }
 
@@ -69,6 +71,7 @@ class ExchangeValuesFromNotifier extends _$ExchangeValuesFromNotifier {
     }
 
     state = nextValuesFrom;
+    $appEvents.add(const DecreaseValuesFromEvent());
     return true;
   }
 }

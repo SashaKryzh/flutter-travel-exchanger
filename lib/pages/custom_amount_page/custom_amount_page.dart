@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
+import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_providers.dart';
@@ -198,6 +199,7 @@ class _BottomButtons extends ConsumerWidget {
     void onChangeCurrencyTap() async {
       final router = GoRouter.of(context)..pop();
       Future.delayed(const Duration(milliseconds: 200), () {
+        $appEvents.add(const OpenSelectCurrencyPageEvent());
         router.go(SelectCurrencyRoute(currencyCode: selectedCurrency.code).location);
       });
     }

@@ -5,7 +5,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/i18n/strings.g.dart';
 import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
+import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/utils/analytics/analytics_provider.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -25,6 +27,11 @@ class _AppState extends ConsumerState<App> {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeNotifierProvider).themeMode;
     final router = ref.watch(routerProvider);
+
+    // TODO: Remove
+    ref.listen(appEventProvider, (previous, next) {
+      logDebug(next);
+    });
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
