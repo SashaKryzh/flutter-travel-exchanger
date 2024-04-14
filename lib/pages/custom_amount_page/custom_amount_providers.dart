@@ -20,11 +20,20 @@ class CustomAmountState with _$CustomAmountState {
   const CustomAmountState._();
 
   factory CustomAmountState({
-    required Currency from,
+    required int fromIndex,
     required Values values,
   }) = _CustomAmountState;
 
-  double get fromValue => valueFor(from);
+  Currency get fromCurrency => currencyFor(fromIndex);
+  double get fromValue => valueFor(fromCurrency);
+
+  Currency currencyFor(int index) {
+    return index == 0
+        ? values.$1.$1
+        : index == 1
+            ? values.$2.$1
+            : values.$3!.$1;
+  }
 
   double valueFor(Currency currency) {
     return values.$1.$1 == currency
@@ -40,6 +49,10 @@ class CustomAmountConverter extends _$CustomAmountConverter {
   @override
   CustomAmountState build(String fromCode) {
     final from = ref.watch(currenciesProvider).getCurrencyFromCode(fromCode);
+    var fromIndex = ref.read(exchangeBetweenProvider).currencies.indexOf(from);
+    if (fromIndex == -1) {
+      fromIndex = 0;
+    }
 
     ref.listen(
       customAmountTimeContainerProvider,
@@ -48,8 +61,15 @@ class CustomAmountConverter extends _$CustomAmountConverter {
       },
     );
 
+    ref.listen(
+      exchangeBetweenProvider,
+      (prev, curr) {
+        if (prev != curr) _recalculate();
+      },
+    );
+
     return CustomAmountState(
-      from: from,
+      fromIndex: fromIndex,
       values: _calculateValues(from: from, amount: 1),
     );
   }
@@ -60,10 +80,13 @@ class CustomAmountConverter extends _$CustomAmountConverter {
     );
   }
 
-  void setFrom(Currency from) {
+  void setFrom(int index) {
     state = state.copyWith(
-      from: from,
-      values: _calculateValues(from: from, amount: state.valueFor(from)),
+      fromIndex: index,
+      values: _calculateValues(
+        from: state.currencyFor(index),
+        amount: state.valueFor(state.currencyFor(index)),
+      ),
     );
   }
 
@@ -75,7 +98,7 @@ class CustomAmountConverter extends _$CustomAmountConverter {
 
   Values _calculateValues({Currency? from, double? amount}) {
     final between = ref.read(exchangeBetweenProvider);
-    final from1 = from ?? state.from;
+    final from1 = from ?? state.fromCurrency;
     final amount1 = amount ?? state.fromValue;
 
     final double amountAdjusted;

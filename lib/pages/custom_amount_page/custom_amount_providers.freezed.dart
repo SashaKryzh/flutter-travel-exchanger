@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$CustomAmountState {
-  Currency get from => throw _privateConstructorUsedError;
+  int get fromIndex => throw _privateConstructorUsedError;
   ((Currency, double), (Currency, double), (Currency, double)?) get values =>
       throw _privateConstructorUsedError;
 
@@ -32,7 +32,7 @@ abstract class $CustomAmountStateCopyWith<$Res> {
       _$CustomAmountStateCopyWithImpl<$Res, CustomAmountState>;
   @useResult
   $Res call(
-      {Currency from,
+      {int fromIndex,
       ((Currency, double), (Currency, double), (Currency, double)?) values});
 }
 
@@ -49,14 +49,14 @@ class _$CustomAmountStateCopyWithImpl<$Res, $Val extends CustomAmountState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? from = null,
+    Object? fromIndex = null,
     Object? values = null,
   }) {
     return _then(_value.copyWith(
-      from: null == from
-          ? _value.from
-          : from // ignore: cast_nullable_to_non_nullable
-              as Currency,
+      fromIndex: null == fromIndex
+          ? _value.fromIndex
+          : fromIndex // ignore: cast_nullable_to_non_nullable
+              as int,
       values: null == values
           ? _value.values
           : values // ignore: cast_nullable_to_non_nullable
@@ -74,7 +74,7 @@ abstract class _$$CustomAmountStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {Currency from,
+      {int fromIndex,
       ((Currency, double), (Currency, double), (Currency, double)?) values});
 }
 
@@ -89,14 +89,14 @@ class __$$CustomAmountStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? from = null,
+    Object? fromIndex = null,
     Object? values = null,
   }) {
     return _then(_$CustomAmountStateImpl(
-      from: null == from
-          ? _value.from
-          : from // ignore: cast_nullable_to_non_nullable
-              as Currency,
+      fromIndex: null == fromIndex
+          ? _value.fromIndex
+          : fromIndex // ignore: cast_nullable_to_non_nullable
+              as int,
       values: null == values
           ? _value.values
           : values // ignore: cast_nullable_to_non_nullable
@@ -108,17 +108,17 @@ class __$$CustomAmountStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$CustomAmountStateImpl extends _CustomAmountState {
-  _$CustomAmountStateImpl({required this.from, required this.values})
+  _$CustomAmountStateImpl({required this.fromIndex, required this.values})
       : super._();
 
   @override
-  final Currency from;
+  final int fromIndex;
   @override
   final ((Currency, double), (Currency, double), (Currency, double)?) values;
 
   @override
   String toString() {
-    return 'CustomAmountState(from: $from, values: $values)';
+    return 'CustomAmountState(fromIndex: $fromIndex, values: $values)';
   }
 
   @override
@@ -126,12 +126,13 @@ class _$CustomAmountStateImpl extends _CustomAmountState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CustomAmountStateImpl &&
-            (identical(other.from, from) || other.from == from) &&
+            (identical(other.fromIndex, fromIndex) ||
+                other.fromIndex == fromIndex) &&
             (identical(other.values, values) || other.values == values));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, from, values);
+  int get hashCode => Object.hash(runtimeType, fromIndex, values);
 
   @JsonKey(ignore: true)
   @override
@@ -143,7 +144,7 @@ class _$CustomAmountStateImpl extends _CustomAmountState {
 
 abstract class _CustomAmountState extends CustomAmountState {
   factory _CustomAmountState(
-      {required final Currency from,
+      {required final int fromIndex,
       required final (
         (Currency, double),
         (Currency, double),
@@ -152,7 +153,7 @@ abstract class _CustomAmountState extends CustomAmountState {
   _CustomAmountState._() : super._();
 
   @override
-  Currency get from;
+  int get fromIndex;
   @override
   ((Currency, double), (Currency, double), (Currency, double)?) get values;
   @override

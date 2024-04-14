@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_providers.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/formatters/currency_input_formatter.dart';
@@ -15,6 +16,7 @@ import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
 late CustomAmountState _state;
 late CustomAmountConverter _notifier;
+late CustomAmountConverterProvider _provider;
 
 class CustomAmountPage extends ConsumerWidget {
   const CustomAmountPage({
@@ -26,11 +28,11 @@ class CustomAmountPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _state = ref.watch(customAmountConverterProvider(code));
-    _notifier = ref.read(customAmountConverterProvider(code).notifier);
+    _provider = customAmountConverterProvider(code);
+    _state = ref.watch(_provider);
+    _notifier = ref.read(_provider.notifier);
 
     final between = ref.watch(exchangeBetweenProvider);
-    final to2 = between.to2;
 
     return GestureDetector(
       onTap: () => Navigator.pop(context),
@@ -43,18 +45,30 @@ class CustomAmountPage extends ConsumerWidget {
               VStack(
                 gap: 16,
                 children: [
-                  _InputContainer(currency: between.from),
-                  _InputContainer(currency: between.to1),
-                  if (to2 != null) _InputContainer(currency: to2),
+                  const _InputContainer(index: 0),
+                  const _InputContainer(index: 1),
+                  if (between.isThree) const _InputContainer(index: 2),
                 ],
               ).center(),
               Align(
                 alignment: Alignment.bottomCenter,
-                child: _TimeFromButtons(
-                  isShown: _state.from.isTime,
-                  selected: ref.watch(customAmountTimeContainerProvider),
-                  onChanged: (timeFrom) =>
-                      ref.read(customAmountTimeContainerProvider.notifier).setFrom(timeFrom),
+                child: AnimatedCrossFade(
+                  duration: const Duration(milliseconds: 50),
+                  crossFadeState: _state.fromCurrency.isMoney
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  firstChild: TextButton(
+                    onPressed: () => SelectCurrencyFromCustomAmountRoute(
+                      currencyCode: code,
+                      selectCurrencyCode: _state.fromCurrency.code,
+                    ).go(context),
+                    child: const Text('Change currency'),
+                  ),
+                  secondChild: _TimeFromButtons(
+                    selected: ref.watch(customAmountTimeContainerProvider),
+                    onChanged: (timeFrom) =>
+                        ref.read(customAmountTimeContainerProvider.notifier).setFrom(timeFrom),
+                  ),
                 ),
               ),
             ],
@@ -71,10 +85,10 @@ const kContainerBlur = 7.0;
 
 class _InputContainer extends HookConsumerWidget {
   const _InputContainer({
-    required this.currency,
+    required this.index,
   });
 
-  final Currency currency;
+  final int index;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -83,7 +97,9 @@ class _InputContainer extends HookConsumerWidget {
 
     final isFirstBuild = usePrevious(false) ?? true;
 
-    final isSelected = _state.from == currency;
+    final currency = ref.watch(_provider).currencyFor(index);
+
+    final isSelected = _state.fromIndex == index;
     final value = _state.valueFor(currency);
 
     final prevValue = usePrevious(value);
@@ -127,7 +143,7 @@ class _InputContainer extends HookConsumerWidget {
     }
 
     void setFrom() {
-      _notifier.setFrom(currency);
+      _notifier.setFrom(index);
       focusNode.requestFocus();
     }
 
@@ -136,7 +152,7 @@ class _InputContainer extends HookConsumerWidget {
       CustomAmountTimeFrom.hours => 'hours',
       CustomAmountTimeFrom.days => 'days',
     };
-    final titleSuffix = currency.isTime && _state.from.isTime ? ' ($timeFrom)' : '';
+    final titleSuffix = currency.isTime && _state.fromCurrency.isTime ? ' ($timeFrom)' : '';
 
     return GlassSelectableContainer(
       isSelected: isSelected,
@@ -194,12 +210,10 @@ class _InputContainer extends HookConsumerWidget {
 
 class _TimeFromButtons extends StatelessWidget {
   const _TimeFromButtons({
-    required this.isShown,
     required this.selected,
     required this.onChanged,
   });
 
-  final bool isShown;
   final CustomAmountTimeFrom selected;
   final ValueChanged<CustomAmountTimeFrom>? onChanged;
 
@@ -207,48 +221,41 @@ class _TimeFromButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     void onTap(CustomAmountTimeFrom timeFrom) => onChanged?.call(timeFrom);
 
-    return IgnorePointer(
-      ignoring: !isShown,
-      child: SafeArea(
-        top: false,
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 50),
-          opacity: isShown ? 1 : 0,
-          child: HStack(
-            mainAxisSize: MainAxisSize.max,
-            gap: 8,
-            children: [
-              GlassSelectableContainer(
-                isSelected: selected == CustomAmountTimeFrom.minutes,
-                onTap: () => onTap(CustomAmountTimeFrom.minutes),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                blur: kContainerBlur,
-                borderRadius: 5,
-                child: const Text('Minutes'),
-              ).expanded(),
-              GlassSelectableContainer(
-                isSelected: selected == CustomAmountTimeFrom.hours,
-                onTap: () => onTap(CustomAmountTimeFrom.hours),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                blur: kContainerBlur,
-                borderRadius: 5,
-                child: const Text('Hours'),
-              ).expanded(),
-              GlassSelectableContainer(
-                isSelected: selected == CustomAmountTimeFrom.days,
-                onTap: () => onTap(CustomAmountTimeFrom.days),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                blur: kContainerBlur,
-                borderRadius: 5,
-                child: const Text('Days'),
-              ).expanded(),
-            ],
-          ).padding(b: 10).textStyle(const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              )),
-        ),
-      ),
+    return SafeArea(
+      top: false,
+      child: HStack(
+        mainAxisSize: MainAxisSize.max,
+        gap: 8,
+        children: [
+          GlassSelectableContainer(
+            isSelected: selected == CustomAmountTimeFrom.minutes,
+            onTap: () => onTap(CustomAmountTimeFrom.minutes),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            blur: kContainerBlur,
+            borderRadius: 5,
+            child: const Text('Minutes'),
+          ).expanded(),
+          GlassSelectableContainer(
+            isSelected: selected == CustomAmountTimeFrom.hours,
+            onTap: () => onTap(CustomAmountTimeFrom.hours),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            blur: kContainerBlur,
+            borderRadius: 5,
+            child: const Text('Hours'),
+          ).expanded(),
+          GlassSelectableContainer(
+            isSelected: selected == CustomAmountTimeFrom.days,
+            onTap: () => onTap(CustomAmountTimeFrom.days),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            blur: kContainerBlur,
+            borderRadius: 5,
+            child: const Text('Days'),
+          ).expanded(),
+        ],
+      ).padding(b: 10).textStyle(const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          )),
     );
   }
 }

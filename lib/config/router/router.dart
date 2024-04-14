@@ -21,7 +21,14 @@ final _router = GoRouter(routes: $appRoutes);
   routes: [
     TypedGoRoute<SettingsRoute>(path: 'settings'),
     TypedGoRoute<SelectCurrencyRoute>(path: 'select-currency/:currencyCode'),
-    TypedGoRoute<CustomAmountRoute>(path: 'custom-amount/:currencyCode'),
+    TypedGoRoute<CustomAmountRoute>(
+      path: 'custom-amount/:currencyCode',
+      routes: [
+        TypedGoRoute<SelectCurrencyFromCustomAmountRoute>(
+          path: 'select-currency/:selectCurrencyCode',
+        ),
+      ],
+    ),
   ],
 )
 class HomeRoute extends GoRouteData {
@@ -43,6 +50,21 @@ class SelectCurrencyRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return SelectCurrencyPage(currencyCode: currencyCode);
+  }
+}
+
+class SelectCurrencyFromCustomAmountRoute extends GoRouteData {
+  const SelectCurrencyFromCustomAmountRoute({
+    required this.currencyCode,
+    required this.selectCurrencyCode,
+  });
+
+  final String currencyCode;
+  final String selectCurrencyCode;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return SelectCurrencyPage(currencyCode: selectCurrencyCode);
   }
 }
 
