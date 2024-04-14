@@ -53,6 +53,9 @@ scripts:
   flutterfire-configure:
     run: flutterfire configure --project=fteapp-fb4e1 --platforms=ios,android
 
+  gen-splash:
+    run: fvm dart run flutter_native_splash:create
+
 command:
   clean:
     hooks:
