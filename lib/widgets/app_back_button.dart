@@ -19,12 +19,9 @@ class AppBackButton extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap ?? (canPop ? () => Navigator.pop(context) : null),
-      child: Container(
-        // padding: const EdgeInsets.all(16),
-        child: Icon(
-          Platform.isIOS ? Icons.arrow_back_ios_rounded : Icons.arrow_back_rounded,
-          color: canPop ? null : Colors.transparent,
-        ),
+      child: Icon(
+        Platform.isIOS ? Icons.arrow_back_ios_rounded : Icons.arrow_back_rounded,
+        color: canPop ? null : Colors.transparent,
       ),
     );
   }
