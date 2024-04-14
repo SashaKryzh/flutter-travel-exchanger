@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/custom_amount_providers.dart';
@@ -13,6 +15,7 @@ import 'package:travel_exchanger/widgets/shortcut_widgets.dart';
 import 'package:travel_exchanger/widgets/sized_spacer.dart';
 import 'package:travel_exchanger/widgets/widget_extensions.dart';
 
+late CustomAmountConverterProvider _provider;
 late CustomAmountState _state;
 late CustomAmountConverter _notifier;
 
@@ -26,8 +29,9 @@ class CustomAmountPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    _state = ref.watch(customAmountConverterProvider(code));
-    _notifier = ref.read(customAmountConverterProvider(code).notifier);
+    _provider = customAmountConverterProvider(code);
+    _state = ref.watch(_provider);
+    _notifier = ref.read(_provider.notifier);
 
     final between = ref.watch(exchangeBetweenProvider);
     final to2 = between.to2;
@@ -36,7 +40,7 @@ class CustomAmountPage extends ConsumerWidget {
       onTap: () => Navigator.pop(context),
       child: Scaffold(
         backgroundColor: Colors.black.withOpacity(0.6),
-        body: Container(
+        body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Stack(
             children: [
@@ -48,15 +52,7 @@ class CustomAmountPage extends ConsumerWidget {
                   if (to2 != null) _InputContainer(currency: to2),
                 ],
               ).center(),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: _TimeFromButtons(
-                  isShown: _state.from.isTime,
-                  selected: ref.watch(customAmountTimeContainerProvider),
-                  onChanged: (timeFrom) =>
-                      ref.read(customAmountTimeContainerProvider.notifier).setFrom(timeFrom),
-                ),
-              ),
+              const _BottomButtons(),
             ],
           ),
         ),
@@ -192,14 +188,70 @@ class _InputContainer extends HookConsumerWidget {
   }
 }
 
+class _BottomButtons extends ConsumerWidget {
+  const _BottomButtons();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedCurrency = ref.watch(_provider).from;
+
+    void onChangeCurrencyTap() async {
+      final router = GoRouter.of(context)..pop();
+      Future.delayed(const Duration(milliseconds: 200), () {
+        router.go(SelectCurrencyRoute(currencyCode: selectedCurrency.code).location);
+      });
+    }
+
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: SafeArea(
+        top: false,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            IgnorePointer(
+              ignoring: !selectedCurrency.isMoney,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 50),
+                opacity: selectedCurrency.isMoney ? 1 : 0,
+                child: OutlinedButton(
+                  onPressed: onChangeCurrencyTap,
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.black12,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 10),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text('Change currency'),
+                ),
+              ),
+            ).padding(b: 10),
+            IgnorePointer(
+              ignoring: !selectedCurrency.isTime,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 50),
+                opacity: selectedCurrency.isTime ? 1 : 0,
+                child: _TimeFromButtons(
+                  selected: ref.watch(customAmountTimeContainerProvider),
+                  onChanged: (timeFrom) =>
+                      ref.read(customAmountTimeContainerProvider.notifier).setFrom(timeFrom),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _TimeFromButtons extends StatelessWidget {
   const _TimeFromButtons({
-    required this.isShown,
     required this.selected,
     required this.onChanged,
   });
 
-  final bool isShown;
   final CustomAmountTimeFrom selected;
   final ValueChanged<CustomAmountTimeFrom>? onChanged;
 
@@ -207,48 +259,38 @@ class _TimeFromButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     void onTap(CustomAmountTimeFrom timeFrom) => onChanged?.call(timeFrom);
 
-    return IgnorePointer(
-      ignoring: !isShown,
-      child: SafeArea(
-        top: false,
-        child: AnimatedOpacity(
-          duration: const Duration(milliseconds: 50),
-          opacity: isShown ? 1 : 0,
-          child: HStack(
-            mainAxisSize: MainAxisSize.max,
-            gap: 8,
-            children: [
-              GlassSelectableContainer(
-                isSelected: selected == CustomAmountTimeFrom.minutes,
-                onTap: () => onTap(CustomAmountTimeFrom.minutes),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                blur: kContainerBlur,
-                borderRadius: 5,
-                child: const Text('Minutes'),
-              ).expanded(),
-              GlassSelectableContainer(
-                isSelected: selected == CustomAmountTimeFrom.hours,
-                onTap: () => onTap(CustomAmountTimeFrom.hours),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                blur: kContainerBlur,
-                borderRadius: 5,
-                child: const Text('Hours'),
-              ).expanded(),
-              GlassSelectableContainer(
-                isSelected: selected == CustomAmountTimeFrom.days,
-                onTap: () => onTap(CustomAmountTimeFrom.days),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                blur: kContainerBlur,
-                borderRadius: 5,
-                child: const Text('Days'),
-              ).expanded(),
-            ],
-          ).padding(b: 10).textStyle(const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              )),
-        ),
-      ),
-    );
+    return HStack(
+      mainAxisSize: MainAxisSize.max,
+      gap: 8,
+      children: [
+        GlassSelectableContainer(
+          isSelected: selected == CustomAmountTimeFrom.minutes,
+          onTap: () => onTap(CustomAmountTimeFrom.minutes),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          blur: kContainerBlur,
+          borderRadius: 5,
+          child: const Text('Minutes'),
+        ).expanded(),
+        GlassSelectableContainer(
+          isSelected: selected == CustomAmountTimeFrom.hours,
+          onTap: () => onTap(CustomAmountTimeFrom.hours),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          blur: kContainerBlur,
+          borderRadius: 5,
+          child: const Text('Hours'),
+        ).expanded(),
+        GlassSelectableContainer(
+          isSelected: selected == CustomAmountTimeFrom.days,
+          onTap: () => onTap(CustomAmountTimeFrom.days),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          blur: kContainerBlur,
+          borderRadius: 5,
+          child: const Text('Days'),
+        ).expanded(),
+      ],
+    ).padding(b: 10).textStyle(const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ));
   }
 }
