@@ -6,6 +6,7 @@ import 'package:travel_exchanger/config/i18n/strings.g.dart';
 import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/domain/onboarding.dart';
+import 'package:travel_exchanger/pages/onboarding/onboarding_wrapper.dart';
 import 'package:travel_exchanger/utils/analytics/analytics_provider.dart';
 
 class App extends ConsumerStatefulWidget {
@@ -40,7 +41,14 @@ class _AppState extends ConsumerState<App> {
       locale: TranslationProvider.of(context).flutterLocale,
       supportedLocales: AppLocaleUtils.supportedLocales,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
-      builder: FToastBuilder(),
+      builder: (context, child) {
+        return FToastBuilder()(
+          context,
+          OnboardingWrapper(
+            child: child!,
+          ),
+        );
+      },
     );
   }
 }

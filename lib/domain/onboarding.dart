@@ -8,7 +8,8 @@ part 'onboarding.freezed.dart';
 part 'onboarding.g.dart';
 
 class Onboarding {
-  static var _step = OnboardingStep.complete;
+  // TODO: change
+  static var _step = OnboardingStep.values.first;
 
   static void guard(VoidCallback callback, {AppEvent? event, bool addEvent = true}) {
     if (event != null && addEvent) {
@@ -39,8 +40,19 @@ class OnboardingNotifier extends _$OnboardingNotifier {
     });
 
     return OnboardingState(
+      // TODO: change
       OnboardingStep.values.first,
     );
+  }
+
+  void start() {
+    Onboarding._step = OnboardingStep.values.first;
+    state = OnboardingState(OnboardingStep.values.first);
+  }
+
+  void complete() {
+    Onboarding._step = OnboardingStep.complete;
+    state = OnboardingState(OnboardingStep.complete);
   }
 
   void _processAppEvent(AppEvent event) {
@@ -71,8 +83,13 @@ enum OnboardingStep {
   expandRow(ExpandRowEvent()),
   collapseRow(CollapseRowEvent()),
   openSelectCurrencyPage(OpenSelectCurrencyPageEvent()),
+  thanks(_ImpossibleEvent()),
   complete(null);
 
   const OnboardingStep(this.requiredEvent);
   final AppEvent? requiredEvent;
+}
+
+final class _ImpossibleEvent extends AppEvent {
+  const _ImpossibleEvent();
 }
