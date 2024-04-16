@@ -19,4 +19,5 @@ abstract class AppIcons {
   static const lightMode = _L.sun;
   static const systemMode = _L.sun_moon;
   static const equal = _L.equal;
+  static const warning = _L.alert_triangle;
 }

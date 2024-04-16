@@ -16,7 +16,9 @@ class HomePage extends HookConsumerWidget {
       final isOnboardingComplete =
           await ref.read(onboardingNotifierProvider.notifier).isOnboardingComplete();
       if (!isOnboardingComplete) {
-        ref.read(onboardingNotifierProvider.notifier).start();
+        Future.delayed(const Duration(seconds: 1), () {
+          ref.read(onboardingNotifierProvider.notifier).start();
+        });
       }
     }
 

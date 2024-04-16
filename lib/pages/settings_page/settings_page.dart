@@ -46,12 +46,6 @@ class SettingsPage extends ConsumerWidget {
           const Divider().padding(x: 16),
           const Gap(48),
           const RatesDataTimestampsWidget().padding(x: 16),
-          const Gap(48),
-          OutlinedButton(
-            // TODO: Improve clear method.
-            onPressed: () => ref.read(sharedPreferencesProvider).clear(),
-            child: const Text('Clear All Data'),
-          ).padding(x: 16),
           if (kDebugMode) ...[
             const Gap(48),
             const Divider().padding(x: 16),
@@ -202,6 +196,47 @@ class RatesDataTimestampsWidget extends ConsumerWidget {
     final timestampsAsync = ref.watch(ratesDataTimestampsProvider);
     final timestamps = timestampsAsync.valueOrNull;
 
+    void clear() {
+      ref.read(sharedPreferencesProvider).clear();
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return PopScope(
+            canPop: false,
+            child: Center(
+              widthFactor: 0,
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.surface,
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(15),
+                  ),
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: VStack(
+                    children: [
+                      const Icon(
+                        AppIcons.warning,
+                        size: 32,
+                      ),
+                      const Gap(8),
+                      const Text('Data is Cleared').textStyle(context.textTheme.titleLarge),
+                      const Gap(8),
+                      const Text('Please restart the app').textStyle(context.textTheme.titleLarge),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    }
+
     String format(DateTime? dateTime) {
       final formatter = DateFormat.Hm().add_MMMEd();
       return dateTime == null ? '' : formatter.format(dateTime);
@@ -220,6 +255,14 @@ class RatesDataTimestampsWidget extends ConsumerWidget {
           ),
           const Gap(8),
           Text('Last fetched at ${format(timestamps?.lastFetchedAt)}'),
+          const Gap(48),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: clear,
+              child: const Text('Clear All Data'),
+            ),
+          ),
         ],
       ),
     );
