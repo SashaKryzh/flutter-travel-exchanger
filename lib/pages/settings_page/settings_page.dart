@@ -3,11 +3,13 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
+import 'package:travel_exchanger/domain/onboarding.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/utils/analytics/analytics.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
@@ -32,7 +34,9 @@ class SettingsPage extends ConsumerWidget {
         children: [
           const Gap(12),
           const AppearanceSection(),
-          const Gap(48),
+          const Gap(24),
+          const _Menu(),
+          const Gap(32),
           const Divider().padding(x: 16),
           const Gap(48),
           const _ThankYouSection(),
@@ -162,6 +166,31 @@ class AppearanceSection extends ConsumerWidget {
         ),
       ],
     ).padding(x: 16);
+  }
+}
+
+class _Menu extends ConsumerWidget {
+  const _Menu();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    void showOnboarding() {
+      final onboardingNotifier = ref.read(onboardingNotifierProvider.notifier);
+      context.pop();
+      Future.delayed(const Duration(milliseconds: 200), () {
+        onboardingNotifier.start();
+      });
+    }
+
+    return VStack(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextButton(
+          onPressed: showOnboarding,
+          child: const Text('Show Onboarding'),
+        ),
+      ],
+    ).padding(x: 4);
   }
 }
 

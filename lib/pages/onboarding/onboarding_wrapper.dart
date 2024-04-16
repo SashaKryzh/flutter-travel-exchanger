@@ -80,7 +80,7 @@ class _DescriptionFromStep extends StatelessWidget {
         ),
       OnboardingStep.openSelectCurrencyPage => const _StepDescription(
           description: Text(
-            'Tap the currency in the header\nor\nlong-press in the bottom bar\nto change currencies',
+            'Tap the currency in the header\nOR\nLong-press in the bottom bar',
           ),
         ),
       OnboardingStep.thanks => _StepDescription(
@@ -100,7 +100,7 @@ class _ThanksStepDescription extends StatelessWidget {
   Widget build(BuildContext context) {
     return VStack(
       children: [
-        const Text('Thank you for using the app!'),
+        const Text("That's all\nThank you for using the app!"),
         const Gap(8),
         OutlinedButton(
           style: OutlinedButton.styleFrom(foregroundColor: Colors.white),

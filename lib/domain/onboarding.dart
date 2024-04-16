@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:travel_exchanger/data/onboarding_repository.dart';
 import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/utils/logger.dart';
 
@@ -8,19 +9,20 @@ part 'onboarding.freezed.dart';
 part 'onboarding.g.dart';
 
 class Onboarding {
-  // TODO: change
-  static var _step = OnboardingStep.values.first;
+  static OnboardingStep? _step;
 
   static void guard(VoidCallback callback, {AppEvent? event, bool addEvent = true}) {
     if (event != null && addEvent) {
       $appEvents.add(event);
     }
 
-    if (_step.requiredEvent == null) {
+    final step = _step;
+    if (step == null || step.requiredEvent == null) {
       callback();
+      return;
     }
 
-    if (event == null || _step.requiredEvent != event) {
+    if (event == null || step.requiredEvent != event) {
       return;
     }
 
@@ -39,10 +41,11 @@ class OnboardingNotifier extends _$OnboardingNotifier {
       }
     });
 
-    return OnboardingState(
-      // TODO: change
-      OnboardingStep.values.first,
-    );
+    return OnboardingState(OnboardingStep.complete);
+  }
+
+  Future<bool> isOnboardingComplete() async {
+    return ref.read(onboardingRepositoryProvider).isOnboardingComplete();
   }
 
   void start() {
@@ -50,7 +53,8 @@ class OnboardingNotifier extends _$OnboardingNotifier {
     state = OnboardingState(OnboardingStep.values.first);
   }
 
-  void complete() {
+  Future<void> complete() async {
+    await ref.read(onboardingRepositoryProvider).storeOnboardingComplete();
     Onboarding._step = OnboardingStep.complete;
     state = OnboardingState(OnboardingStep.complete);
   }
@@ -83,13 +87,13 @@ enum OnboardingStep {
   expandRow(ExpandRowEvent()),
   collapseRow(CollapseRowEvent()),
   openSelectCurrencyPage(OpenSelectCurrencyPageEvent()),
-  thanks(_ImpossibleEvent()),
+  thanks(_ImpossibleToCompleteEvent()),
   complete(null);
 
   const OnboardingStep(this.requiredEvent);
   final AppEvent? requiredEvent;
 }
 
-final class _ImpossibleEvent extends AppEvent {
-  const _ImpossibleEvent();
+final class _ImpossibleToCompleteEvent extends AppEvent {
+  const _ImpossibleToCompleteEvent();
 }
