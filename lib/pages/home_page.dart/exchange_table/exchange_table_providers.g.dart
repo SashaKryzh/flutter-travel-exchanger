@@ -171,6 +171,134 @@ class _ConvertedValuesProviderElement
   double get value => (origin as ConvertedValuesProvider).value;
 }
 
+String _$autoSizeGroupHash() => r'f3f10cb05b06b86004d72b23a3556506f004dbe1';
+
+/// See also [autoSizeGroup].
+@ProviderFor(autoSizeGroup)
+const autoSizeGroupProvider = AutoSizeGroupFamily();
+
+/// See also [autoSizeGroup].
+class AutoSizeGroupFamily extends Family<AutoSizeGroup> {
+  /// See also [autoSizeGroup].
+  const AutoSizeGroupFamily();
+
+  /// See also [autoSizeGroup].
+  AutoSizeGroupProvider call(
+    int level,
+  ) {
+    return AutoSizeGroupProvider(
+      level,
+    );
+  }
+
+  @override
+  AutoSizeGroupProvider getProviderOverride(
+    covariant AutoSizeGroupProvider provider,
+  ) {
+    return call(
+      provider.level,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'autoSizeGroupProvider';
+}
+
+/// See also [autoSizeGroup].
+class AutoSizeGroupProvider extends AutoDisposeProvider<AutoSizeGroup> {
+  /// See also [autoSizeGroup].
+  AutoSizeGroupProvider(
+    int level,
+  ) : this._internal(
+          (ref) => autoSizeGroup(
+            ref as AutoSizeGroupRef,
+            level,
+          ),
+          from: autoSizeGroupProvider,
+          name: r'autoSizeGroupProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$autoSizeGroupHash,
+          dependencies: AutoSizeGroupFamily._dependencies,
+          allTransitiveDependencies:
+              AutoSizeGroupFamily._allTransitiveDependencies,
+          level: level,
+        );
+
+  AutoSizeGroupProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.level,
+  }) : super.internal();
+
+  final int level;
+
+  @override
+  Override overrideWith(
+    AutoSizeGroup Function(AutoSizeGroupRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: AutoSizeGroupProvider._internal(
+        (ref) => create(ref as AutoSizeGroupRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        level: level,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<AutoSizeGroup> createElement() {
+    return _AutoSizeGroupProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is AutoSizeGroupProvider && other.level == level;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, level.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin AutoSizeGroupRef on AutoDisposeProviderRef<AutoSizeGroup> {
+  /// The parameter `level` of this provider.
+  int get level;
+}
+
+class _AutoSizeGroupProviderElement
+    extends AutoDisposeProviderElement<AutoSizeGroup> with AutoSizeGroupRef {
+  _AutoSizeGroupProviderElement(super.provider);
+
+  @override
+  int get level => (origin as AutoSizeGroupProvider).level;
+}
+
 String _$exchangeTableExpandedRowsHash() =>
     r'20cb383e4f71c5e28fd71c4797eca82f043dc3c8';
 

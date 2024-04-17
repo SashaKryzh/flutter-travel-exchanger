@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:equatable/equatable.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -139,4 +140,13 @@ class ExchangeTableExpandedRows extends _$ExchangeTableExpandedRows {
     Value(converted1, to1),
     converted2 != null ? Value(converted2, to2!) : null,
   );
+}
+
+//
+// =============================================================================
+//
+
+@riverpod
+AutoSizeGroup autoSizeGroup(AutoSizeGroupRef ref, int level) {
+  return AutoSizeGroup();
 }

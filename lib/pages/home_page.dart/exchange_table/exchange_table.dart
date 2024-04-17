@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -13,12 +14,12 @@ import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_ta
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_providers.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_values_from.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
-import 'package:travel_exchanger/utils/logger.dart';
+import 'package:travel_exchanger/widgets/debug_container.dart';
 
 const kExchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
 const kExpandAnimationCurve = Curves.easeInOut;
 
-const kValuePadding = 25.0;
+const kValuePadding = 20.0;
 double get activationDelta => kValuePadding * 0.8;
 
 /// Handles side drag activation
@@ -483,6 +484,7 @@ class _ValuesRow extends ConsumerWidget {
                 value: Value(value, currency),
                 isFrom: true,
                 level: level,
+                group: ref.watch(autoSizeGroupProvider(level)),
                 alignment: ColumnAlignment.right,
               ),
             ),
@@ -491,6 +493,7 @@ class _ValuesRow extends ConsumerWidget {
                 value: convertedValues.$1,
                 isFrom: false,
                 level: level,
+                group: ref.watch(autoSizeGroupProvider(level)),
                 alignment: isThree ? ColumnAlignment.center : ColumnAlignment.left,
               ),
             ),
@@ -500,6 +503,7 @@ class _ValuesRow extends ConsumerWidget {
                   value: convertedValues.$2!,
                   isFrom: false,
                   level: level,
+                  group: ref.watch(autoSizeGroupProvider(level)),
                   alignment: ColumnAlignment.left,
                 ),
               ),
@@ -521,12 +525,14 @@ class _ValueItem extends StatelessWidget {
     required this.value,
     required this.isFrom,
     required this.level,
+    required this.group,
     required this.alignment,
   });
 
   final Value value;
   final bool isFrom;
   final int level;
+  final AutoSizeGroup group;
   final ColumnAlignment alignment;
 
   @override
@@ -552,7 +558,11 @@ class _ValueItem extends StatelessWidget {
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: kValuePadding),
-            child: Text(
+            child: AutoSizeText(
+              group: group,
+              overflow: TextOverflow.visible,
+              maxLines: 1,
+              style: context.textTheme.bodyLarge?.copyWith(fontSize: 17),
               switch (value) {
                 MoneyValue() => value.formatM(
                     showFullNumber: level > 2,
@@ -561,9 +571,6 @@ class _ValueItem extends StatelessWidget {
                   ),
                 TimeValue() => value.format(),
               },
-              style: context.textTheme.bodyLarge?.copyWith(fontSize: 17),
-              maxLines: 1,
-              overflow: TextOverflow.visible,
             ),
           ),
         ),
