@@ -6,7 +6,7 @@ part of 'exchange_table_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$exchangeValuesHash() => r'2ef3c540dcdc3d5ea210ec6df3d49fb894b5a429';
+String _$exchangeValuesHash() => r'8b52bf18cf211d647179167e8fd2503cb21ee593';
 
 /// See also [exchangeValues].
 @ProviderFor(exchangeValues)
@@ -21,7 +21,7 @@ final exchangeValuesProvider = AutoDisposeProvider<List<double>>.internal(
 );
 
 typedef ExchangeValuesRef = AutoDisposeProviderRef<List<double>>;
-String _$convertedValuesHash() => r'7c785ac76773d88d79e93a18608641b6d63b7e64';
+String _$betweenValuesHash() => r'e88073c236f161d094971155e444097a2b9bcfac';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,6 +43,167 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
+
+/// See also [betweenValues].
+@ProviderFor(betweenValues)
+const betweenValuesProvider = BetweenValuesFamily();
+
+/// See also [betweenValues].
+class BetweenValuesFamily extends Family<List<double>?> {
+  /// See also [betweenValues].
+  const BetweenValuesFamily();
+
+  /// See also [betweenValues].
+  BetweenValuesProvider call({
+    required ExchangeValuesFrom from1,
+    required double value,
+    required int level,
+  }) {
+    return BetweenValuesProvider(
+      from1: from1,
+      value: value,
+      level: level,
+    );
+  }
+
+  @override
+  BetweenValuesProvider getProviderOverride(
+    covariant BetweenValuesProvider provider,
+  ) {
+    return call(
+      from1: provider.from1,
+      value: provider.value,
+      level: provider.level,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'betweenValuesProvider';
+}
+
+/// See also [betweenValues].
+class BetweenValuesProvider extends AutoDisposeProvider<List<double>?> {
+  /// See also [betweenValues].
+  BetweenValuesProvider({
+    required ExchangeValuesFrom from1,
+    required double value,
+    required int level,
+  }) : this._internal(
+          (ref) => betweenValues(
+            ref as BetweenValuesRef,
+            from1: from1,
+            value: value,
+            level: level,
+          ),
+          from: betweenValuesProvider,
+          name: r'betweenValuesProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$betweenValuesHash,
+          dependencies: BetweenValuesFamily._dependencies,
+          allTransitiveDependencies:
+              BetweenValuesFamily._allTransitiveDependencies,
+          from1: from1,
+          value: value,
+          level: level,
+        );
+
+  BetweenValuesProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.from1,
+    required this.value,
+    required this.level,
+  }) : super.internal();
+
+  final ExchangeValuesFrom from1;
+  final double value;
+  final int level;
+
+  @override
+  Override overrideWith(
+    List<double>? Function(BetweenValuesRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: BetweenValuesProvider._internal(
+        (ref) => create(ref as BetweenValuesRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        from1: from1,
+        value: value,
+        level: level,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<List<double>?> createElement() {
+    return _BetweenValuesProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is BetweenValuesProvider &&
+        other.from1 == from1 &&
+        other.value == value &&
+        other.level == level;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, from1.hashCode);
+    hash = _SystemHash.combine(hash, value.hashCode);
+    hash = _SystemHash.combine(hash, level.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin BetweenValuesRef on AutoDisposeProviderRef<List<double>?> {
+  /// The parameter `from1` of this provider.
+  ExchangeValuesFrom get from1;
+
+  /// The parameter `value` of this provider.
+  double get value;
+
+  /// The parameter `level` of this provider.
+  int get level;
+}
+
+class _BetweenValuesProviderElement
+    extends AutoDisposeProviderElement<List<double>?> with BetweenValuesRef {
+  _BetweenValuesProviderElement(super.provider);
+
+  @override
+  ExchangeValuesFrom get from1 => (origin as BetweenValuesProvider).from1;
+  @override
+  double get value => (origin as BetweenValuesProvider).value;
+  @override
+  int get level => (origin as BetweenValuesProvider).level;
+}
+
+String _$convertedValuesHash() => r'7c785ac76773d88d79e93a18608641b6d63b7e64';
 
 /// See also [convertedValues].
 @ProviderFor(convertedValues)

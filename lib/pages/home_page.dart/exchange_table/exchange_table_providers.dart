@@ -15,15 +15,23 @@ part 'exchange_table_providers.freezed.dart';
 @riverpod
 List<double> exchangeValues(ExchangeValuesRef ref) {
   final from = ref.watch(exchangeValuesFromNotifierProvider);
-  final values = [from.value];
+  final isTime = ref.watch(exchangeBetweenProvider).from.isTime;
+  final values = [isTime ? from.timeValue : from.value];
   for (var i = 0; i < 10; i++) {
     values.add(values.last + values.first);
   }
   return values;
 }
 
-List<double>? betweenValues(ExchangeValuesFrom from, double value, int level) {
-  final step = from.step(level);
+@riverpod
+List<double>? betweenValues(
+  BetweenValuesRef ref, {
+  required ExchangeValuesFrom from1,
+  required double value,
+  required int level,
+}) {
+  final isTime = ref.watch(exchangeBetweenProvider).from.isTime;
+  final step = from1.step(level: level, isTime: isTime);
 
   if (step == null) {
     return null;

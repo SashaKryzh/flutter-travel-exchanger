@@ -14,7 +14,6 @@ import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_ta
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_providers.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_values_from.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
-import 'package:travel_exchanger/widgets/debug_container.dart';
 
 const kExchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
 const kExpandAnimationCurve = Curves.easeInOut;
@@ -282,7 +281,11 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
   late var _animation = Tween(begin: 0.0, end: 0.0)
       .animate(CurvedAnimation(parent: _animationController, curve: kExpandAnimationCurve));
 
-  bool get _canExpand => ref.read(exchangeValuesFromNotifierProvider).step(widget.level) != null;
+  bool get _canExpand =>
+      ref
+          .read(exchangeValuesFromNotifierProvider)
+          .step(level: widget.level, isTime: ref.read(exchangeBetweenProvider).from.isTime) !=
+      null;
 
   late _ExchangeTableLayoutProperties _layoutProperties;
 
@@ -411,11 +414,11 @@ class _ExpandableRowState extends ConsumerState<_ExpandableRow>
           sizeFactor: adjustedAnimation,
           child: Column(
             children: _renderChildren
-                ? (betweenValues(
-                          ref.read(exchangeValuesFromNotifierProvider),
-                          widget.value,
-                          widget.level,
-                        ) ??
+                ? (ref.watch(betweenValuesProvider(
+                          from1: ref.watch(exchangeValuesFromNotifierProvider),
+                          value: widget.value,
+                          level: widget.level,
+                        )) ??
                         [])
                     .mapIndexed(
                     (i, e) {
