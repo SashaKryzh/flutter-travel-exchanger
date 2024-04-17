@@ -23,8 +23,9 @@ import 'package:travel_exchanger/utils/remote_config/remote_config.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  LocaleSettings.useDeviceLocale();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await setSystemOverlayStyle();
+  LocaleSettings.useDeviceLocale();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

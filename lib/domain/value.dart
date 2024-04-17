@@ -47,7 +47,7 @@ class TimeValue extends Value {
       return '${duration.inSeconds}s';
     } else if (duration.inMinutes < 60) {
       final seconds = duration.inSeconds % 60;
-      return '${duration.inMinutes}m ${seconds > 0 ? '${seconds}s' : ''}';
+      return '${duration.inMinutes}m${seconds > 0 ? ' ${seconds}s' : ''}';
     } else if (duration.inHours < 24) {
       return '${duration.inHours}h ${duration.inMinutes % 60}m';
     } else if (duration.inDays < 30) {

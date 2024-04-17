@@ -114,9 +114,9 @@ class SeedColorNotifier extends _$SeedColorNotifier {
 }
 
 final seedColors = [
-  Colors.red.value,
-  Colors.orange.value,
   Colors.green.value,
+  Colors.red.value,
   Colors.blue.value,
+  Colors.orange.value,
   Colors.purple.value,
 ].map(Color.new);

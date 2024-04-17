@@ -28,16 +28,17 @@ class OnboardingWrapper extends HookConsumerWidget {
       ref.read(onboardingNotifierProvider.notifier).complete();
     }
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          child,
-          AnimatedSwitcher(
-            duration: kThemeAnimationDuration,
-            child: !isComplete
-                ? IgnorePointer(
-                    ignoring: state.step != OnboardingStep.thanks,
-                    child: Container(
+    return Stack(
+      children: [
+        child,
+        AnimatedSwitcher(
+          duration: kThemeAnimationDuration,
+          child: !isComplete
+              ? IgnorePointer(
+                  ignoring: state.step != OnboardingStep.thanks,
+                  child: Scaffold(
+                    backgroundColor: Colors.transparent,
+                    body: Container(
                       color: Colors.black.withOpacity(0.6),
                       alignment: Alignment.center,
                       child: _DescriptionFromStep(
@@ -45,11 +46,11 @@ class OnboardingWrapper extends HookConsumerWidget {
                         onComplete: onComplete,
                       ),
                     ),
-                  )
-                : const EmptyWidget(),
-          ),
-        ],
-      ),
+                  ),
+                )
+              : const EmptyWidget(),
+        ),
+      ],
     );
   }
 }

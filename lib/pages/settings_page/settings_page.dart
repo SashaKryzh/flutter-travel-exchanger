@@ -341,12 +341,13 @@ class _FeedbackSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return VStack(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextButton(
           onPressed: openFeedbackForm,
           child: const Text('Report a bug or write feedback'),
         ),
       ],
-    ).padding(x: 16);
+    ).padding(x: 4);
   }
 }
