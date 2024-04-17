@@ -412,6 +412,7 @@ class _AllList extends ConsumerWidget {
 /// Swaps to currency in the ExchangeBetween and also updates selectingFor in the SelectCurrencyNotifier.
 void swapToCurrency(WidgetRef ref, Currency currency) {
   final from = ref.read(selectCurrencyNotifierProvider).selectingFor;
-  ref.read(selectCurrencyNotifierProvider.notifier).selectFor(currency);
-  ref.read(exchangeBetweenProvider.notifier).swap(from, currency);
+  if (ref.read(exchangeBetweenProvider.notifier).swap(from, currency)) {
+    ref.read(selectCurrencyNotifierProvider.notifier).selectFor(currency);
+  }
 }

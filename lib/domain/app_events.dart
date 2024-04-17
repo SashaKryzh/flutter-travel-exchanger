@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 
 part 'app_events.g.dart';
 
@@ -17,6 +18,7 @@ final class AppEvents {
   Stream<AppEvent> get events => _streamController.stream;
 
   void add(AppEvent event) {
+    logDebug('AppEvents.add: $event');
     _streamController.add(event);
   }
 }
