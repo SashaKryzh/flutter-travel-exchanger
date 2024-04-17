@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:travel_exchanger/domain/currency.dart';
+import 'package:travel_exchanger/pages/custom_amount_page/formatters/currency_input_formatter.dart';
 import 'package:travel_exchanger/utils/time_currency_utils.dart';
 
 sealed class Value {
@@ -27,7 +28,50 @@ class MoneyValue extends Value {
     final formatter = NumberFormat.compact();
     return formatter.format(value);
   }
+
+  String formatM({
+    bool showFullNumber = false,
+    bool truncateDecimal = false,
+    bool roundFractionDigits = false,
+  }) {
+    final escapedDecimalSeparator = RegExp.escape(decimalSeparator);
+    final regexPattern = '($escapedDecimalSeparator' '0+|(?<=$escapedDecimalSeparator\\d+)0+)\$';
+
+    if (showFullNumber) {
+      final s = formatMoney(value);
+      return truncateDecimal ? s.replaceAll(RegExp(regexPattern), '') : s;
+    }
+
+    if (value < thousand) {
+      final s = formatMoney(value, decimalDigits: roundFractionDigits && value > 1 ? 1 : 2);
+      return truncateDecimal ? s.replaceAll(RegExp(regexPattern), '') : s;
+    }
+
+    final double newValue;
+    final String suffix;
+
+    if (value < million) {
+      suffix = 'K';
+      newValue = value / thousand;
+    } else if (value < billion) {
+      suffix = 'M';
+      newValue = value / million;
+    } else if (value < trillion) {
+      suffix = 'B';
+      newValue = value / billion;
+    } else {
+      suffix = 'T';
+      newValue = value / trillion;
+    }
+
+    return "${formatMoney(newValue).replaceAll(RegExp(regexPattern), "")}$suffix";
+  }
 }
+
+const thousand = 1000;
+const million = 1000000;
+const billion = 1000000000;
+const trillion = 1000000000000;
 
 class TimeValue extends Value {
   const TimeValue(double hours) : super._(hours, Currency.time);

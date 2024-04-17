@@ -13,6 +13,7 @@ import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_ta
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_providers.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_values_from.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 
 const kExchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
 const kExpandAnimationCurve = Curves.easeInOut;
@@ -480,12 +481,16 @@ class _ValuesRow extends ConsumerWidget {
             Expanded(
               child: _ValueItem(
                 value: Value(value, currency),
+                isFrom: true,
+                level: level,
                 alignment: ColumnAlignment.right,
               ),
             ),
             Expanded(
               child: _ValueItem(
                 value: convertedValues.$1,
+                isFrom: false,
+                level: level,
                 alignment: isThree ? ColumnAlignment.center : ColumnAlignment.left,
               ),
             ),
@@ -493,6 +498,8 @@ class _ValuesRow extends ConsumerWidget {
               Expanded(
                 child: _ValueItem(
                   value: convertedValues.$2!,
+                  isFrom: false,
+                  level: level,
                   alignment: ColumnAlignment.left,
                 ),
               ),
@@ -512,14 +519,20 @@ enum ColumnAlignment {
 class _ValueItem extends StatelessWidget {
   const _ValueItem({
     required this.value,
+    required this.isFrom,
+    required this.level,
     required this.alignment,
   });
 
   final Value value;
+  final bool isFrom;
+  final int level;
   final ColumnAlignment alignment;
 
   @override
   Widget build(BuildContext context) {
+    final value = this.value;
+
     final width = MediaQuery.sizeOf(context).width / 2;
 
     final animation = context.watch<_SlideAnimationProvider>().animation;
@@ -540,7 +553,14 @@ class _ValueItem extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: kValuePadding),
             child: Text(
-              value.format(),
+              switch (value) {
+                MoneyValue() => value.formatM(
+                    showFullNumber: level > 2,
+                    truncateDecimal: isFrom,
+                    roundFractionDigits: level == 0,
+                  ),
+                TimeValue() => value.format(),
+              },
               style: context.textTheme.bodyLarge?.copyWith(fontSize: 17),
               maxLines: 1,
               overflow: TextOverflow.visible,
