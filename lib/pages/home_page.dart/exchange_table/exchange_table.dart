@@ -14,7 +14,6 @@ import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_ta
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_providers.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_values_from.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
-import 'package:travel_exchanger/widgets/debug_container.dart';
 
 const kExchangeRowExpandAnimationDuration = Duration(milliseconds: 200);
 const kExpandAnimationCurve = Curves.easeInOut;
