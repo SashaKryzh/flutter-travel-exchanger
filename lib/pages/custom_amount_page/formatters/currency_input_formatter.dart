@@ -75,7 +75,7 @@ class CurrencyInputFormatter extends TextInputFormatter {
       return oldValue;
     }
     newText = formatMoney(value, decimalDigits: decimalDigits);
-    // Add decimal separator if it was removed.
+    // Return decimal separator if it was removed from text
     if (decimalDigits == 0 && decimalSeparatorInText) {
       newText += decimalSeparator;
     }

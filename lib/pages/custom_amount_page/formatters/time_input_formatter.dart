@@ -26,6 +26,14 @@ class TimeInputFormatter extends TextInputFormatter {
       return oldValue;
     }
 
-    return newValue;
+    final intValue = int.tryParse(newText);
+    if (intValue == null) {
+      return oldValue;
+    }
+
+    return newValue.copyWith(
+      text: intValue.toString(),
+      selection: TextSelection.collapsed(offset: intValue.toString().length),
+    );
   }
 }
