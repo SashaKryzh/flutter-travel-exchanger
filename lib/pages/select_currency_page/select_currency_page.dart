@@ -36,17 +36,13 @@ class SelectCurrencyPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final scrollController = useScrollController();
+
     final showCustomRateToCurrency = useRef<Currency>(Currency.eur);
     final showCustomRate = useState(false);
     final showCustomRateDebounced =
         useDebounced(showCustomRate.value, const Duration(milliseconds: 500));
 
-    final resizeToAvoidBottomInset = showCustomRate.value
-        ? false
-        // ignore: avoid-unnecessary-conditionals
-        : showCustomRateDebounced == true
-            ? false
-            : true;
+    final resizeToAvoidBottomInset = !showCustomRate.value && showCustomRateDebounced == false;
 
     void onEditRate(Currency currency) {
       showCustomRateToCurrency.value = currency;

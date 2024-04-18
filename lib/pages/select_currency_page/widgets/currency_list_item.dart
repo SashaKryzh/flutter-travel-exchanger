@@ -101,6 +101,8 @@ class SelectedCurrencyListItem extends StatelessWidget {
     final rateColor =
         rate.source.isApi ? context.theme.disabledColor : context.theme.customRateColor;
 
+    final value = Value(rate.rate, currency);
+
     return _Row(
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -126,7 +128,10 @@ class SelectedCurrencyListItem extends StatelessWidget {
                 ),
                 const SizedSpacer(4),
                 Text(
-                  Value(rate.rate, currency).format(),
+                  switch (value) {
+                    TimeValue() => value.format(),
+                    MoneyValue() => value.formatM(truncateDecimal: true),
+                  },
                   style: context.textTheme.bodyLarge?.copyWith(color: rateColor),
                 ),
               ],

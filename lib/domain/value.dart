@@ -7,22 +7,23 @@ sealed class Value {
   const Value._(this.value, this.currency);
 
   factory Value(double value, Currency currency) {
-    if (currency == Currency.time) {
-      return TimeValue(value);
-    } else {
-      return MoneyValue(value, currency);
-    }
+    return switch (currency) {
+      TimeCurrency() => TimeValue(value),
+      MoneyCurrency() => MoneyValue(value, currency),
+    };
   }
 
   final double value;
   final Currency currency;
 
+  @Deprecated('Use specific format for currency')
   String format();
 }
 
 class MoneyValue extends Value {
-  const MoneyValue(super.value, super.currency) : super._();
+  const MoneyValue(super.value, MoneyCurrency super.currency) : super._();
 
+  @Deprecated('Use specific format for currency')
   @override
   String format() {
     final formatter = NumberFormat.compact();

@@ -8,6 +8,7 @@ import 'package:travel_exchanger/data/time_rate_repository.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
+import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/formatters/currency_input_formatter.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
@@ -25,21 +26,24 @@ class CustomTimeRateModal extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // ! TODO: Handle from the Time is FROM
     final from = ref.watch(exchangeBetweenProvider).from.asOrNull<MoneyCurrency>();
+    // This case is impossible, but just in case
     if (from == null) {
       onClose();
       return const EmptyWidget();
     }
 
-    final fromCurrency = useState(from);
-
-    final initialTimeRate = useMemoized(() {
-      final timeRateData = ref.read(timeRateDataProvider);
-      if (timeRateData == null) return null;
-      return formatMoney(timeRateData.perHour);
+    final initialTimeRateData = useMemoized(() {
+      return ref.read(timeRateDataProvider);
     });
-    final textController = useTextEditingController(text: initialTimeRate ?? '');
+
+    final fromCurrency = useState(initialTimeRateData?.to.asOrNull<MoneyCurrency>() ?? from);
+    final textController = useTextEditingController(
+      text: initialTimeRateData != null
+          ? MoneyValue(initialTimeRateData.perHour, fromCurrency.value)
+              .formatM(showFullNumber: true, truncateDecimal: true)
+          : null,
+    );
 
     void onSave() {
       var perHour = moneyFormatter().tryParse(textController.text);
@@ -133,7 +137,7 @@ class CustomTimeRateModal extends HookConsumerWidget {
             HStack(
               children: [
                 ElevatedButton(
-                  onPressed: initialTimeRate != null ? onDelete : null,
+                  onPressed: initialTimeRateData != null ? onDelete : null,
                   child: const Text('Delete'),
                 ).expanded(),
                 const SizedSpacer(8),

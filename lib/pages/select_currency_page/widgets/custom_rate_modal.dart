@@ -7,6 +7,7 @@ import 'package:travel_exchanger/data/rates_repository.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
+import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/custom_amount_page/formatters/currency_input_formatter.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
@@ -33,7 +34,9 @@ class CustomRateModal extends HookConsumerWidget {
     }
 
     final rate = ref.watch(rateProvider(from, to));
-    final initialRight = rate.source.isCustom ? formatMoney(rate.rate) : null;
+    final initialRight = rate.source.isCustom
+        ? MoneyValue(rate.rate, to).formatM(showFullNumber: true, truncateDecimal: true)
+        : null;
 
     final leftController = useTextEditingController(text: '1');
     final rightController = useTextEditingController(text: initialRight);
