@@ -5,6 +5,7 @@ import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/domain/value.dart';
+import 'package:travel_exchanger/utils/time_currency_utils.dart';
 
 part 'custom_amount_providers.freezed.dart';
 part 'custom_amount_providers.g.dart';
@@ -61,9 +62,20 @@ class CustomAmountConverter extends _$CustomAmountConverter {
   }
 
   void setFrom(Currency from) {
+    var amount = state.valueFor(from);
+
+    if (state.from.isMoney && from.isTime) {
+      // Convert hours amount to selected time input type
+      amount = switch (ref.read(customAmountTimeContainerProvider)) {
+        CustomAmountTimeFrom.minutes => amount * kMinutesInHour,
+        CustomAmountTimeFrom.hours => amount,
+        CustomAmountTimeFrom.days => amount / kHoursInDay,
+      };
+    }
+
     state = state.copyWith(
       from: from,
-      values: _calculateValues(from: from, amount: state.valueFor(from)),
+      values: _calculateValues(from: from, amount: amount),
     );
   }
 
@@ -80,6 +92,7 @@ class CustomAmountConverter extends _$CustomAmountConverter {
 
     final double amountAdjusted;
     if (from1.isTime) {
+      // Convert time input type to hours
       amountAdjusted = switch (ref.read(customAmountTimeContainerProvider)) {
         CustomAmountTimeFrom.minutes => TimeValue.fromMinutes(amount1).value,
         CustomAmountTimeFrom.hours => amount1,
