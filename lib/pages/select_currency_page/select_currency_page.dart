@@ -16,6 +16,7 @@ import 'package:travel_exchanger/pages/select_currency_page/widgets/search_bar.d
 import 'package:travel_exchanger/pages/select_currency_page/widgets/select_currency_app_bar.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/swapable_with.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 import 'package:travel_exchanger/widgets/bottom_safe_area.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
 import 'package:travel_exchanger/widgets/modal.dart';
@@ -38,29 +39,36 @@ class SelectCurrencyPage extends HookWidget {
     final scrollController = useScrollController();
 
     final showCustomRateToCurrency = useRef<Currency>(Currency.eur);
+    final showCustomRateCallback = useRef<VoidCallback?>(null);
     final showCustomRate = useState(false);
     final showCustomRateDebounced =
         useDebounced(showCustomRate.value, const Duration(milliseconds: 500));
 
     final resizeToAvoidBottomInset = !showCustomRate.value && showCustomRateDebounced == false;
 
-    void onEditRate(Currency currency) {
+    void onEditRate(Currency currency, {VoidCallback? callback}) {
       showCustomRateToCurrency.value = currency;
+      showCustomRateCallback.value = callback;
       showCustomRate.value = true;
+    }
+
+    void onCloseCustomRate() {
+      showCustomRate.value = false;
+      showCustomRateCallback.value?.call();
     }
 
     return Modal(
       visible: showCustomRate.value,
-      onDismiss: () => showCustomRate.value = false,
+      onDismiss: onCloseCustomRate,
       modal: () {
         final to = showCustomRateToCurrency.value;
         return switch (to) {
           MoneyCurrency() => CustomRateModal(
               to: to,
-              onClose: () => showCustomRate.value = false,
+              onClose: onCloseCustomRate,
             ),
           TimeCurrency() => CustomTimeRateModal(
-              onClose: () => showCustomRate.value = false,
+              onClose: onCloseCustomRate,
             ),
         };
       }(),
@@ -239,7 +247,7 @@ class _PopularSection extends ConsumerWidget {
     required this.onEditRate,
   });
 
-  final ValueChanged<Currency> onEditRate;
+  final void Function(Currency currency, {VoidCallback? callback}) onEditRate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -277,7 +285,7 @@ class _PopularSection extends ConsumerWidget {
 class _YourTimePopularItem extends HookConsumerWidget {
   const _YourTimePopularItem({required this.onEditRate});
 
-  final ValueChanged<Currency> onEditRate;
+  final void Function(Currency currency, {VoidCallback callback}) onEditRate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -290,7 +298,17 @@ class _YourTimePopularItem extends HookConsumerWidget {
       if (timeRateExists) {
         swapToCurrency(ref, Currency.time);
       } else {
-        onEditRate(Currency.time);
+        onEditRate(
+          Currency.time,
+          callback: () async {
+            // Await for provider to update with the latest data from Stream.
+            // Without it, the data will be null.
+            await Future(() => null);
+            if (ref.read(timeRateDataProvider) != null) {
+              swapToCurrency(ref, Currency.time);
+            }
+          },
+        );
       }
     }
 
@@ -318,7 +336,7 @@ class _YourTimePopularItem extends HookConsumerWidget {
             ],
           ),
           const Spacer(),
-          if (metadata.isSelected)
+          if (timeRateExists && metadata.isSelected)
             Icon(
               AppIcons.selected,
               color: context.theme.disabledColor,
