@@ -197,41 +197,85 @@ class RatesDataTimestampsWidget extends ConsumerWidget {
     final timestamps = timestampsAsync.valueOrNull;
 
     void clear() {
-      ref.read(sharedPreferencesProvider).clear();
       showDialog<void>(
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          return PopScope(
-            canPop: false,
-            child: Center(
-              widthFactor: 0,
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                decoration: BoxDecoration(
-                  color: context.colorScheme.surface,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(15),
-                  ),
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: VStack(
+          return HookBuilder(
+            builder: (context) {
+              final cleared = useState(false);
+
+              void clear() {
+                // ref.read(sharedPreferencesProvider).clear();
+                cleared.value = true;
+              }
+
+              final Widget content;
+              if (!cleared.value) {
+                content = VStack(children: [
+                  const Gap(8),
+                  const Text('Clear All Data').textStyle(context.textTheme.titleLarge),
+                  const Gap(8),
+                  const Text(
+                    'If you clear all data, you will lose custom rates and you will need to restart the app.',
+                  ).textStyle(context.textTheme.titleSmall, align: TextAlign.center),
+                  const Gap(8),
+                  HStack(
                     children: [
-                      const Icon(
-                        AppIcons.warning,
-                        size: 32,
+                      Expanded(
+                        child: TextButton(
+                          onPressed: clear,
+                          child: const Text('Clear'),
+                        ),
                       ),
                       const Gap(8),
-                      const Text('Data is Cleared').textStyle(context.textTheme.titleLarge),
-                      const Gap(8),
-                      const Text('Please restart the app').textStyle(context.textTheme.titleLarge),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: context.pop,
+                          child: const Text('Cancel'),
+                        ),
+                      ),
                     ],
                   ),
+                ]);
+              } else {
+                content = VStack(children: [
+                  const Gap(8),
+                  const Text('Data is Cleared').textStyle(context.textTheme.titleLarge),
+                  const Gap(8),
+                  const Text('Please restart the app').textStyle(context.textTheme.titleLarge),
+                ]);
+              }
+
+              return PopScope(
+                canPop: !cleared.value,
+                child: Center(
+                  widthFactor: 0,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                    decoration: BoxDecoration(
+                      color: context.colorScheme.surface,
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(15),
+                      ),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: VStack(
+                        children: [
+                          const Icon(
+                            AppIcons.warning,
+                            size: 32,
+                          ),
+                          content,
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       );
