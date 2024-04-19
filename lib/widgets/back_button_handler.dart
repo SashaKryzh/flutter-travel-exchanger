@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_providers.dart';
 import 'package:travel_exchanger/widgets/toast.dart';
@@ -26,6 +27,10 @@ class BackButtonHandler extends HookConsumerWidget {
     final lastPressedTime = useRef<DateTime?>(null);
 
     Future<bool> onBackButtonPressed() async {
+      if (context.canPop()) {
+        return false;
+      }
+
       if (ref.read(exchangeTableExpandedRowsProvider).rows.isNotEmpty) {
         ref.read(exchangeTableExpandedRowsProvider.notifier).collapse();
         return true;
