@@ -175,6 +175,7 @@ class _Row extends HookWidget {
     return Listener(
       onPointerDown: (_) => onPointerChanged(true),
       onPointerUp: (_) => onPointerChanged(false),
+      onPointerCancel: (_) => onPointerChanged(false),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: onTap,
