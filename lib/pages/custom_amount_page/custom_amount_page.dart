@@ -128,6 +128,15 @@ class _InputContainer extends HookConsumerWidget {
       focusNode.requestFocus();
     }
 
+    ref.listen(customAmountTimeContainerProvider, (prev, curr) {
+      if (prev != curr && currency.isTime && isSelected && justReceivedFocus.value) {
+        // Special case when user selects time input with some string (e.g. 1d 8h)
+        // and then changes time input type.
+        controller.text = '1';
+        _notifier.setAmount(1);
+      }
+    });
+
     final timeFrom = switch (ref.watch(customAmountTimeContainerProvider)) {
       CustomAmountTimeFrom.minutes => 'minutes',
       CustomAmountTimeFrom.hours => 'hours',
