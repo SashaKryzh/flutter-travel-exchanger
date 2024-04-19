@@ -56,6 +56,12 @@ scripts:
   gen-splash:
     run: fvm dart run flutter_native_splash:create
 
+  build-ipa-release:
+    run: fvm flutter build ipa
+
+  build-apk-release:
+    run: fvm flutter build apk
+
 command:
   clean:
     hooks:
