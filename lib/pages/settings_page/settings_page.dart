@@ -205,8 +205,8 @@ class RatesDataTimestampsWidget extends ConsumerWidget {
             builder: (context) {
               final cleared = useState(false);
 
-              void clear() {
-                // ref.read(sharedPreferencesProvider).clear();
+              void clear() async {
+                await ref.read(sharedPreferencesProvider).clear();
                 cleared.value = true;
               }
 
