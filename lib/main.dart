@@ -5,6 +5,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -18,11 +19,17 @@ import 'package:travel_exchanger/data/shared_preferences.dart';
 import 'package:travel_exchanger/data/time_rate_repository.dart';
 import 'package:travel_exchanger/firebase_options.dart';
 import 'package:travel_exchanger/utils/general_provider_observer.dart';
+import 'package:travel_exchanger/utils/licence_registry.dart';
 import 'package:travel_exchanger/utils/logger.dart';
 import 'package:travel_exchanger/utils/remote_config/remote_config.dart';
 
 Future<void> main() async {
+  GoogleFonts.config.allowRuntimeFetching = false;
+
   WidgetsFlutterBinding.ensureInitialized();
+
+  addLicences();
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await setSystemOverlayStyle();
   LocaleSettings.useDeviceLocale();
