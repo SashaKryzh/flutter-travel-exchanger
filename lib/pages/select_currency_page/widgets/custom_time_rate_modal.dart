@@ -26,9 +26,9 @@ class CustomTimeRateModal extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final from = ref.watch(exchangeBetweenProvider).from.asOrNull<MoneyCurrency>();
+    final globalFrom = ref.watch(exchangeBetweenProvider).from.asOrNull<MoneyCurrency>();
     // This case is impossible, but just in case
-    if (from == null) {
+    if (globalFrom == null) {
       onClose();
       return const EmptyWidget();
     }
@@ -37,7 +37,7 @@ class CustomTimeRateModal extends HookConsumerWidget {
       return ref.read(timeRateDataProvider);
     });
 
-    final fromCurrency = useState(initialTimeRateData?.to.asOrNull<MoneyCurrency>() ?? from);
+    final fromCurrency = useState(initialTimeRateData?.to.asOrNull<MoneyCurrency>() ?? globalFrom);
     final textController = useTextEditingController(
       text: initialTimeRateData != null
           ? MoneyValue(initialTimeRateData.perHour, fromCurrency.value)
@@ -70,7 +70,7 @@ class CustomTimeRateModal extends HookConsumerWidget {
     void changeCurrency() {
       SearchCurrencyRoute(
         SearchCurrencyRouteExtra(
-          selectedCurrency: from,
+          selectedCurrency: fromCurrency.value,
           onSelectCurrency: onSelectCurrency,
         ),
       ).push<void>(context);
