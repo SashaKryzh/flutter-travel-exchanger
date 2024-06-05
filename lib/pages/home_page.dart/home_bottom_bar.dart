@@ -98,7 +98,6 @@ class _CurrencyButtons extends ConsumerWidget {
             onLongTap: () => onLongTap(between.from),
           ).padding(l: 12, r: 6),
         ),
-        // const SizedSpacer(12),
         Expanded(
           child: _CurrencyButton(
             currency: between.to1,
@@ -107,7 +106,6 @@ class _CurrencyButtons extends ConsumerWidget {
           ).padding(l: 6, r: between.isThree ? 6 : 12),
         ),
         if (to2 != null) ...[
-          // const SizedSpacer(12),
           Expanded(
             child: _CurrencyButton(
               currency: to2,

@@ -42,6 +42,8 @@ class SettingsPage extends ConsumerWidget {
           const _ThankYouSection(),
           const Gap(24),
           const _FeedbackSection(),
+          const Gap(24),
+          const _PrivacyTermsLinksSection(),
           const Gap(40),
           const Divider().padding(x: 16),
           const Gap(48),
@@ -390,6 +392,41 @@ class _FeedbackSection extends StatelessWidget {
         TextButton(
           onPressed: openFeedbackForm,
           child: const Text('Report a bug or write feedback'),
+        ),
+      ],
+    ).padding(x: 4);
+  }
+}
+
+class _PrivacyTermsLinksSection extends StatelessWidget {
+  const _PrivacyTermsLinksSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return VStack(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextButton(
+          onPressed: () {
+            final privacyPolicy = remoteConfig.getPrivacyPolicyConfig();
+            canLaunchUrlString(privacyPolicy.url).then((canLaunch) {
+              if (canLaunch) {
+                launchUrlString(privacyPolicy.url);
+              }
+            });
+          },
+          child: const Text('Privacy Policy'),
+        ),
+        TextButton(
+          onPressed: () {
+            final termsOfUse = remoteConfig.getTermsOfUseConfig();
+            canLaunchUrlString(termsOfUse.url).then((canLaunch) {
+              if (canLaunch) {
+                launchUrlString(termsOfUse.url);
+              }
+            });
+          },
+          child: const Text('Terms of Use'),
         ),
       ],
     ).padding(x: 4);
