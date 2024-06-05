@@ -55,9 +55,9 @@ final _remoteConfigDefaults = {
     url: 'https://twitter.com/sashakryzh',
   ).toJson(),
   RemoteConfigKeys.privacyPolicy: PrivacyPolicyConfig(
-    url: 'https://example.com/privacy_policy',
+    url: 'https://sashakryzh.notion.site/Privacy-Policy-7f6c0af1a21643438e14d445fb0baf40',
   ).toJson(),
   RemoteConfigKeys.termsOfUse: TermsOfUseConfig(
-    url: 'https://example.com/terms_of_use',
+    url: 'https://sashakryzh.notion.site/Terms-of-Use-6f3215b7e83f4d27984765c6f9f4438e',
   ).toJson(),
 };
