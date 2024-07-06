@@ -1,4 +1,5 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:travel_exchanger/utils/logger.dart';
 import 'package:travel_exchanger/utils/remote_config/feedback_form_config.dart';
 import 'package:travel_exchanger/utils/remote_config/privacy_policy_config.dart';
 import 'package:travel_exchanger/utils/remote_config/terms_of_use_config.dart';
@@ -10,12 +11,16 @@ final class RemoteConfig {
   final _remoteConfig = FirebaseRemoteConfig.instance;
 
   Future<void> init() async {
-    await _remoteConfig.setConfigSettings(RemoteConfigSettings(
-      fetchTimeout: const Duration(seconds: 10),
-      minimumFetchInterval: const Duration(hours: 1),
-    ));
-    await _remoteConfig.setDefaults(_remoteConfigDefaults);
-    await _remoteConfig.fetchAndActivate();
+    try {
+      await _remoteConfig.setConfigSettings(RemoteConfigSettings(
+        fetchTimeout: const Duration(seconds: 10),
+        minimumFetchInterval: const Duration(hours: 1),
+      ));
+      await _remoteConfig.setDefaults(_remoteConfigDefaults);
+      await _remoteConfig.fetchAndActivate();
+    } catch (e) {
+      logger.e('RemoteConfig init error', error: e);
+    }
   }
 
   FeedbackFormConfig getFeedbackFormConfig() {
