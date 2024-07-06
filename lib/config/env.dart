@@ -5,7 +5,6 @@ abstract final class Env {
     await dotenv.load();
   }
 
-  static String get baseUrl => dotenv.env['BASE_URL'] ?? '';
   static String get supabaseUrl => dotenv.env['SUPABASE_URL'] ?? '';
   static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
 }
