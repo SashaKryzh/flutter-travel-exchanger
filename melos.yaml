@@ -62,6 +62,9 @@ scripts:
   build-apk-release:
     run: fvm flutter build apk
 
+  build-appbundle-release:
+    run: fvm flutter build appbundle
+
 command:
   clean:
     hooks:
