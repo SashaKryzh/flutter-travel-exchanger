@@ -34,21 +34,34 @@ class OnboardingWrapper extends HookConsumerWidget {
         AnimatedSwitcher(
           duration: kThemeAnimationDuration,
           child: !isComplete
-              ? IgnorePointer(
-                  ignoring: state.step != OnboardingStep.thanks,
-                  child: Scaffold(
-                    backgroundColor: Colors.transparent,
-                    body: Container(
-                      color: Colors.black.withOpacity(0.6),
-                      alignment: Alignment.center,
-                      child: _DescriptionFromStep(
-                        step: state.step,
-                        onComplete: onComplete,
+              ? Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    SafeArea(
+                      child: state.step != OnboardingStep.thanks
+                          ? IconButton.filledTonal(
+                              onPressed: onComplete,
+                              icon: const Icon(Icons.close),
+                            )
+                          : const EmptyWidget(),
+                    ),
+                    IgnorePointer(
+                      ignoring: state.step != OnboardingStep.thanks,
+                      child: Scaffold(
+                        backgroundColor: Colors.transparent,
+                        body: Container(
+                          color: const Color.fromARGB(255, 22, 20, 20).withOpacity(0.6),
+                          alignment: Alignment.center,
+                          child: _DescriptionFromStep(
+                            step: state.step,
+                            onComplete: onComplete,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 )
-              : const EmptyWidget(),
+              : null,
         ),
       ],
     );

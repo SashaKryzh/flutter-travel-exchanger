@@ -28,7 +28,7 @@ class GlassSelectableContainer extends StatelessWidget {
       child: GlassContainer(
         blur: blur ?? 5,
         borderRadius: BorderRadius.circular(borderRadius ?? 0),
-        color: context.colorScheme.onBackground.withOpacity(0.15),
+        color: context.colorScheme.onSurface.withOpacity(0.15),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 100),
           padding: padding,

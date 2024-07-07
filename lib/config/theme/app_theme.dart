@@ -38,7 +38,7 @@ class AppTheme {
         ExchangeTableTheme(
           borderColor: Colors.black,
           fromColor: colorScheme.secondaryContainer,
-          toColor: colorScheme.background,
+          toColor: colorScheme.surface,
         ),
       ],
     );

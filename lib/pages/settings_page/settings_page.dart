@@ -140,7 +140,7 @@ class AppearanceSection extends ConsumerWidget {
             color: color,
             shape: BoxShape.circle,
             border: Border.all(
-              color: isSelected ? context.colorScheme.onBackground : Colors.transparent,
+              color: isSelected ? context.colorScheme.onSurface : Colors.transparent,
               width: 2,
             ),
           ),

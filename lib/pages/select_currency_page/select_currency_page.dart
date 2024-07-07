@@ -16,7 +16,6 @@ import 'package:travel_exchanger/pages/select_currency_page/widgets/search_bar.d
 import 'package:travel_exchanger/pages/select_currency_page/widgets/select_currency_app_bar.dart';
 import 'package:travel_exchanger/pages/select_currency_page/widgets/swapable_with.dart';
 import 'package:travel_exchanger/utils/extensions.dart';
-import 'package:travel_exchanger/utils/logger.dart';
 import 'package:travel_exchanger/widgets/bottom_safe_area.dart';
 import 'package:travel_exchanger/widgets/empty_widget.dart';
 import 'package:travel_exchanger/widgets/modal.dart';

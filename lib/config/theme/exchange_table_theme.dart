@@ -12,7 +12,10 @@ class ExchangeTableTheme extends ThemeExtension<ExchangeTableTheme>
     required this.toColor,
   });
 
+  @override
   final Color borderColor;
+  @override
   final Color fromColor;
+  @override
   final Color toColor;
 }

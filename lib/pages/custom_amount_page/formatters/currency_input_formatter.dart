@@ -1,7 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:travel_exchanger/utils/extensions.dart';
 import 'package:travel_exchanger/utils/logger.dart';
 
 String get decimalSeparator => NumberFormat().symbols.DECIMAL_SEP;
