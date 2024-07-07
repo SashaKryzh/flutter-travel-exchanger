@@ -37,14 +37,6 @@ class OnboardingWrapper extends HookConsumerWidget {
               ? Stack(
                   alignment: Alignment.topRight,
                   children: [
-                    SafeArea(
-                      child: state.step != OnboardingStep.thanks
-                          ? IconButton.filledTonal(
-                              onPressed: onComplete,
-                              icon: const Icon(Icons.close),
-                            )
-                          : const EmptyWidget(),
-                    ),
                     IgnorePointer(
                       ignoring: state.step != OnboardingStep.thanks,
                       child: Scaffold(
@@ -58,6 +50,19 @@ class OnboardingWrapper extends HookConsumerWidget {
                           ),
                         ),
                       ),
+                    ),
+                    SafeArea(
+                      child: state.step != OnboardingStep.thanks
+                          ? IconButton.filled(
+                              onPressed: onComplete,
+                              style: IconButton.styleFrom(
+                                  backgroundColor: context.isDark
+                                      ? context.theme.primaryColorLight.withOpacity(0.3)
+                                      : context.theme.primaryColorLight.withOpacity(0.3),
+                                  foregroundColor: Colors.white),
+                              icon: const Icon(Icons.close),
+                            )
+                          : const EmptyWidget(),
                     ),
                   ],
                 )
