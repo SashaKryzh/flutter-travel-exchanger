@@ -121,8 +121,7 @@ class _ThanksStepDescription extends StatelessWidget {
       children: [
         const Text("That's all\nThank you for using the app!"),
         const Gap(8),
-        OutlinedButton(
-          style: OutlinedButton.styleFrom(foregroundColor: Colors.white),
+        FilledButton.tonal(
           onPressed: onComplete,
           child: const Text('Complete'),
         ),

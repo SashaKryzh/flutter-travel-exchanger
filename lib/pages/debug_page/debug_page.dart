@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DebugPage extends ConsumerWidget {
@@ -13,6 +14,12 @@ class DebugPage extends ConsumerWidget {
       ),
       body: ListView(
         children: [
+          const Gap(24),
+          TextButton(
+            onPressed: () => throw Exception(),
+            child: const Text('Throw Test Exception'),
+          ),
+          const Gap(24),
           ElevatedButton(
             onPressed: () => HapticFeedback.lightImpact(),
             child: const Text('Light Impact'),

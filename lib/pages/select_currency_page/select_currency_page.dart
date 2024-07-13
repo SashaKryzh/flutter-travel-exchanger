@@ -5,6 +5,7 @@ import 'package:provider/provider.dart' as p;
 import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
+import 'package:travel_exchanger/domain/models/feature_flags.dart';
 import 'package:travel_exchanger/domain/popular_provider.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/domain/recently_used_provider.dart';
@@ -97,7 +98,7 @@ class SelectCurrencyPage extends HookWidget {
                       _SelectedSection(
                         onEditRate: onEditRate,
                       ).sliver(),
-                      const _RecentSection().sliver(),
+                      if (kEnableRecentCurrencies) const _RecentSection().sliver(),
                       _PopularSection(
                         onEditRate: onEditRate,
                       ).sliver(),

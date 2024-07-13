@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -9,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
+import 'package:travel_exchanger/domain/models/feature_flags.dart';
 import 'package:travel_exchanger/domain/onboarding.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/utils/analytics/analytics.dart';
@@ -33,30 +33,16 @@ class SettingsPage extends ConsumerWidget {
       body: ListView(
         children: [
           const Gap(12),
-          const AppearanceSection(),
-          const Gap(24),
-          const _Menu(),
+          const AppearanceSection().padding(x: 16),
           const Gap(32),
+          const _Menu().padding(x: 4),
+          const Gap(32),
+          const RatesDataTimestampsWidget().padding(x: 16),
+          const Gap(48),
           const Divider().padding(x: 16),
           const Gap(48),
           const _ThankYouSection(),
-          const Gap(24),
-          const _FeedbackSection(),
-          const Gap(24),
-          const _PrivacyTermsLinksSection(),
-          const Gap(40),
-          const Divider().padding(x: 16),
           const Gap(48),
-          const RatesDataTimestampsWidget().padding(x: 16),
-          if (kDebugMode) ...[
-            const Gap(48),
-            const Divider().padding(x: 16),
-            const Gap(24),
-            TextButton(
-              onPressed: () => throw Exception(),
-              child: const Text('Throw Test Exception'),
-            ),
-          ],
         ],
       ),
     );
@@ -161,12 +147,25 @@ class AppearanceSection extends ConsumerWidget {
           children: seedColors.map(buildColorPicker).toList(),
         ),
       ],
-    ).padding(x: 16);
+    );
   }
 }
 
 class _Menu extends ConsumerWidget {
   const _Menu();
+
+  void openFeedbackForm() {
+    analyticsVar.logOpenFeedbackForm();
+    final feedbackForm = remoteConfig.getFeedbackFormConfig();
+    canLaunchUrlString(feedbackForm.url).then((canLaunch) {
+      if (canLaunch) {
+        launchUrlString(
+          feedbackForm.url,
+          mode: LaunchMode.externalApplication,
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -185,8 +184,34 @@ class _Menu extends ConsumerWidget {
           onPressed: showOnboarding,
           child: const Text('Show Onboarding'),
         ),
+        TextButton(
+          onPressed: openFeedbackForm,
+          child: const Text('Report a bug or write feedback'),
+        ),
+        TextButton(
+          onPressed: () {
+            final privacyPolicy = remoteConfig.getPrivacyPolicyConfig();
+            canLaunchUrlString(privacyPolicy.url).then((canLaunch) {
+              if (canLaunch) {
+                launchUrlString(privacyPolicy.url);
+              }
+            });
+          },
+          child: const Text('Privacy Policy'),
+        ),
+        TextButton(
+          onPressed: () {
+            final termsOfUse = remoteConfig.getTermsOfUseConfig();
+            canLaunchUrlString(termsOfUse.url).then((canLaunch) {
+              if (canLaunch) {
+                launchUrlString(termsOfUse.url);
+              }
+            });
+          },
+          child: const Text('Terms of Use'),
+        ),
       ],
-    ).padding(x: 4);
+    );
   }
 }
 
@@ -301,14 +326,16 @@ class RatesDataTimestampsWidget extends ConsumerWidget {
           ),
           const Gap(8),
           Text('Last fetched at ${format(timestamps?.lastFetchedAt)}'),
-          const Gap(48),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: clear,
-              child: const Text('Clear All Data'),
+          if (kEnableClearAllData) ...[
+            const Gap(48),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: clear,
+                child: const Text('Clear All Data'),
+              ),
             ),
-          ),
+          ]
         ],
       ),
     );
@@ -365,70 +392,5 @@ class _ThankYouSection extends HookWidget {
         ),
       ],
     ).padding(x: 16);
-  }
-}
-
-class _FeedbackSection extends StatelessWidget {
-  const _FeedbackSection();
-
-  void openFeedbackForm() {
-    analyticsVar.logOpenFeedbackForm();
-    final feedbackForm = remoteConfig.getFeedbackFormConfig();
-    canLaunchUrlString(feedbackForm.url).then((canLaunch) {
-      if (canLaunch) {
-        launchUrlString(
-          feedbackForm.url,
-          mode: LaunchMode.externalApplication,
-        );
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return VStack(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextButton(
-          onPressed: openFeedbackForm,
-          child: const Text('Report a bug or write feedback'),
-        ),
-      ],
-    ).padding(x: 4);
-  }
-}
-
-class _PrivacyTermsLinksSection extends StatelessWidget {
-  const _PrivacyTermsLinksSection();
-
-  @override
-  Widget build(BuildContext context) {
-    return VStack(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextButton(
-          onPressed: () {
-            final privacyPolicy = remoteConfig.getPrivacyPolicyConfig();
-            canLaunchUrlString(privacyPolicy.url).then((canLaunch) {
-              if (canLaunch) {
-                launchUrlString(privacyPolicy.url);
-              }
-            });
-          },
-          child: const Text('Privacy Policy'),
-        ),
-        TextButton(
-          onPressed: () {
-            final termsOfUse = remoteConfig.getTermsOfUseConfig();
-            canLaunchUrlString(termsOfUse.url).then((canLaunch) {
-              if (canLaunch) {
-                launchUrlString(termsOfUse.url);
-              }
-            });
-          },
-          child: const Text('Terms of Use'),
-        ),
-      ],
-    ).padding(x: 4);
   }
 }
