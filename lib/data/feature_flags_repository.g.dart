@@ -7,7 +7,7 @@ part of 'feature_flags_repository.dart';
 // **************************************************************************
 
 String _$featureFlagsRepositoryHash() =>
-    r'd5c9a3746e78a4992e583d2cb73cae8af93eebd9';
+    r'2d797d4f4c6a5d1650a3f2d5500cfde394a9a6d8';
 
 /// See also [featureFlagsRepository].
 @ProviderFor(featureFlagsRepository)
