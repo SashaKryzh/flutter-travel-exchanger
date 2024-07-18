@@ -155,6 +155,7 @@ class _SelectedSection extends HookConsumerWidget {
     return Column(
       children: [
         _SectionHeading(
+          padding: const EdgeInsets.only(left: 12),
           icon: const Icon(AppIcons.selected),
           title: const Text('Selected'),
           trailing: HStack(
@@ -163,9 +164,11 @@ class _SelectedSection extends HookConsumerWidget {
                 'Rate',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
-              Opacity(
-                opacity: 0,
-                child: SelectedCurrencyListItem.reorderIndicator(context),
+              IgnorePointer(
+                child: Opacity(
+                  opacity: 0,
+                  child: SelectedCurrencyListItem.reorderIndicator(context),
+                ),
               ),
             ],
           ),
@@ -177,6 +180,7 @@ class _SelectedSection extends HookConsumerWidget {
           children: [
             SelectedCurrencyListItem(
               key: ValueKey(between.from),
+              index: 0,
               currency: between.from,
               active: between.from == selectingFor,
               rate: ref.watch(rateProvider(between.from, between.from)),
@@ -186,6 +190,7 @@ class _SelectedSection extends HookConsumerWidget {
             ),
             SelectedCurrencyListItem(
               key: ValueKey(between.to1),
+              index: 1,
               currency: between.to1,
               active: between.to1 == selectingFor,
               rate: ref.watch(rateProvider(between.from, between.to1)),
@@ -196,6 +201,7 @@ class _SelectedSection extends HookConsumerWidget {
             if (to2 != null)
               SelectedCurrencyListItem(
                 key: ValueKey(to2),
+                index: 2,
                 currency: to2,
                 active: to2 == selectingFor,
                 rate: ref.watch(rateProvider(between.from, to2)),
@@ -356,6 +362,7 @@ class _YourTimePopularItem extends HookConsumerWidget {
 
 class _SectionHeading extends StatelessWidget {
   const _SectionHeading({
+    this.padding,
     required this.icon,
     required this.title,
     this.trailing,
@@ -364,11 +371,12 @@ class _SectionHeading extends StatelessWidget {
   final Widget icon;
   final Widget title;
   final Widget? trailing;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: padding ?? const EdgeInsets.symmetric(horizontal: 12),
       child: VStack(
         children: [
           HStack(

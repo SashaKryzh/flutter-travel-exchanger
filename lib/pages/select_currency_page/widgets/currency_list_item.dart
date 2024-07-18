@@ -64,6 +64,7 @@ class RegularCurrencyListItem extends StatelessWidget {
 class SelectedCurrencyListItem extends StatelessWidget {
   const SelectedCurrencyListItem({
     super.key,
+    required this.index,
     required this.currency,
     required this.active,
     required this.rate,
@@ -72,6 +73,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
     required this.onEditRate,
   });
 
+  final int index;
   final Currency currency;
   final bool active;
   final RateForData rate;
@@ -80,16 +82,11 @@ class SelectedCurrencyListItem extends StatelessWidget {
   final VoidCallback? onEditRate;
 
   static Widget reorderIndicator(BuildContext context) {
-    return HStack(
-      children: [
-        const SizedSpacer(6),
-        Icon(
-          AppIcons.rearrangeIndicator,
-          color: context.theme.disabledColor,
-          size: 16,
-        ),
-      ],
-    );
+    return Icon(
+      AppIcons.rearrangeIndicator,
+      color: context.theme.disabledColor,
+      size: 16,
+    ).padding(l: 6, r: 12, y: 8);
   }
 
   bool get isTime => currency.isTime;
@@ -105,7 +102,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
 
     return _Row(
       onTap: onTap,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.only(left: 12),
       code: Text(
         currency.displayCode(context),
         style: TextStyle(color: activeHighlightColor),
@@ -114,31 +111,34 @@ class SelectedCurrencyListItem extends StatelessWidget {
         isTime ? '' : currency.name(context),
         style: TextStyle(color: activeHighlightColor),
       ),
-      trailing: HStack(
-        children: [
-          GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: onEditRate,
-            child: HStack(
-              children: [
-                Icon(
-                  isTime ? AppIcons.editTimeRate : AppIcons.editMoneyRate,
-                  color: onEditRate != null ? rateColor : Colors.transparent,
-                  size: 12,
-                ),
-                const SizedSpacer(4),
-                Text(
-                  switch (value) {
-                    TimeValue() => value.format(),
-                    MoneyValue() => value.formatM(truncateDecimal: true),
-                  },
-                  style: context.textTheme.bodyLarge?.copyWith(color: rateColor),
-                ),
-              ],
+      trailing: ReorderableDragStartListener(
+        index: index,
+        child: HStack(
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: onEditRate,
+              child: HStack(
+                children: [
+                  Icon(
+                    isTime ? AppIcons.editTimeRate : AppIcons.editMoneyRate,
+                    color: onEditRate != null ? rateColor : Colors.transparent,
+                    size: 12,
+                  ),
+                  const SizedSpacer(4),
+                  Text(
+                    switch (value) {
+                      TimeValue() => value.format(),
+                      MoneyValue() => value.formatM(truncateDecimal: true),
+                    },
+                    style: context.textTheme.bodyLarge?.copyWith(color: rateColor),
+                  ),
+                ],
+              ),
             ),
-          ),
-          reorderIndicator(context),
-        ],
+            reorderIndicator(context),
+          ],
+        ),
       ),
     );
   }
