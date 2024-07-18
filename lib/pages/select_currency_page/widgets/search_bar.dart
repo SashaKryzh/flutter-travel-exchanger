@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:travel_exchanger/config/theme/font_size.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/pages/home_page.dart/home_bottom_bar.dart';
 import 'package:travel_exchanger/pages/select_currency_page/select_currency_providers.dart';
@@ -86,7 +87,9 @@ class SearchBar extends HookConsumerWidget {
                   enableSuggestions: false,
                   decoration: const InputDecoration(
                     hintText: 'Search',
+                    hintStyle: TextStyle(fontSize: FontSize.s18),
                   ),
+                  style: const TextStyle(fontSize: FontSize.s18),
                 ).padding(x: 12),
               ),
               AnimatedContainer(

@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:provider/provider.dart' as p;
 import 'package:travel_exchanger/config/theme/app_icons.dart';
+import 'package:travel_exchanger/config/theme/font_size.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/models/feature_flags.dart';
@@ -162,7 +163,7 @@ class _SelectedSection extends HookConsumerWidget {
             children: [
               const Text(
                 'Rate',
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(fontSize: FontSize.s18),
               ),
               IgnorePointer(
                 child: Opacity(
@@ -336,6 +337,7 @@ class _YourTimePopularItem extends HookConsumerWidget {
                 Currency.time.displayCode(context),
                 style: context.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w600,
+                  fontSize: FontSize.s18,
                 ),
               ),
               const Text('Use your time as currency'),
@@ -391,8 +393,7 @@ class _SectionHeading extends StatelessWidget {
               const SizedSpacer(8),
               DefaultTextStyle.merge(
                 style: context.textTheme.titleLarge?.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontSize: FontSize.s20,
                 ),
                 child: title,
               ).expanded(),

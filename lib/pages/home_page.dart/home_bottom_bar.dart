@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -120,6 +121,8 @@ class _CurrencyButtons extends ConsumerWidget {
 }
 
 class _CurrencyButton extends StatelessWidget {
+  static final _autoSizeGroup = AutoSizeGroup();
+
   const _CurrencyButton({
     required this.currency,
     required this.onTap,
@@ -136,14 +139,19 @@ class _CurrencyButton extends StatelessWidget {
       onTap: onTap,
       onLongPress: onLongTap,
       child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 6),
         padding: const EdgeInsets.symmetric(vertical: 10),
+        height: double.infinity,
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(8)),
           border: Border.all(color: context.colorScheme.outlineVariant),
           color: context.colorScheme.surface,
         ),
-        child: Text(
+        child: AutoSizeText(
           currency.displayCode(context),
+          group: _autoSizeGroup,
+          maxLines: 1,
           textAlign: TextAlign.center,
           style: context.textTheme.bodyMedium?.copyWith(
             color: context.colorScheme.onSurface,

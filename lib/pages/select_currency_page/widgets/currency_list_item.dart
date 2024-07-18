@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
+import 'package:travel_exchanger/config/theme/font_size.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/rates_providers.dart';
 import 'package:travel_exchanger/domain/value.dart';
@@ -86,7 +87,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
       AppIcons.rearrangeIndicator,
       color: context.theme.disabledColor,
       size: 16,
-    ).padding(l: 6, r: 12, y: 8);
+    ).padding(l: 6, r: 12);
   }
 
   bool get isTime => currency.isTime;
@@ -105,7 +106,9 @@ class SelectedCurrencyListItem extends StatelessWidget {
       padding: const EdgeInsets.only(left: 12),
       code: Text(
         currency.displayCode(context),
-        style: TextStyle(color: activeHighlightColor),
+        style: TextStyle(
+          color: activeHighlightColor,
+        ),
       ),
       title: Text(
         isTime ? '' : currency.name(context),
@@ -123,7 +126,7 @@ class SelectedCurrencyListItem extends StatelessWidget {
                   Icon(
                     isTime ? AppIcons.editTimeRate : AppIcons.editMoneyRate,
                     color: onEditRate != null ? rateColor : Colors.transparent,
-                    size: 12,
+                    size: 16,
                   ),
                   const SizedSpacer(4),
                   Text(
@@ -131,14 +134,17 @@ class SelectedCurrencyListItem extends StatelessWidget {
                       TimeValue() => value.format(),
                       MoneyValue() => value.formatM(truncateDecimal: true),
                     },
-                    style: context.textTheme.bodyLarge?.copyWith(color: rateColor),
+                    style: context.textTheme.bodyLarge?.copyWith(
+                      color: rateColor,
+                      fontSize: FontSize.s18,
+                    ),
                   ),
                 ],
               ),
             ),
             reorderIndicator(context),
           ],
-        ),
+        ).padding(y: 8),
       ),
     );
   }
@@ -193,6 +199,7 @@ class _Row extends HookWidget {
                 style: context.textTheme.bodyLarge?.copyWith(
                   color: context.defaultTextStyle.style.color,
                   fontWeight: FontWeight.bold,
+                  fontSize: FontSize.s18,
                 ),
                 child: MinSizeWidget(
                   alignment: Alignment.centerLeft,
@@ -203,6 +210,7 @@ class _Row extends HookWidget {
               DefaultTextStyle.merge(
                 style: context.textTheme.bodyLarge?.copyWith(
                   color: context.defaultTextStyle.style.color,
+                  fontSize: FontSize.s18,
                 ),
                 child: title,
               ).expanded(),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:travel_exchanger/config/theme/exchange_table_theme.dart';
+import 'package:travel_exchanger/config/theme/font_size.dart';
 import 'package:travel_exchanger/config/theme/theme_mode_state.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
 import 'package:travel_exchanger/data/shared_storage_keys.dart';
@@ -22,6 +23,52 @@ class AppTheme {
       colorScheme: colorScheme,
       appBarTheme: const AppBarTheme(
         surfaceTintColor: Colors.transparent,
+      ),
+      textTheme: const TextTheme(
+        bodyMedium: TextStyle(
+          fontSize: FontSize.s16,
+        ),
+        titleLarge: TextStyle(fontSize: FontSize.s30, fontWeight: FontWeight.w500),
+      ),
+      textButtonTheme: const TextButtonThemeData(
+        style: ButtonStyle(
+          textStyle: WidgetStatePropertyAll(
+            TextStyle(
+              fontWeight: FontWeight.w300,
+              fontSize: FontSize.s16,
+            ),
+          ),
+        ),
+      ),
+      outlinedButtonTheme: const OutlinedButtonThemeData(
+        style: ButtonStyle(
+          textStyle: WidgetStatePropertyAll(
+            TextStyle(
+              fontWeight: FontWeight.w300,
+              fontSize: FontSize.s16,
+            ),
+          ),
+        ),
+      ),
+      filledButtonTheme: const FilledButtonThemeData(
+        style: ButtonStyle(
+          textStyle: WidgetStatePropertyAll(
+            TextStyle(
+              fontWeight: FontWeight.w300,
+              fontSize: FontSize.s16,
+            ),
+          ),
+        ),
+      ),
+      elevatedButtonTheme: const ElevatedButtonThemeData(
+        style: ButtonStyle(
+          textStyle: WidgetStatePropertyAll(
+            TextStyle(
+              fontWeight: FontWeight.w300,
+              fontSize: FontSize.s16,
+            ),
+          ),
+        ),
       ),
     );
 

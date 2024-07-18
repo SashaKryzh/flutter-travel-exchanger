@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
 import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
+import 'package:travel_exchanger/config/theme/font_size.dart';
 import 'package:travel_exchanger/domain/app_events.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
@@ -77,7 +78,7 @@ class HomeAppBar extends ConsumerWidget {
                       Expanded(
                         child: _ColumnHeader(
                           currency: between.to1,
-                          useShortName: false,
+                          useShortName: true,
                           showCustomRateBadge: showCustomRateBadge(between.to1),
                           alignment:
                               between.isThree ? ColumnAlignment.center : ColumnAlignment.left,
@@ -88,7 +89,7 @@ class HomeAppBar extends ConsumerWidget {
                         Expanded(
                           child: _ColumnHeader(
                             currency: between.to2!,
-                            useShortName: false,
+                            useShortName: true,
                             showCustomRateBadge: showCustomRateBadge(between.to2!),
                             alignment: ColumnAlignment.left,
                             onTap: () => onCurrencyTap(between.to2!),
@@ -152,7 +153,7 @@ class _ColumnHeader extends StatelessWidget {
               group: _kAutoSizeGroup,
               maxLines: 1,
             ).textStyle(
-              context.textTheme.titleLarge?.copyWith(height: 1),
+              context.textTheme.titleLarge?.copyWith(height: 1, fontSize: FontSize.s24),
             ),
           ),
         ),

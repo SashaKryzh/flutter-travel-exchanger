@@ -22,7 +22,7 @@ class SwapableWith extends StatelessWidget {
     return HStack(
       children: [
         Text(
-          from.displayCode(context),
+          from.displayCodeShort(context),
           style: textStyle,
         ),
         const SizedSpacer(1),
@@ -33,7 +33,7 @@ class SwapableWith extends StatelessWidget {
         ),
         const SizedSpacer(1),
         Text(
-          to.displayCode(context),
+          to.displayCodeShort(context),
           style: textStyle,
         ),
       ],

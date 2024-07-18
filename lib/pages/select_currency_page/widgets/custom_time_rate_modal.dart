@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gap/gap.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:travel_exchanger/config/router/router.dart';
+import 'package:travel_exchanger/config/theme/font_size.dart';
 import 'package:travel_exchanger/data/time_rate_repository.dart';
 import 'package:travel_exchanger/domain/currency.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
@@ -106,9 +107,11 @@ class CustomTimeRateModal extends HookConsumerWidget {
                   ),
                 ],
               ),
-              style: context.textTheme.titleMedium,
+              style: context.textTheme.titleMedium?.copyWith(
+                fontSize: FontSize.s20,
+              ),
               textAlign: TextAlign.center,
-              maxLines: 1,
+              maxLines: 2,
             ),
             HStack(
               children: [

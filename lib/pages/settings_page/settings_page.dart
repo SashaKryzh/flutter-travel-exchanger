@@ -7,6 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_exchanger/config/theme/app_icons.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
+import 'package:travel_exchanger/config/theme/font_size.dart';
 import 'package:travel_exchanger/data/shared_preferences.dart';
 import 'package:travel_exchanger/domain/models/feature_flags.dart';
 import 'package:travel_exchanger/domain/onboarding.dart';
@@ -325,7 +326,7 @@ class RatesDataTimestampsWidget extends ConsumerWidget {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const Gap(8),
-          Text('Last fetched at ${format(timestamps?.lastFetchedAt)}'),
+          Text('Last checked at ${format(timestamps?.lastFetchedAt)}'),
           if (kEnableClearAllData) ...[
             const Gap(48),
             SizedBox(
@@ -373,7 +374,7 @@ class _ThankYouSection extends HookWidget {
       children: [
         Text(
           'Thank you for using TIM Converter!',
-          style: context.textTheme.titleLarge,
+          style: context.textTheme.titleLarge?.copyWith(fontSize: FontSize.s20),
         ),
         Text.rich(
           TextSpan(

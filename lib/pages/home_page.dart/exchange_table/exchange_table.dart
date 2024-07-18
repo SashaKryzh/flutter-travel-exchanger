@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart' hide Provider;
 import 'package:provider/provider.dart';
 import 'package:travel_exchanger/config/theme/app_theme.dart';
+import 'package:travel_exchanger/config/theme/font_size.dart';
 import 'package:travel_exchanger/domain/exchange_between.dart';
 import 'package:travel_exchanger/domain/value.dart';
 import 'package:travel_exchanger/pages/home_page.dart/exchange_table/exchange_table_background.dart';
@@ -561,7 +562,7 @@ class _ValueItem extends StatelessWidget {
               group: group,
               overflow: TextOverflow.visible,
               maxLines: 1,
-              style: context.textTheme.bodyLarge?.copyWith(fontSize: 17),
+              style: context.textTheme.bodyLarge?.copyWith(fontSize: FontSize.s24),
               switch (value) {
                 MoneyValue() => value.formatM(
                     showFullNumber: level > 2,
