@@ -4,6 +4,7 @@ part 'feature_flags.mapper.dart';
 
 const kEnableRecentCurrencies = false;
 const kEnableClearAllData = false;
+const kShowCurrenciesOnSelectAppBar = false;
 
 @MappableClass()
 class FeatureFlags with FeatureFlagsMappable {
