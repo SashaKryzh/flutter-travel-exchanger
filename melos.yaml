@@ -56,7 +56,7 @@ scripts:
     run: fvm dart run flutter_native_splash:create
 
   build-ipa-release:
-    run: fvm flutter build ipa
+    run: fvm flutter build ipa --obfuscate --split-debug-info=debug-info/
 
   build-apk-release:
     run: fvm flutter build apk
